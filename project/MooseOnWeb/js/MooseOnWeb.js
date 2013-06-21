@@ -139,20 +139,17 @@ selector: "renderOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4;
-$1=_st(html)._span();
-_st($1)._class_("label label-info");
-$2=_st($1)._with_(_st(_st(self)._mooseEntity())._name());
-$3=_st(html)._ul();
-_st($3)._class_("unstyled");
-$4=_st($3)._with_((function(){
+return smalltalk.withContext(function($ctx1) { var $1,$2;
+$1=_st(html)._ul();
+_st($1)._class_("unstyled");
+$2=_st($1)._with_((function(){
 return smalltalk.withContext(function($ctx2) {return _st(self)._renderContents_(html);
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
-self["@ul"]=$4;
+self["@ul"]=$2;
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltalk.MWActionList)})},
 args: ["html"],
-source: "renderOn: html\x0a\x09html span\x0a    \x09class: 'label label-info'; \x0a        with: self mooseEntity name.\x0a\x09ul := html ul \x0a    \x09class: 'unstyled';\x0a        with: \x0a           [ self renderContents: html]",
-messageSends: ["class:", "span", "with:", "name", "mooseEntity", "ul", "renderContents:"],
+source: "renderOn: html\x0a\x09ul := html ul \x0a    \x09class: 'unstyled';\x0a        with: \x0a           [ self renderContents: html]",
+messageSends: ["class:", "ul", "with:", "renderContents:"],
 referencedClasses: []
 }),
 smalltalk.MWActionList);
@@ -172,6 +169,24 @@ args: ["data"],
 source: "success: data\x0a\x09actions := data asArray.\x0a    isFetched := true.\x0a    MWAnnouncer current announce: MWSuccess new.\x0a\x09",
 messageSends: ["asArray", "announce:", "new", "current"],
 referencedClasses: ["MWSuccess", "MWAnnouncer"]
+}),
+smalltalk.MWActionList);
+
+smalltalk.addMethod(
+"_title",
+smalltalk.method({
+selector: "title",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=_st(self["@mooseEntity"])._title();
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"title",{}, smalltalk.MWActionList)})},
+args: [],
+source: "title\x0a\x09^mooseEntity title",
+messageSends: ["title"],
+referencedClasses: []
 }),
 smalltalk.MWActionList);
 
@@ -469,28 +484,31 @@ selector: "renderOn:",
 category: 'render',
 fn: function (html){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$3,$5,$6,$4,$2;
+return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$5,$6,$2;
 $1=_st(html)._div();
 _st($1)._class_(_st(self)._cssClass());
 _st($1)._at_put_("row",_st(self)._number());
 $2=_st($1)._with_((function(element){
-return smalltalk.withContext(function($ctx2) {$3=_st(element)._div();
-_st($3)._align_("right");
-$5=_st(element)._button();
-_st($5)._class_("btn btn-mini btn-danger");
+return smalltalk.withContext(function($ctx2) {_st(_st(element)._div())._with_((function(cont){
+return smalltalk.withContext(function($ctx3) {$3=_st(cont)._span();
+_st($3)._class_(" label label-info");
+$4=_st($3)._with_(_st(_st(self)._content())._title());
+$4;
+$5=_st(cont)._button();
+_st($5)._class_("pull-right btn btn-mini btn-danger");
 _st($5)._type_("button");
 _st($5)._onClick_((function(){
-return smalltalk.withContext(function($ctx3) {return _st(self)._close();
-}, function($ctx3) {$ctx3.fillBlock({},$ctx1)})}));
+return smalltalk.withContext(function($ctx4) {return _st(self)._close();
+}, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
 $6=_st($5)._with_("X");
-$4=_st($3)._with_($6);
-$4;
+return $6;
+}, function($ctx3) {$ctx3.fillBlock({cont:cont},$ctx1)})}));
 return _st(element)._with_(_st(self)._content());
 }, function($ctx2) {$ctx2.fillBlock({element:element},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltalk.MWColumnWidget)})},
 args: ["html"],
-source: "renderOn: html\x0a\x09html div \x0a    \x09class: self cssClass; \x0a        at: 'row' put: self number;\x0a    \x09with: [ :element | \x0a        \x09element div\x0a            \x09align: 'right';\x0a                with: (\x0a                    element button \x0a                        class:'btn btn-mini btn-danger';\x0a                        type:'button';\x0a                        onClick: [ self close ];\x0a                        with: 'X'\x0a                ).\x0a            element with: self content.\x0a        ]\x0a\x09\x09",
-messageSends: ["class:", "cssClass", "div", "at:put:", "number", "with:", "align:", "button", "type:", "onClick:", "close", "content"],
+source: "renderOn: html\x0a\x09html div \x0a    \x09class: self cssClass; \x0a        at: 'row' put: self number;\x0a    \x09with: [ :element | \x0a        \x09element div \x0a                with: [ :cont |\x0a                            cont span \x0a                            \x09    class:' label label-info';\x0a                            \x09\x09with: self content title.\x0a                            cont button \x0a                                class:'pull-right btn btn-mini btn-danger';\x0a                                type:'button';\x0a                                onClick: [ self close ];\x0a                                with: 'X'\x0a            \x09]   .\x0a            element with: self content.\x0a        ]\x0a\x09\x09",
+messageSends: ["class:", "cssClass", "div", "at:put:", "number", "with:", "span", "title", "content", "button", "type:", "onClick:", "close"],
 referencedClasses: []
 }),
 smalltalk.MWColumnWidget);
@@ -517,6 +535,22 @@ smalltalk.MWEntryPoint);
 
 
 smalltalk.addMethod(
+"_colorGroup",
+smalltalk.method({
+selector: "colorGroup",
+category: 'Accesseurs',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { return "rgb(255,140,0)";
+}, function($ctx1) {$ctx1.fill(self,"colorGroup",{}, smalltalk.MWEntryPoint.klass)})},
+args: [],
+source: "colorGroup\x0a\x09 ^'rgb(255,140,0)'",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWEntryPoint.klass);
+
+smalltalk.addMethod(
 "_colorItems",
 smalltalk.method({
 selector: "colorItems",
@@ -527,6 +561,22 @@ return smalltalk.withContext(function($ctx1) { return "rgb(218, 79, 73)";
 }, function($ctx1) {$ctx1.fill(self,"colorItems",{}, smalltalk.MWEntryPoint.klass)})},
 args: [],
 source: "colorItems\x0a\x09 ^'rgb(218, 79, 73)'",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWEntryPoint.klass);
+
+smalltalk.addMethod(
+"_colorcolorGroup",
+smalltalk.method({
+selector: "colorcolorGroup",
+category: 'Accesseurs',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { return "rgb(255,140,0)";
+}, function($ctx1) {$ctx1.fill(self,"colorcolorGroup",{}, smalltalk.MWEntryPoint.klass)})},
+args: [],
+source: "colorcolorGroup\x0a\x09 ^'rgb(255,140,0)'",
 messageSends: [],
 referencedClasses: []
 }),
@@ -723,7 +773,7 @@ category: 'accessing',
 fn: function (num){
 var self=this;
 var i;
-return smalltalk.withContext(function($ctx1) { _st(_st(self)._colWidget())._removeFrom_to_(num,(2));
+return smalltalk.withContext(function($ctx1) { _st(_st(self)._colWidget())._removeFrom_to_(num,_st(_st(_st(_st(self)._colWidget())._size()).__minus(num)).__plus((2)));
 i=(1);
 _st(_st(self)._colWidget())._do_((function(col){
 return smalltalk.withContext(function($ctx2) {_st(col)._number_(i);
@@ -733,8 +783,8 @@ return i;
 _st(self)._render();
 return self}, function($ctx1) {$ctx1.fill(self,"delCol:",{num:num,i:i}, smalltalk.MWMainWidget)})},
 args: ["num"],
-source: "delCol: num\x0a\x09| i |\x0a    self colWidget removeFrom: num to: 2.\x0a    i:= 1.\x0a    self colWidget do: [ :col | col number: i. i := i +1. ].\x0a    self render",
-messageSends: ["removeFrom:to:", "colWidget", "do:", "number:", "+", "render"],
+source: "delCol: num\x0a\x09| i |\x0a    self colWidget removeFrom: num to:  self colWidget size - num + 2.\x0a    i:= 1.\x0a    self colWidget do: [ :col | col number: i. i := i +1. ].\x0a    self render",
+messageSends: ["removeFrom:to:", "+", "-", "size", "colWidget", "do:", "number:", "render"],
 referencedClasses: []
 }),
 smalltalk.MWMainWidget);
@@ -1088,27 +1138,6 @@ smalltalk.MWModelRoot);
 
 smalltalk.addClass('MWMooseEntity', smalltalk.Widget, ['id', 'name', 'type', 'properties', 'isFetched', 'div'], 'MooseOnWeb');
 smalltalk.addMethod(
-"_click",
-smalltalk.method({
-selector: "click",
-category: 'rendering',
-fn: function (){
-var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$2;
-$1=_st((smalltalk.MWAddCol || MWAddCol))._new();
-_st($1)._content_(self);
-$2=_st($1)._colId_(_st(_st(_st(self["@div"])._asJQuery())._parents_("div"))._attr_("row"));
-_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_($2);
-_st(self)._getProperties();
-return self}, function($ctx1) {$ctx1.fill(self,"click",{}, smalltalk.MWMooseEntity)})},
-args: [],
-source: "click\x0a  \x09MWAnnouncer current announce: (\x0a    \x09MWAddCol new \x0a        \x09content: self;\x0a            colId: ((div asJQuery parents: 'div') attr: 'row')\x0a    ).\x0a\x09self getProperties.",
-messageSends: ["announce:", "content:", "new", "colId:", "attr:", "parents:", "asJQuery", "current", "getProperties"],
-referencedClasses: ["MWAddCol", "MWAnnouncer"]
-}),
-smalltalk.MWMooseEntity);
-
-smalltalk.addMethod(
 "_clickFrom_",
 smalltalk.method({
 selector: "clickFrom:",
@@ -1266,24 +1295,33 @@ selector: "renderContentOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$2;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4,$5;
 _st(_st(self)._properties())._keysAndValuesDo_((function(key,value){
 return smalltalk.withContext(function($ctx2) {return _st(_st(html)._li())._with_((function(li){
-var a;
-return smalltalk.withContext(function($ctx3) {$1=_st(li)._span();
-_st($1)._style_(_st(_st("color: ").__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._colorItems())).__comma(";\x22"));
-_st($1)._with_(_st(key).__comma(" : "));
-$2=_st($1)._yourself();
-a=$2;
-a;
+return smalltalk.withContext(function($ctx3) {$1=_st(value)._isKindOf_((smalltalk.MWMooseGroup || MWMooseGroup));
+if(smalltalk.assert($1)){
+$2=_st(li)._a();
+_st($2)._style_(_st(_st("color: ").__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._colorGroup())).__comma(";\x22"));
+_st($2)._href_("#");
+_st($2)._onClick_((function(){
+return smalltalk.withContext(function($ctx4) {return _st(value)._clickFrom_(_st(_st(_st(self["@div"])._asJQuery())._parents_("div"))._attr_("row"));
+}, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
+$3=_st($2)._with_(_st(key).__comma(" : "));
+$3;
+} else {
+$4=_st(li)._span();
+_st($4)._style_(_st(_st("color: ").__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._colorItems())).__comma(";\x22"));
+$5=_st($4)._with_(_st(key).__comma(" : "));
+$5;
+};
 return _st(_st(li)._span())._with_(value);
-}, function($ctx3) {$ctx3.fillBlock({li:li,a:a},$ctx1)})}));
+}, function($ctx3) {$ctx3.fillBlock({li:li},$ctx1)})}));
 }, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderContentOn:",{html:html}, smalltalk.MWMooseEntity)})},
 args: ["html"],
-source: "renderContentOn: html\x0a\x09self properties keysAndValuesDo: [ :key :value |\x0a    \x09html li \x0a        \x09with:  \x0a            \x09[ :li  |\x0a                \x09| a |\x0a                \x09a :=li span\x0a                     \x09style: 'color: ', MWEntryPoint colorItems,';\x22';\x0a                     \x09with: key, ' : ';\x0a                      \x0a                      yourself.\x0a                 \x22 (value isKindOf: MWMooseGroup) ifFalse: [\x0a                     a class: 'label label-important' ] ifTrue: [  a class: 'label label-warning' ].\x22\x0a                   li span with: ( value )\x0a \x09\x09\x09\x09]\x0a    ].\x0a",
-messageSends: ["keysAndValuesDo:", "with:", "style:", ",", "colorItems", "span", "yourself", "li", "properties"],
-referencedClasses: ["MWEntryPoint"]
+source: "renderContentOn: html\x0a\x09self properties keysAndValuesDo: [ :key :value |\x0a    \x09html li \x0a        \x09with:  \x0a            \x09[ :li  |\x0a\x0a                 \x09(value isKindOf: MWMooseGroup) ifTrue: [\x0a                    \x09\x09li a\x0a                     \x09\x09\x09style: 'color: ', MWEntryPoint colorGroup,';\x22';\x0a                                href: '#';\x0a                                onClick: [ value clickFrom: ((div asJQuery parents: 'div') attr: 'row') ];\x0a                     \x09\x09\x09with: key, ' : '.\x0a    \x09\x09\x09\x09\x09] ifFalse: [  \x0a                        \x09li span\x0a            \x09                style: 'color: ', MWEntryPoint colorItems,';\x22';\x0a                     \x09\x09\x09with: key, ' : '.\x0a    \x09\x09\x09\x09\x09].\x0a                   li span with: ( value )\x0a \x09\x09\x09\x09]\x0a    ].\x0a",
+messageSends: ["keysAndValuesDo:", "with:", "ifTrue:ifFalse:", "style:", ",", "colorGroup", "a", "href:", "onClick:", "clickFrom:", "attr:", "parents:", "asJQuery", "colorItems", "span", "isKindOf:", "li", "properties"],
+referencedClasses: ["MWEntryPoint", "MWMooseGroup"]
 }),
 smalltalk.MWMooseEntity);
 
@@ -1294,24 +1332,23 @@ selector: "renderOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4,$5;
-$1=_st(html)._div();
-_st($1)._class_("label label-info");
-$2=_st($1)._with_(_st(self)._name());
-self["@div"]=$2;
-$3=self["@isFetched"];
-if(smalltalk.assert($3)){
-$4=_st(html)._ul();
-_st($4)._class_("unstyled");
-$5=_st($4)._with_((function(){
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3;
+$1=self["@isFetched"];
+if(smalltalk.assert($1)){
+$2=_st(html)._ul();
+_st($2)._class_("unstyled");
+$3=_st($2)._with_((function(){
 return smalltalk.withContext(function($ctx2) {return _st(self)._renderContentOn_(html);
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
-$5;
+self["@div"]=$3;
+self["@div"];
+} else {
+_st(_st(html)._span())._with_("Loading");
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltalk.MWMooseEntity)})},
 args: ["html"],
-source: "renderOn: html\x0a     div := html div \x0a     \x09     class: 'label label-info';\x0a          \x09\x09with: self name.\x0a\x0a       isFetched ifTrue: [     \x0a        \x09\x09html ul \x0a         \x09\x09\x09 class: 'unstyled';\x0a          \x09\x09\x09 with: [self renderContentOn: html] ]\x0a",
-messageSends: ["class:", "div", "with:", "name", "ifTrue:", "ul", "renderContentOn:"],
+source: "renderOn: html\x0a\x0a\x0a       isFetched ifTrue: [     \x0a        \x09\x09div := html ul \x0a         \x09\x09\x09 class: 'unstyled';\x0a          \x09\x09\x09 with: [self renderContentOn: html] ]\x0a                   ifFalse: [ \x0a                 html span \x0a          \x09\x09\x09with: 'Loading'.\x0a                   \x0a               ]    \x0a",
+messageSends: ["ifTrue:ifFalse:", "class:", "ul", "with:", "renderContentOn:", "span"],
 referencedClasses: []
 }),
 smalltalk.MWMooseEntity);
@@ -1335,6 +1372,24 @@ args: ["data"],
 source: "success: data\x0a\x09isFetched := true.\x0a\x09data keysAndValuesDo: [ :key :value | \x0a    \x09self properties at: key put: ( value asMooseGroup ).\x0a        Transcript show: value.\x0a        Transcript show: value asMooseGroup.\x0a\x09].\x0a    MWAnnouncer current announce: MWSuccess new.\x0a\x0a",
 messageSends: ["keysAndValuesDo:", "at:put:", "asMooseGroup", "properties", "show:", "announce:", "new", "current"],
 referencedClasses: ["Transcript", "MWSuccess", "MWAnnouncer"]
+}),
+smalltalk.MWMooseEntity);
+
+smalltalk.addMethod(
+"_title",
+smalltalk.method({
+selector: "title",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=_st(self)._name();
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"title",{}, smalltalk.MWMooseEntity)})},
+args: [],
+source: "title\x0a\x09^self name",
+messageSends: ["name"],
+referencedClasses: []
 }),
 smalltalk.MWMooseEntity);
 
@@ -1395,6 +1450,26 @@ args: ["anObjectCollection"],
 source: "addAll: anObjectCollection\x0a\x09\x22anObjectCollection contains MWMooseEntity under JSON format\x22\x0a    anObjectCollection do: [ :e | \x0a    \x09self entities add: (MWMooseEntity new id: e id; type: e type; name: e name).\x0a    ]",
 messageSends: ["do:", "add:", "id:", "id", "new", "type:", "type", "name:", "name", "entities"],
 referencedClasses: ["MWMooseEntity"]
+}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
+"_clickFrom_",
+smalltalk.method({
+selector: "clickFrom:",
+category: 'accessing',
+fn: function (colId){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$2;
+$1=_st((smalltalk.MWAddColumn || MWAddColumn))._new();
+_st($1)._content_(self);
+$2=_st($1)._colId_(colId);
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_($2);
+return self}, function($ctx1) {$ctx1.fill(self,"clickFrom:",{colId:colId}, smalltalk.MWMooseGroup)})},
+args: ["colId"],
+source: "clickFrom: colId\x0a  \x09MWAnnouncer current announce: (\x0a    \x09MWAddColumn new \x0a        \x09content: self;\x0a            colId: colId\x0a    ).\x0a\x09",
+messageSends: ["announce:", "content:", "new", "colId:", "current"],
+referencedClasses: ["MWAddColumn", "MWAnnouncer"]
 }),
 smalltalk.MWMooseGroup);
 
@@ -1509,7 +1584,7 @@ return _st(_st(html)._li())._with_($2);
 }, function($ctx2) {$ctx2.fillBlock({e:e},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderContentOn:",{html:html}, smalltalk.MWMooseGroup)})},
 args: ["html"],
-source: "renderContentOn: html\x0a    self entities do: [ :e |\x0a      html li \x0a    \x09  with:\x0a    \x09\x09  (html a\x0a    \x09\x09\x09  \x22class: 'label label-important'; \x22\x0a   \x09\x09\x09\x09   href: '#';\x0a   \x09\x09\x09\x09   onClick: [ e clickFrom:  ((ul asJQuery parents: 'div') attr: 'row') ]; \x0a   \x09\x09\x09\x09   with: e name\x0a     \x09\x09\x09 )\x0a    ]\x0a\x09\x0a\x09",
+source: "renderContentOn: html\x0a    self entities do: [ :e |\x0a      html li \x0a    \x09  with:\x0a    \x09\x09  (html a\x0a   \x09\x09\x09\x09   href: '#';\x0a   \x09\x09\x09\x09   onClick: [ e clickFrom:  ((ul asJQuery parents: 'div') attr: 'row') ]; \x0a   \x09\x09\x09\x09   with: e name\x0a     \x09\x09\x09 )\x0a    ]\x0a\x09\x0a\x09",
 messageSends: ["do:", "with:", "href:", "a", "onClick:", "clickFrom:", "attr:", "parents:", "asJQuery", "name", "li", "entities"],
 referencedClasses: []
 }),
@@ -1536,6 +1611,24 @@ return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltal
 args: ["html"],
 source: "renderOn: html\x0a\x09ul := \x0a        html pre\x0a           class: 'pre-scrollable';\x0a           with: (\x0a    \x09\x09\x09html ul\x0a    \x09\x09\x09class: 'unstyled';\x0a        \x09\x09with: [self renderContentOn: html]\x0a              )\x0a        \x0a\x09\x0a\x09",
 messageSends: ["class:", "pre", "with:", "ul", "renderContentOn:"],
+referencedClasses: []
+}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
+"_title",
+smalltalk.method({
+selector: "title",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=_st(self)._name();
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"title",{}, smalltalk.MWMooseGroup)})},
+args: [],
+source: "title\x0a\x09^self name",
+messageSends: ["name"],
 referencedClasses: []
 }),
 smalltalk.MWMooseGroup);
@@ -1656,20 +1749,17 @@ selector: "renderOn:",
 category: 'render',
 fn: function (html){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$2,$3;
-$1=_st(html)._div();
-_st($1)._class_("label label-info");
-$2=_st($1)._with_(_st(self)._action());
-$3=self["@isFetched"];
-if(smalltalk.assert($3)){
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=self["@isFetched"];
+if(smalltalk.assert($1)){
 _st(html)._with_(self["@result"]);
 } else {
 _st(_st(html)._div())._with_("Loading");
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltalk.MWResultWidget)})},
 args: ["html"],
-source: "renderOn: html\x0a\x09html div\x0a    \x09class: 'label label-info';\x0a        with: self action.\x0a    isFetched ifFalse: [ \x0a    \x09html div with: 'Loading'.\x0a\x09] ifTrue: [ \x0a    \x09html with: result\x0a\x09]    \x0a\x09\x0a\x09\x09",
-messageSends: ["class:", "div", "with:", "action", "ifFalse:ifTrue:"],
+source: "renderOn: html\x0a    isFetched ifFalse: [ \x0a    \x09html div with: 'Loading'.\x0a\x09] ifTrue: [ \x0a    \x09html with: result\x0a\x09]    \x0a\x09\x0a\x09\x09",
+messageSends: ["ifFalse:ifTrue:", "with:", "div"],
 referencedClasses: []
 }),
 smalltalk.MWResultWidget);
@@ -1734,6 +1824,24 @@ args: ["data"],
 source: "success: data\x0a\x09isFetched := true.\x0a\x09[ result:=(MWMooseGroup new addAll: (data entities); yourself). ] on: MessageNotUnderstood do:\x0a    \x09[ \x0a      \x09  result :=  data.\x0a          window alert: 'not entities'.\x0a\x09\x09].\x0a  \x09MWAnnouncer current announce: MWSuccess new.",
 messageSends: ["on:do:", "alert:", "addAll:", "entities", "new", "yourself", "announce:", "current"],
 referencedClasses: ["MessageNotUnderstood", "MWMooseGroup", "MWSuccess", "MWAnnouncer"]
+}),
+smalltalk.MWResultWidget);
+
+smalltalk.addMethod(
+"_title",
+smalltalk.method({
+selector: "title",
+category: 'accessors',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=_st(self)._action();
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"title",{}, smalltalk.MWResultWidget)})},
+args: [],
+source: "title\x0a\x09^self action",
+messageSends: ["action"],
+referencedClasses: []
 }),
 smalltalk.MWResultWidget);
 

@@ -11,6 +11,10 @@ mooseEntity
 
 mooseEntity: aMooseEntity
 	mooseEntity := aMooseEntity
+!
+
+title
+	^mooseEntity title
 ! !
 
 !MWActionList methodsFor: 'events'!
@@ -74,9 +78,6 @@ renderContents: html
 !
 
 renderOn: html
-	html span
-    	class: 'label label-info'; 
-        with: self mooseEntity name.
 	ul := html ul 
     	class: 'unstyled';
         with: 
@@ -198,15 +199,17 @@ renderOn: html
     	class: self cssClass; 
         at: 'row' put: self number;
     	with: [ :element | 
-        	element div
-            	align: 'right';
-                with: (
-                    element button 
-                        class:'btn btn-mini btn-danger';
-                        type:'button';
-                        onClick: [ self close ];
-                        with: 'X'
-                ).
+        	element div 
+                with: [ :cont |
+                            cont span 
+                            	    class:' label label-info';
+                            		with: self content title.
+                            cont button 
+                                class:'pull-right btn btn-mini btn-danger';
+                                type:'button';
+                                onClick: [ self close ];
+                                with: 'X'
+            	]   .
             element with: self content.
         ]
 ! !
@@ -226,8 +229,16 @@ initialize
 
 !MWEntryPoint class methodsFor: 'Accesseurs'!
 
+colorGroup
+	 ^'rgb(255,140,0)'
+!
+
 colorItems
 	 ^'rgb(218, 79, 73)'
+!
+
+colorcolorGroup
+	 ^'rgb(255,140,0)'
 !
 
 restApiLocation
@@ -284,7 +295,7 @@ cssId
 
 delCol: num
 	| i |
-    self colWidget removeFrom: num to: 2.
+    self colWidget removeFrom: num to:  self colWidget size - num + 2.
     i:= 1.
     self colWidget do: [ :col | col number: i. i := i +1. ].
     self render
@@ -484,6 +495,10 @@ properties
 	^properties ifNil: [ properties := Dictionary new ]
 !
 
+title
+	^self name
+!
+
 type
 	^type
 !
@@ -524,15 +539,6 @@ success: data
 
 !MWMooseEntity methodsFor: 'rendering'!
 
-click
-  	MWAnnouncer current announce: (
-    	MWAddCol new 
-        	content: self;
-            colId: ((div asJQuery parents: 'div') attr: 'row')
-    ).
-	self getProperties.
-!
-
 clickFrom: colId
   	MWAnnouncer current announce: (
     	MWAddColumn new 
@@ -547,28 +553,35 @@ renderContentOn: html
     	html li 
         	with:  
             	[ :li  |
-                	| a |
-                	a :=li span
-                     	style: 'color: ', MWEntryPoint colorItems,';"';
-                     	with: key, ' : ';
-                      
-                      yourself.
-                 " (value isKindOf: MWMooseGroup) ifFalse: [
-                     a class: 'label label-important' ] ifTrue: [  a class: 'label label-warning' ]."
+
+                 	(value isKindOf: MWMooseGroup) ifTrue: [
+                    		li a
+                     			style: 'color: ', MWEntryPoint colorGroup,';"';
+                                href: '#';
+                                onClick: [ value clickFrom: ((div asJQuery parents: 'div') attr: 'row') ];
+                     			with: key, ' : '.
+    					] ifFalse: [  
+                        	li span
+            	                style: 'color: ', MWEntryPoint colorItems,';"';
+                     			with: key, ' : '.
+    					].
                    li span with: ( value )
  				]
     ].
 !
 
 renderOn: html
-     div := html div 
-     	     class: 'label label-info';
-          		with: self name.
+
 
        isFetched ifTrue: [     
-        		html ul 
+        		div := html ul 
          			 class: 'unstyled';
           			 with: [self renderContentOn: html] ]
+                   ifFalse: [ 
+                 html span 
+          			with: 'Loading'.
+                   
+               ]
 ! !
 
 Widget subclass: #MWMooseGroup
@@ -582,6 +595,14 @@ addAll: anObjectCollection
     anObjectCollection do: [ :e | 
     	self entities add: (MWMooseEntity new id: e id; type: e type; name: e name).
     ]
+!
+
+clickFrom: colId
+  	MWAnnouncer current announce: (
+    	MWAddColumn new 
+        	content: self;
+            colId: colId
+    ).
 !
 
 entities
@@ -609,7 +630,6 @@ renderContentOn: html
       html li 
     	  with:
     		  (html a
-    			  "class: 'label label-important'; "
    				   href: '#';
    				   onClick: [ e clickFrom:  ((ul asJQuery parents: 'div') attr: 'row') ]; 
    				   with: e name
@@ -626,6 +646,10 @@ renderOn: html
     			class: 'unstyled';
         		with: [self renderContentOn: html]
               )
+!
+
+title
+	^self name
 !
 
 type
@@ -656,6 +680,10 @@ sourceEntity
 
 sourceEntity: anEntity
 	sourceEntity := anEntity
+!
+
+title
+	^self action
 ! !
 
 !MWResultWidget methodsFor: 'query'!
@@ -689,9 +717,6 @@ success: data
 !MWResultWidget methodsFor: 'render'!
 
 renderOn: html
-	html div
-    	class: 'label label-info';
-        with: self action.
     isFetched ifFalse: [ 
     	html div with: 'Loading'.
 	] ifTrue: [ 
