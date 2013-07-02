@@ -63,7 +63,7 @@ ChartApp subclass: #IndexChartApp
 
 begin
 	"Start the executiong of the ExampleChartApp by connecting each button/graphic pair"
-    PieChartExample new chartId:'row3';drawChart.
+    PieChartExample new chartId:'pie_chart_div';drawChart.
     ^super begin
 ! !
 
