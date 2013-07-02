@@ -589,10 +589,10 @@ selector: "restApiLocation",
 category: 'Accesseurs',
 fn: function (){
 var self=this;
-return smalltalk.withContext(function($ctx1) { return "http://localhost:8080/mooseOnWeb";
-}, function($ctx1) {$ctx1.fill(self,"restApiLocation",{}, smalltalk.EntryPoint.klass)})},
+return smalltalk.withContext(function($ctx1) { return "http://37.139.2.203:8080/mooseOnWeb";
+}, function($ctx1) {$ctx1.fill(self,"restApiLocation",{}, smalltalk.MWEntryPoint.klass)})},
 args: [],
-source: "restApiLocation\x0a\x09^'http://localhost:8080/mooseOnWeb'",
+source: "restApiLocation\x0a\x09^'http://37.139.2.203:8080/mooseOnWeb'",
 messageSends: [],
 referencedClasses: []
 }),
