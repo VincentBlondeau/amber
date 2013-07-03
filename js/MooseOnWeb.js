@@ -35,14 +35,13 @@ var result;
 return smalltalk.withContext(function($ctx1) { result=_st(jQuery)._ajax_options_(_st(_st(_st(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlEntities())).__comma("/")).__comma(_st(_st(self)._mooseEntity())._id())).__comma("?q=actions"),smalltalk.HashedCollection._fromPairs_([_st("type").__minus_gt("GET"),_st("success").__minus_gt((function(tmp){
 return smalltalk.withContext(function($ctx2) {return _st(self)._success_(tmp);
 }, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),_st("error").__minus_gt((function(a,b,c){
-return smalltalk.withContext(function($ctx2) {_st(window)._alert_("error in getting actions list");
-return _st((smalltalk.Transcript || Transcript))._show_(_st(_st(_st(_st(_st("error1").__comma(a)).__comma("2")).__comma(b)).__comma("3")).__comma(c));
+return smalltalk.withContext(function($ctx2) {return _st(window)._alert_("error in getting actions list");
 }, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),_st("dataType").__minus_gt("json")]));
 return self}, function($ctx1) {$ctx1.fill(self,"getActions",{result:result}, smalltalk.MWActionList)})},
 args: [],
-source: "getActions\x0a\x09| result |\x0a\x09result := jQuery \x0a    \x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/',self mooseEntity id, '?q=actions'\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self success: tmp].\x0a\x09\x09\x09'error' -> [:a :b : c |  window alert:'error in getting actions list'.Transcript  show: 'error1',a, '2',b,'3',c].\x0a\x09\x09\x09'dataType' -> 'json'\x0a\x09\x09}.",
-messageSends: ["ajax:options:", ",", "id", "mooseEntity", "urlEntities", "restApiLocation", "->", "success:", "alert:", "show:"],
-referencedClasses: ["MWEntryPoint", "Transcript"]
+source: "getActions\x0a\x09| result |\x0a\x09result := jQuery \x0a    \x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/',self mooseEntity id, '?q=actions'\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self success: tmp].\x0a\x09\x09\x09'error' -> [:a :b : c |  window alert:'error in getting actions list'.].\x0a\x09\x09\x09'dataType' -> 'json'\x0a\x09\x09}.",
+messageSends: ["ajax:options:", ",", "id", "mooseEntity", "urlEntities", "restApiLocation", "->", "success:", "alert:"],
+referencedClasses: ["MWEntryPoint"]
 }),
 smalltalk.MWActionList);
 
@@ -57,7 +56,7 @@ return smalltalk.withContext(function($ctx1) { smalltalk.Widget.fn.prototype._i
 self["@isFetched"]=false;
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWActionList)})},
 args: [],
-source: "initialize \x0a\x09super initialize.\x0a\x09isFetched := false.\x0a    ",
+source: "initialize \x0a\x09super initialize.\x0a\x09isFetched := false.\x0a     ",
 messageSends: ["initialize"],
 referencedClasses: []
 }),
@@ -161,14 +160,19 @@ selector: "success:",
 category: 'query',
 fn: function (data){
 var self=this;
-return smalltalk.withContext(function($ctx1) { self["@actions"]=_st(data)._asArray();
+return smalltalk.withContext(function($ctx1) { var $1,$2;
+self["@actions"]=_st(data)._asArray();
 self["@isFetched"]=true;
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWSuccess || MWSuccess))._new());
+$1=_st((smalltalk.MWSuccessForSearch || MWSuccessForSearch))._new();
+_st($1)._actions_(self["@actions"]);
+$2=_st($1)._yourself();
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_($2);
 return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWActionList)})},
 args: ["data"],
-source: "success: data\x0a\x09actions := data asArray.\x0a    isFetched := true.\x0a    MWAnnouncer current announce: MWSuccess new.\x0a\x09",
-messageSends: ["asArray", "announce:", "new", "current"],
-referencedClasses: ["MWSuccess", "MWAnnouncer"]
+source: "success: data\x0a\x09actions := data asArray.\x0a    isFetched := true.\x0a    MWAnnouncer current announce: MWSuccess new.\x0a\x09MWAnnouncer current announce: (MWSuccessForSearch new actions: actions; yourself).",
+messageSends: ["asArray", "announce:", "new", "current", "actions:", "yourself"],
+referencedClasses: ["MWSuccess", "MWAnnouncer", "MWSuccessForSearch"]
 }),
 smalltalk.MWActionList);
 
@@ -309,6 +313,43 @@ smalltalk.addClass('MWResetColumn', smalltalk.MWAnnouncement, [], 'MooseOnWeb');
 smalltalk.addClass('MWSuccess', smalltalk.MWAnnouncement, [], 'MooseOnWeb');
 
 
+smalltalk.addClass('MWSuccessForSearch', smalltalk.MWAnnouncement, ['actions'], 'MooseOnWeb');
+smalltalk.addMethod(
+"_actions",
+smalltalk.method({
+selector: "actions",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=self["@actions"];
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"actions",{}, smalltalk.MWSuccessForSearch)})},
+args: [],
+source: "actions\x0a\x09^actions",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWSuccessForSearch);
+
+smalltalk.addMethod(
+"_actions_",
+smalltalk.method({
+selector: "actions:",
+category: 'accessing',
+fn: function (actionArray){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@actions"]=actionArray;
+return self}, function($ctx1) {$ctx1.fill(self,"actions:",{actionArray:actionArray}, smalltalk.MWSuccessForSearch)})},
+args: ["actionArray"],
+source: "actions: actionArray\x0a\x09actions := actionArray",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWSuccessForSearch);
+
+
+
 smalltalk.addClass('MWAnnouncer', smalltalk.Announcer, [], 'MooseOnWeb');
 
 smalltalk.MWAnnouncer.klass.iVarNames = ['current'];
@@ -353,7 +394,7 @@ referencedClasses: []
 smalltalk.MWAnnouncer.klass);
 
 
-smalltalk.addClass('MWColumnWidget', smalltalk.Widget, ['content', 'number'], 'MooseOnWeb');
+smalltalk.addClass('MWColumnWidget', smalltalk.Widget, ['content', 'number', 'isGroupColumn'], 'MooseOnWeb');
 smalltalk.addMethod(
 "_close",
 smalltalk.method({
@@ -478,37 +519,71 @@ referencedClasses: []
 smalltalk.MWColumnWidget);
 
 smalltalk.addMethod(
+"_renderHeaderOn_",
+smalltalk.method({
+selector: "renderHeaderOn:",
+category: 'render',
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4,$5,$6,$8,$9,$7;
+_st(_st(html)._div())._with_((function(cont){
+return smalltalk.withContext(function($ctx2) {$1=_st(cont)._span();
+_st($1)._class_(" label label-info");
+$2=_st($1)._with_(_st(_st(self)._content())._title());
+$2;
+$3=_st(cont)._button();
+_st($3)._class_("pull-right btn btn-mini btn-danger");
+_st($3)._type_("button");
+_st($3)._onClick_((function(){
+return smalltalk.withContext(function($ctx3) {return _st(self)._close();
+}, function($ctx3) {$ctx3.fillBlock({},$ctx1)})}));
+$4=_st($3)._with_("X");
+$4;
+$5=_st(self["@content"])._isSearchableColumn();
+if(smalltalk.assert($5)){
+$6=_st(cont)._a();
+_st($6)._href_("#searchModal");
+_st($6)._at_put_("role","button");
+_st($6)._at_put_("data-toggle","modal");
+_st($6)._class_("pull-right btn btn-mini btn-info");
+_st($6)._with_("Search");
+$7=_st($6)._onClick_((function(){
+return smalltalk.withContext(function($ctx3) {$8=_st((smalltalk.MWSearch || MWSearch))._new();
+_st($8)._group_(_st(self)._content());
+$9=_st($8)._anchor_(_st(self)._number());
+return $9;
+}, function($ctx3) {$ctx3.fillBlock({},$ctx1)})}));
+return $7;
+};
+}, function($ctx2) {$ctx2.fillBlock({cont:cont},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:",{html:html}, smalltalk.MWColumnWidget)})},
+args: ["html"],
+source: "renderHeaderOn: html\x0a\x09html div \x0a\x09\x09with: [ :cont |\x0a  \x09\x09\x09cont span \x0a  \x09\x09\x09\x09class:' label label-info';\x0a  \x09\x09\x09\x09with: ( \x0a                \x09self content title\x0a                ).        \x0a  \x09\x09\x09cont button \x0a  \x09\x09\x09\x09class:'pull-right btn btn-mini btn-danger';\x0a  \x09\x09\x09\x09type:'button';\x0a  \x09\x09\x09\x09onClick: [ self close ];\x0a  \x09\x09\x09\x09with: 'X'.\x0a            content isSearchableColumn ifTrue: [\x0a  \x09\x09\x09\x09cont a\x0a\x09  \x09\x09\x09\x09href:'#searchModal';\x0a  \x09\x09\x09\x09\x09at: 'role' put:'button';\x0a  \x09\x09\x09\x09\x09at: 'data-toggle' put:'modal';\x0a  \x09\x09\x09\x09\x09class:'pull-right btn btn-mini btn-info';\x0a  \x09\x09\x09\x09\x09with: 'Search';\x0a\x09  \x09\x09\x09\x09onClick: [ MWSearch new group: self content; anchor: self number ].\x0a            ]\x0a\x09\x09] \x0a\x0a\x09\x09",
+messageSends: ["with:", "class:", "span", "title", "content", "button", "type:", "onClick:", "close", "ifTrue:", "href:", "a", "at:put:", "group:", "new", "anchor:", "number", "isSearchableColumn", "div"],
+referencedClasses: ["MWSearch"]
+}),
+smalltalk.MWColumnWidget);
+
+smalltalk.addMethod(
 "_renderOn_",
 smalltalk.method({
 selector: "renderOn:",
 category: 'render',
 fn: function (html){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$5,$6,$2;
+return smalltalk.withContext(function($ctx1) { var $1,$2;
 $1=_st(html)._div();
 _st($1)._class_(_st(self)._cssClass());
 _st($1)._at_put_("row",_st(self)._number());
 $2=_st($1)._with_((function(element){
-return smalltalk.withContext(function($ctx2) {_st(_st(element)._div())._with_((function(cont){
-return smalltalk.withContext(function($ctx3) {$3=_st(cont)._span();
-_st($3)._class_(" label label-info");
-$4=_st($3)._with_(_st(_st(self)._content())._title());
-$4;
-$5=_st(cont)._button();
-_st($5)._class_("pull-right btn btn-mini btn-danger");
-_st($5)._type_("button");
-_st($5)._onClick_((function(){
-return smalltalk.withContext(function($ctx4) {return _st(self)._close();
-}, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
-$6=_st($5)._with_("X");
-return $6;
-}, function($ctx3) {$ctx3.fillBlock({cont:cont},$ctx1)})}));
+return smalltalk.withContext(function($ctx2) {_st(self)._renderHeaderOn_(element);
+_st(element)._br();
 return _st(element)._with_(_st(self)._content());
 }, function($ctx2) {$ctx2.fillBlock({element:element},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltalk.MWColumnWidget)})},
 args: ["html"],
-source: "renderOn: html\x0a\x09html div \x0a    \x09class: self cssClass; \x0a        at: 'row' put: self number;\x0a    \x09with: [ :element | \x0a        \x09element div \x0a                with: [ :cont |\x0a                            cont span \x0a                            \x09    class:' label label-info';\x0a                            \x09\x09with: self content title.\x0a                            cont button \x0a                                class:'pull-right btn btn-mini btn-danger';\x0a                                type:'button';\x0a                                onClick: [ self close ];\x0a                                with: 'X'\x0a            \x09]   .\x0a            element with: self content.\x0a        ]\x0a\x09\x09",
-messageSends: ["class:", "cssClass", "div", "at:put:", "number", "with:", "span", "title", "content", "button", "type:", "onClick:", "close"],
+source: "renderOn: html\x0a\x09html div \x0a    \x09class: self cssClass; \x0a        at: 'row' put: self number;\x0a    \x09with: [ :element | \x0a        \x09self renderHeaderOn: element.\x0a            element br.    \x0a            element with: self content.\x0a        ]\x0a\x09\x09",
+messageSends: ["class:", "cssClass", "div", "at:put:", "number", "with:", "renderHeaderOn:", "br", "content"],
 referencedClasses: []
 }),
 smalltalk.MWColumnWidget);
@@ -647,7 +722,7 @@ _st(_st(self)._colWidget())._add_($2);
 _st(self)._render();
 return self}, function($ctx1) {$ctx1.fill(self,"addCol:",{aContent:aContent}, smalltalk.MWMainWidget)})},
 args: ["aContent"],
-source: "addCol: aContent\x0a\x0a    self colWidget add: (\x0a    \x09MWColumnWidget new \x0a        \x09content: aContent; \x0a           \x09number: (\x0a            \x09self colWidget size +1\x0a            )\x0a       ).\x0a    self render",
+source: "addCol: aContent\x0a    self colWidget add: (\x0a    \x09MWColumnWidget new \x0a        \x09content: aContent; \x0a           \x09number: (\x0a            \x09self colWidget size +1\x0a            )\x0a       ).\x0a    self render",
 messageSends: ["add:", "content:", "new", "number:", "+", "size", "colWidget", "render"],
 referencedClasses: ["MWColumnWidget"]
 }),
@@ -667,7 +742,7 @@ _st(_st(self)._colWidget())._removeFrom_to_(begin,end);
 _st(self)._addCol_(_st(announcement)._content());
 return self}, function($ctx1) {$ctx1.fill(self,"colManage:",{announcement:announcement,begin:begin,end:end}, smalltalk.MWMainWidget)})},
 args: ["announcement"],
-source: "colManage: announcement\x0a\x09\x09| begin end |\x0a        begin :=  announcement colId asNumber + 1.\x0a        end := self colWidget size +1.\x0a        \x22window alert: begin, ' ',end.\x22\x0a\x09\x09self colWidget removeFrom: begin to: end.\x0a    \x09self addCol: announcement content.",
+source: "colManage: announcement\x0a\x09\x09| begin end |\x0a        begin :=  announcement colId asNumber + 1.\x0a        end := self colWidget size +1.\x0a\x09\x09self colWidget removeFrom: begin to: end.\x0a    \x09self addCol: announcement content.",
 messageSends: ["+", "asNumber", "colId", "size", "colWidget", "removeFrom:to:", "addCol:", "content"],
 referencedClasses: []
 }),
@@ -803,6 +878,9 @@ return smalltalk.withContext(function($ctx2) {return _st(self)._render();
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWAddColumn || MWAddColumn),(function(announcement){
 return smalltalk.withContext(function($ctx2) {return _st(self)._colManage_(announcement);
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWAddLastColumn || MWAddLastColumn),(function(announcement){
+return smalltalk.withContext(function($ctx2) {return _st(self)._addCol_(_st(announcement)._content());
+}, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWResetColumn || MWResetColumn),(function(announcement){
 return smalltalk.withContext(function($ctx2) {return _st(self)._colResetWith_(_st(announcement)._content());
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
@@ -812,9 +890,9 @@ return smalltalk.withContext(function($ctx2) {return _st(self)._delCol_(_st(ann
 _st(self)._render();
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWMainWidget)})},
 args: [],
-source: "initialize\x0a\x09super initialize.\x0a \x09MWAnnouncer current on: MWSuccess do: [ :announcement | self render ].\x0a    MWAnnouncer current on: MWAddColumn do: [ :announcement | \x0a        self colManage: announcement.\x0a\x09].\x0a    MWAnnouncer current on: MWResetColumn do: [ :announcement | \x0a    \x09self colResetWith: announcement content\x0a\x09].\x0a    MWAnnouncer current on: MWDelColumn do: [ :announcement | \x0a    \x09self delCol: announcement colId\x0a\x09].\x0a\x09self render",
-messageSends: ["initialize", "on:do:", "render", "current", "colManage:", "colResetWith:", "content", "delCol:", "colId"],
-referencedClasses: ["MWSuccess", "MWAnnouncer", "MWAddColumn", "MWResetColumn", "MWDelColumn"]
+source: "initialize\x0a\x09super initialize.\x0a \x09MWAnnouncer current on: MWSuccess do: [ :announcement | self render ].\x0a    MWAnnouncer current on: MWAddColumn do: [ :announcement | \x0a        self colManage: announcement.\x0a\x09].\x0a    MWAnnouncer current on: MWAddLastColumn do: [ :announcement | \x0a        self addCol: announcement content.\x0a\x09].\x0a    MWAnnouncer current on: MWResetColumn do: [ :announcement | \x0a    \x09self colResetWith: announcement content\x0a\x09].\x0a    MWAnnouncer current on: MWDelColumn do: [ :announcement | \x0a    \x09self delCol: announcement colId\x0a\x09].\x0a\x09self render",
+messageSends: ["initialize", "on:do:", "render", "current", "colManage:", "addCol:", "content", "colResetWith:", "delCol:", "colId"],
+referencedClasses: ["MWSuccess", "MWAnnouncer", "MWAddColumn", "MWAddLastColumn", "MWResetColumn", "MWDelColumn"]
 }),
 smalltalk.MWMainWidget);
 
@@ -876,11 +954,11 @@ $1=_st((smalltalk.MWActionList || MWActionList))._new();
 _st($1)._mooseEntity_(mooseEntity);
 _st($1)._getActions();
 $2=_st($1)._yourself();
-_st(self)._addCol_($2);
+_st(self)._addCol_asGroup_($2,false);
 return self}, function($ctx1) {$ctx1.fill(self,"showActions:",{mooseEntity:mooseEntity}, smalltalk.MWMainWidget)})},
 args: ["mooseEntity"],
-source: "showActions: mooseEntity\x0a\x09self addCol: (MWActionList new mooseEntity: mooseEntity; getActions; yourself).",
-messageSends: ["addCol:", "mooseEntity:", "new", "getActions", "yourself"],
+source: "showActions: mooseEntity\x0a\x09self addCol: (MWActionList new mooseEntity: mooseEntity; getActions; yourself) asGroup: false.",
+messageSends: ["addCol:asGroup:", "mooseEntity:", "new", "getActions", "yourself"],
 referencedClasses: ["MWActionList"]
 }),
 smalltalk.MWMainWidget);
@@ -1295,32 +1373,48 @@ selector: "renderContentOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4,$5;
-_st(_st(self)._properties())._keysAndValuesDo_((function(key,value){
+return smalltalk.withContext(function($ctx1) { _st(_st(self)._properties())._keysAndValuesDo_((function(key,value){
 return smalltalk.withContext(function($ctx2) {return _st(_st(html)._li())._with_((function(li){
-return smalltalk.withContext(function($ctx3) {$1=_st(value)._isKindOf_((smalltalk.MWMooseGroup || MWMooseGroup));
-if(smalltalk.assert($1)){
-$2=_st(li)._a();
-_st($2)._style_(_st(_st("color: ").__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._colorGroup())).__comma(";\x22"));
-_st($2)._href_("#");
-_st($2)._onClick_((function(){
-return smalltalk.withContext(function($ctx4) {return _st(value)._clickFrom_(_st(_st(_st(self["@div"])._asJQuery())._parents_("div"))._attr_("row"));
-}, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
-$3=_st($2)._with_(_st(key).__comma(" : "));
-$3;
-} else {
-$4=_st(li)._span();
-_st($4)._style_(_st(_st("color: ").__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._colorItems())).__comma(";\x22"));
-$5=_st($4)._with_(_st(key).__comma(" : "));
-$5;
-};
+return smalltalk.withContext(function($ctx3) {_st(self)._renderHeaderOn_withKey_withValue_(li,key,value);
 return _st(_st(li)._span())._with_(value);
 }, function($ctx3) {$ctx3.fillBlock({li:li},$ctx1)})}));
 }, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderContentOn:",{html:html}, smalltalk.MWMooseEntity)})},
 args: ["html"],
-source: "renderContentOn: html\x0a\x09self properties keysAndValuesDo: [ :key :value |\x0a    \x09html li \x0a        \x09with:  \x0a            \x09[ :li  |\x0a\x0a                 \x09(value isKindOf: MWMooseGroup) ifTrue: [\x0a                    \x09\x09li a\x0a                     \x09\x09\x09style: 'color: ', MWEntryPoint colorGroup,';\x22';\x0a                                href: '#';\x0a                                onClick: [ value clickFrom: ((div asJQuery parents: 'div') attr: 'row') ];\x0a                     \x09\x09\x09with: key, ' : '.\x0a    \x09\x09\x09\x09\x09] ifFalse: [  \x0a                        \x09li span\x0a            \x09                style: 'color: ', MWEntryPoint colorItems,';\x22';\x0a                     \x09\x09\x09with: key, ' : '.\x0a    \x09\x09\x09\x09\x09].\x0a                   li span with: ( value )\x0a \x09\x09\x09\x09]\x0a    ].\x0a",
-messageSends: ["keysAndValuesDo:", "with:", "ifTrue:ifFalse:", "style:", ",", "colorGroup", "a", "href:", "onClick:", "clickFrom:", "attr:", "parents:", "asJQuery", "colorItems", "span", "isKindOf:", "li", "properties"],
+source: "renderContentOn: html\x0a\x09self properties keysAndValuesDo: [ :key :value |\x0a    \x09html li \x0a        \x09with:  \x0a            \x09[ :li  |\x0a                  self renderHeaderOn: li withKey: key withValue: value.\x0a                  li span with: ( value )\x0a \x09\x09\x09\x09]\x0a    ].\x0a",
+messageSends: ["keysAndValuesDo:", "with:", "renderHeaderOn:withKey:withValue:", "span", "li", "properties"],
+referencedClasses: []
+}),
+smalltalk.MWMooseEntity);
+
+smalltalk.addMethod(
+"_renderHeaderOn_withKey_withValue_",
+smalltalk.method({
+selector: "renderHeaderOn:withKey:withValue:",
+category: 'rendering',
+fn: function (html,key,value){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4,$5;
+$1=_st(value)._isKindOf_((smalltalk.MWMooseGroup || MWMooseGroup));
+if(smalltalk.assert($1)){
+$2=_st(html)._a();
+_st($2)._href_("#");
+_st($2)._onClick_((function(){
+return smalltalk.withContext(function($ctx2) {return _st(value)._clickFrom_(_st(_st(_st(self["@div"])._asJQuery())._parents_("div"))._attr_("row"));
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
+_st($2)._with_(_st(key).__comma(" : "));
+$3=_st($2)._style_(_st("color: ").__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._colorGroup()));
+$3;
+} else {
+$4=_st(html)._span();
+_st($4)._style_(_st("color: ").__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._colorItems()));
+$5=_st($4)._with_(_st(key).__comma(" : "));
+$5;
+};
+return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:withKey:withValue:",{html:html,key:key,value:value}, smalltalk.MWMooseEntity)})},
+args: ["html", "key", "value"],
+source: "renderHeaderOn: html withKey: key withValue: value\x0a\x09\x22Cannot be inlined : too much recursion!\x22\x0a\x09(value isKindOf: MWMooseGroup) ifTrue: [\x0a    \x09html a\x0a      \x09\x09href: '#';\x0a      \x09\x09onClick: [ value clickFrom: ((div asJQuery parents: 'div') attr: 'row') ];\x0a      \x09\x09with: (key, ' : ');\x0a      \x09\x09style: ('color: ', MWEntryPoint colorGroup)  \x0a\x09] ifFalse: [  \x0a  \x09\x09html span\x0a  \x09\x09\x09style: ('color: ', MWEntryPoint colorItems);\x0a  \x09\x09\x09with: key, ' : ' .\x0a\x09].",
+messageSends: ["ifTrue:ifFalse:", "href:", "a", "onClick:", "clickFrom:", "attr:", "parents:", "asJQuery", "with:", ",", "style:", "colorGroup", "colorItems", "span", "isKindOf:"],
 referencedClasses: ["MWEntryPoint", "MWMooseGroup"]
 }),
 smalltalk.MWMooseEntity);
@@ -1362,16 +1456,14 @@ fn: function (data){
 var self=this;
 return smalltalk.withContext(function($ctx1) { self["@isFetched"]=true;
 _st(data)._keysAndValuesDo_((function(key,value){
-return smalltalk.withContext(function($ctx2) {_st(_st(self)._properties())._at_put_(key,_st(value)._asMooseGroup());
-_st((smalltalk.Transcript || Transcript))._show_(value);
-return _st((smalltalk.Transcript || Transcript))._show_(_st(value)._asMooseGroup());
+return smalltalk.withContext(function($ctx2) {return _st(_st(self)._properties())._at_put_(key,_st(value)._asMooseGroupWithAction_withParentId_(key,_st(self)._id()));
 }, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWSuccess || MWSuccess))._new());
 return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWMooseEntity)})},
 args: ["data"],
-source: "success: data\x0a\x09isFetched := true.\x0a\x09data keysAndValuesDo: [ :key :value | \x0a    \x09self properties at: key put: ( value asMooseGroup ).\x0a        Transcript show: value.\x0a        Transcript show: value asMooseGroup.\x0a\x09].\x0a    MWAnnouncer current announce: MWSuccess new.\x0a\x0a",
-messageSends: ["keysAndValuesDo:", "at:put:", "asMooseGroup", "properties", "show:", "announce:", "new", "current"],
-referencedClasses: ["Transcript", "MWSuccess", "MWAnnouncer"]
+source: "success: data\x0a\x09isFetched := true.\x0a\x09data keysAndValuesDo: [ :key :value | \x0a    \x09self properties at: key put: ( value asMooseGroupWithAction: key withParentId: self id ).\x0a\x09].\x0a    MWAnnouncer current announce: MWSuccess new.\x0a\x0a",
+messageSends: ["keysAndValuesDo:", "at:put:", "asMooseGroupWithAction:withParentId:", "id", "properties", "announce:", "new", "current"],
+referencedClasses: ["MWSuccess", "MWAnnouncer"]
 }),
 smalltalk.MWMooseEntity);
 
@@ -1429,7 +1521,41 @@ smalltalk.MWMooseEntity);
 
 
 
-smalltalk.addClass('MWMooseGroup', smalltalk.Widget, ['id', 'name', 'type', 'entities', 'ul'], 'MooseOnWeb');
+smalltalk.addClass('MWMooseGroup', smalltalk.Widget, ['id', 'name', 'type', 'entities', 'ul', 'action', 'parentId', 'isSearchable'], 'MooseOnWeb');
+smalltalk.addMethod(
+"_action",
+smalltalk.method({
+selector: "action",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=self["@action"];
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"action",{}, smalltalk.MWMooseGroup)})},
+args: [],
+source: "action\x0a\x09^action",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
+"_action_",
+smalltalk.method({
+selector: "action:",
+category: 'accessing',
+fn: function (anAction){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@action"]=anAction;
+return self}, function($ctx1) {$ctx1.fill(self,"action:",{anAction:anAction}, smalltalk.MWMooseGroup)})},
+args: ["anAction"],
+source: "action: anAction\x0a\x09action := anAction",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWMooseGroup);
+
 smalltalk.addMethod(
 "_addAll_",
 smalltalk.method({
@@ -1457,7 +1583,7 @@ smalltalk.addMethod(
 "_clickFrom_",
 smalltalk.method({
 selector: "clickFrom:",
-category: 'accessing',
+category: 'render',
 fn: function (colId){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2;
@@ -1532,6 +1658,56 @@ referencedClasses: []
 smalltalk.MWMooseGroup);
 
 smalltalk.addMethod(
+"_initialize",
+smalltalk.method({
+selector: "initialize",
+category: 'initialize',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@isSearchable"]=true;
+return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWMooseGroup)})},
+args: [],
+source: "initialize \x0a\x09isSearchable := true",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
+"_isSearchableColumn",
+smalltalk.method({
+selector: "isSearchableColumn",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=self["@isSearchable"];
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"isSearchableColumn",{}, smalltalk.MWMooseGroup)})},
+args: [],
+source: "isSearchableColumn\x0a \x09^isSearchable",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
+"_isSearchableColumn_",
+smalltalk.method({
+selector: "isSearchableColumn:",
+category: 'accessing',
+fn: function (aBool){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@isSearchable"]=aBool;
+return self}, function($ctx1) {$ctx1.fill(self,"isSearchableColumn:",{aBool:aBool}, smalltalk.MWMooseGroup)})},
+args: ["aBool"],
+source: "isSearchableColumn: aBool\x0a \x09isSearchable := aBool",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
 "_name",
 smalltalk.method({
 selector: "name",
@@ -1566,10 +1742,49 @@ referencedClasses: []
 smalltalk.MWMooseGroup);
 
 smalltalk.addMethod(
+"_parentId",
+smalltalk.method({
+selector: "parentId",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=self["@parentId"];
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"parentId",{}, smalltalk.MWMooseGroup)})},
+args: [],
+source: "parentId\x0a\x09^parentId",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
+"_parentId_",
+smalltalk.method({
+selector: "parentId:",
+category: 'accessing',
+fn: function (anId){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+self["@parentId"]=anId;
+$1=_st(anId).__eq((-1));
+if(smalltalk.assert($1)){
+_st(self)._isSearchableColumn_(false);
+};
+return self}, function($ctx1) {$ctx1.fill(self,"parentId:",{anId:anId}, smalltalk.MWMooseGroup)})},
+args: ["anId"],
+source: "parentId: anId\x0a\x09parentId:= anId.\x0a    (anId= -1) ifTrue: [ self isSearchableColumn: false ]",
+messageSends: ["ifTrue:", "isSearchableColumn:", "="],
+referencedClasses: []
+}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
 "_renderContentOn_",
 smalltalk.method({
 selector: "renderContentOn:",
-category: 'accessing',
+category: 'render',
 fn: function (html){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2;
@@ -1594,7 +1809,7 @@ smalltalk.addMethod(
 "_renderOn_",
 smalltalk.method({
 selector: "renderOn:",
-category: 'accessing',
+category: 'render',
 fn: function (html){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$2;
@@ -1622,13 +1837,19 @@ selector: "title",
 category: 'accessing',
 fn: function (){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1;
-$1=_st(self)._name();
+return smalltalk.withContext(function($ctx1) { var $2,$3,$1;
+$2=_st(self)._name();
+if(($receiver = $2) == nil || $receiver == undefined){
+$3=_st(self)._action();
+return $3;
+} else {
+$1=$2;
+};
 return $1;
 }, function($ctx1) {$ctx1.fill(self,"title",{}, smalltalk.MWMooseGroup)})},
 args: [],
-source: "title\x0a\x09^self name",
-messageSends: ["name"],
+source: "title\x0a\x09^self name ifNil: [ ^self action ]",
+messageSends: ["ifNil:", "action", "name"],
 referencedClasses: []
 }),
 smalltalk.MWMooseGroup);
@@ -1669,7 +1890,7 @@ smalltalk.MWMooseGroup);
 
 
 
-smalltalk.addClass('MWResultWidget', smalltalk.Widget, ['sourceEntity', 'action', 'result', 'isFetched'], 'MooseOnWeb');
+smalltalk.addClass('MWResultWidget', smalltalk.Widget, ['sourceEntity', 'action', 'result', 'isFetched', 'isSearchableColumn'], 'MooseOnWeb');
 smalltalk.addMethod(
 "_action",
 smalltalk.method({
@@ -1700,6 +1921,24 @@ return self}, function($ctx1) {$ctx1.fill(self,"action:",{anAction:anAction}, sm
 args: ["anAction"],
 source: "action: anAction\x0a\x09action := anAction",
 messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWResultWidget);
+
+smalltalk.addMethod(
+"_entities",
+smalltalk.method({
+selector: "entities",
+category: 'query',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=_st(self["@result"])._entities();
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"entities",{}, smalltalk.MWResultWidget)})},
+args: [],
+source: "entities\x0a\x09^result entities",
+messageSends: ["entities"],
 referencedClasses: []
 }),
 smalltalk.MWResultWidget);
@@ -1738,6 +1977,47 @@ return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWResu
 args: [],
 source: "initialize\x0a\x09super initialize.\x0a\x09isFetched := false.",
 messageSends: ["initialize"],
+referencedClasses: []
+}),
+smalltalk.MWResultWidget);
+
+smalltalk.addMethod(
+"_isSearchableColumn",
+smalltalk.method({
+selector: "isSearchableColumn",
+category: 'accessors',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $2,$1;
+$2=self["@isSearchableColumn"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$1=false;
+} else {
+$1=$2;
+};
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"isSearchableColumn",{}, smalltalk.MWResultWidget)})},
+args: [],
+source: "isSearchableColumn\x0a\x09^isSearchableColumn ifNil: [ false ]",
+messageSends: ["ifNil:"],
+referencedClasses: []
+}),
+smalltalk.MWResultWidget);
+
+smalltalk.addMethod(
+"_parentId",
+smalltalk.method({
+selector: "parentId",
+category: 'accessors',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=_st(self["@sourceEntity"])._id();
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"parentId",{}, smalltalk.MWResultWidget)})},
+args: [],
+source: "parentId\x0a\x09^sourceEntity id",
+messageSends: ["id"],
 referencedClasses: []
 }),
 smalltalk.MWResultWidget);
@@ -1805,24 +2085,26 @@ selector: "success:",
 category: 'query',
 fn: function (data){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$2;
-self["@isFetched"]=true;
+return smalltalk.withContext(function($ctx1) { self["@isFetched"]=true;
 _st((function(){
-return smalltalk.withContext(function($ctx2) {$1=_st((smalltalk.MWMooseGroup || MWMooseGroup))._new();
-_st($1)._addAll_(_st(data)._entities());
-$2=_st($1)._yourself();
-self["@result"]=$2;
-return self["@result"];
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}))._on_do_((smalltalk.MessageNotUnderstood || MessageNotUnderstood),(function(){
-return smalltalk.withContext(function($ctx2) {self["@result"]=data;
+var group;
+return smalltalk.withContext(function($ctx2) {group=_st(_st((smalltalk.MWMooseGroup || MWMooseGroup))._new())._addAll_(_st(data)._entities());
+group;
+_st(group)._action_(_st(self)._action());
+_st(group)._parentId_(_st(self["@sourceEntity"])._id());
+self["@result"]=group;
 self["@result"];
-return _st(window)._alert_("not entities");
+self["@isSearchableColumn"]=true;
+return self["@isSearchableColumn"];
+}, function($ctx2) {$ctx2.fillBlock({group:group},$ctx1)})}))._on_do_((smalltalk.MessageNotUnderstood || MessageNotUnderstood),(function(){
+return smalltalk.withContext(function($ctx2) {self["@result"]=data;
+return self["@result"];
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWSuccess || MWSuccess))._new());
 return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWResultWidget)})},
 args: ["data"],
-source: "success: data\x0a\x09isFetched := true.\x0a\x09[ result:=(MWMooseGroup new addAll: (data entities); yourself). ] on: MessageNotUnderstood do:\x0a    \x09[ \x0a      \x09  result :=  data.\x0a          window alert: 'not entities'.\x0a\x09\x09].\x0a  \x09MWAnnouncer current announce: MWSuccess new.",
-messageSends: ["on:do:", "alert:", "addAll:", "entities", "new", "yourself", "announce:", "current"],
+source: "success: data\x0a\x09isFetched := true.\x0a\x09[ \x09\x0a    \x09| group |\x0a    \x09group := MWMooseGroup new addAll: (data entities).\x0a        group action: self action.\x0a        group  parentId: sourceEntity id.\x0a        result := group.\x0a        isSearchableColumn := true.\x0a\x09] on: MessageNotUnderstood do:\x0a    [ \x0a      \x09  result :=  data.\x0a\x09].\x0a  \x09MWAnnouncer current announce: MWSuccess new.",
+messageSends: ["on:do:", "addAll:", "entities", "new", "action:", "action", "parentId:", "id", "announce:", "current"],
 referencedClasses: ["MessageNotUnderstood", "MWMooseGroup", "MWSuccess", "MWAnnouncer"]
 }),
 smalltalk.MWResultWidget);
@@ -1847,19 +2129,516 @@ smalltalk.MWResultWidget);
 
 
 
+smalltalk.addClass('MWSearch', smalltalk.Widget, ['group', 'isListUpdated', 'actionsList', 'selectedAction', 'selectedOperator', 'valueInput', 'anchor'], 'MooseOnWeb');
 smalltalk.addMethod(
-"_asMooseGroup",
+"_actionChosen_",
 smalltalk.method({
-selector: "asMooseGroup",
-category: '*MooseOnWeb',
+selector: "actionChosen:",
+category: 'action',
+fn: function (a){
+var self=this;
+return smalltalk.withContext(function($ctx1) { _st(self)._selectedAction_(a);
+return self}, function($ctx1) {$ctx1.fill(self,"actionChosen:",{a:a}, smalltalk.MWSearch)})},
+args: ["a"],
+source: "actionChosen: a\x0a\x09 self selectedAction: a.\x0a     ",
+messageSends: ["selectedAction:"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_anchor",
+smalltalk.method({
+selector: "anchor",
+category: 'accessing',
 fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=self["@anchor"];
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"anchor",{}, smalltalk.MWSearch)})},
+args: [],
+source: "anchor\x0a\x09^anchor",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_anchor_",
+smalltalk.method({
+selector: "anchor:",
+category: 'accessing',
+fn: function (a){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@anchor"]=a;
+return self}, function($ctx1) {$ctx1.fill(self,"anchor:",{a:a}, smalltalk.MWSearch)})},
+args: ["a"],
+source: "anchor: a\x0a\x09anchor := a",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_cssId",
+smalltalk.method({
+selector: "cssId",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { return "#searchModal";
+}, function($ctx1) {$ctx1.fill(self,"cssId",{}, smalltalk.MWSearch)})},
+args: [],
+source: "cssId\x0a\x09^ '#searchModal'",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_group_",
+smalltalk.method({
+selector: "group:",
+category: 'accessing',
+fn: function (aMooseGroup){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@group"]=aMooseGroup;
+_st(self)._updateList();
+return self}, function($ctx1) {$ctx1.fill(self,"group:",{aMooseGroup:aMooseGroup}, smalltalk.MWSearch)})},
+args: ["aMooseGroup"],
+source: "group: aMooseGroup\x0a\x09group := aMooseGroup.\x0a    self updateList",
+messageSends: ["updateList"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_initialize",
+smalltalk.method({
+selector: "initialize",
+category: 'initialize',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { smalltalk.Widget.fn.prototype._initialize.apply(_st(self), []);
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWSuccessForSearch || MWSuccessForSearch),(function(announcement){
+return smalltalk.withContext(function($ctx2) {return _st(self)._updateListSuccess_(_st(announcement)._actions());
+}, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
+self["@isListUpdated"]=false;
+_st(self)._render();
+return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWSearch)})},
+args: [],
+source: "initialize\x0a\x09super initialize.\x0a    MWAnnouncer current on: MWSuccessForSearch do: [ :announcement |  self updateListSuccess: announcement actions ].\x0a    isListUpdated := false.\x0a\x09self render",
+messageSends: ["initialize", "on:do:", "updateListSuccess:", "actions", "current", "render"],
+referencedClasses: ["MWSuccessForSearch", "MWAnnouncer"]
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_render",
+smalltalk.method({
+selector: "render",
+category: 'rendering',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { _st(_st(_st(self)._cssId())._asJQuery())._empty();
+_st(self)._appendToJQuery_(_st(_st(self)._cssId())._asJQuery());
+return self}, function($ctx1) {$ctx1.fill(self,"render",{}, smalltalk.MWSearch)})},
+args: [],
+source: "render\x0a\x09(self cssId asJQuery) empty.\x0a\x09self appendToJQuery: (self cssId) asJQuery",
+messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_renderActionListOn_",
+smalltalk.method({
+selector: "renderActionListOn:",
+category: 'rendering',
+fn: function (content){
+var self=this;
+var dropdown;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$5,$6,$7,$8,$9,$4;
+$1=_st(content)._a();
+_st($1)._class_("btn dropdown-toggle");
+_st($1)._at_put_("data-toggle","dropdown");
+$2=_st($1)._href_("#");
+dropdown=$2;
+_st(dropdown)._with_("Choose an action");
+_st(dropdown)._with_(_st(_st(content)._span())._class_("caret"));
+$3=_st(content)._ul();
+_st($3)._class_("dropdown-menu");
+$4=_st($3)._with_((function(elem){
+return smalltalk.withContext(function($ctx2) {$5=self["@isListUpdated"];
+if(smalltalk.assert($5)){
+return _st(self["@actionsList"])._do_((function(a){
+return smalltalk.withContext(function($ctx3) {$6=_st(elem)._a();
+_st($6)._href_("#");
+_st($6)._onClick_((function(){
+return smalltalk.withContext(function($ctx4) {$7=_st(dropdown)._asJQuery();
+_st($7)._empty();
+$8=_st($7)._append_(a);
+$8;
+self["@selectedAction"]=a;
+return self["@selectedAction"];
+}, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
+$9=_st($6)._with_(a);
+return _st(_st(elem)._li())._with_($9);
+}, function($ctx3) {$ctx3.fillBlock({a:a},$ctx1)})}));
+};
+}, function($ctx2) {$ctx2.fillBlock({elem:elem},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderActionListOn:",{content:content,dropdown:dropdown}, smalltalk.MWSearch)})},
+args: ["content"],
+source: "renderActionListOn: content \x0a\x09| dropdown |\x0a\x09dropdown := content a class: 'btn dropdown-toggle';\x0a\x09\x09at: 'data-toggle' put:'dropdown';\x0a\x09\x09href:'#'.\x0a    dropdown with: 'Choose an action'.\x0a\x09dropdown with: (content span class: 'caret').\x0a\x09content ul class: 'dropdown-menu';\x0a\x09\x09with: [ :elem |\x0a        \x09isListUpdated ifTrue: [\x0a        \x09\x09actionsList do: [ :a | \x0a                \x09elem li\x0a                \x09\x09with: (\x0a                        \x09elem a \x0a                            \x09href: '#'; \x0a                                onClick: [ dropdown asJQuery empty; append: a. selectedAction := a ];\x0a                               \x09with: a\x0a                          )\x0a    \x09\x09\x09]     \x0a           ]\x0a        ] \x0a       \x0a\x0a    \x0a",
+messageSends: ["class:", "a", "at:put:", "href:", "with:", "span", "ul", "ifTrue:", "do:", "onClick:", "empty", "asJQuery", "append:", "li"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_renderBodyOn_",
+smalltalk.method({
+selector: "renderBodyOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$5,$6,$2;
+$1=_st(html)._div();
+_st($1)._class_(" modal-body");
+_st($1)._at_put_("max-height","200");
+$2=_st($1)._with_((function(el){
+return smalltalk.withContext(function($ctx2) {$3=_st(el)._div();
+_st($3)._class_("btn-group");
+$4=_st($3)._with_((function(content){
+return smalltalk.withContext(function($ctx3) {return _st(self)._renderActionListOn_(content);
+}, function($ctx3) {$ctx3.fillBlock({content:content},$ctx1)})}));
+$4;
+$5=_st(el)._div();
+_st($5)._class_("btn-group");
+$6=_st($5)._with_((function(content){
+return smalltalk.withContext(function($ctx3) {return _st(self)._renderOperatorsOn_(content);
+}, function($ctx3) {$ctx3.fillBlock({content:content},$ctx1)})}));
+$6;
+return _st(self)._renderValueInputOn_(el);
+}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderBodyOn:",{html:html}, smalltalk.MWSearch)})},
+args: ["html"],
+source: "renderBodyOn: html\x0a\x09\x09html div class:' modal-body'; at:'max-height' put: '200'; with: [ :el |\x0a         \x09el div class: 'btn-group';\x0a            \x09with: [ :content | self renderActionListOn: content ].\x0a          \x09el div class: 'btn-group';\x0a            \x09with: [ :content | self renderOperatorsOn: content ].\x0a           self renderValueInputOn: el.\x0a        ]\x0a       \x0a\x0a    \x0a",
+messageSends: ["class:", "div", "at:put:", "with:", "renderActionListOn:", "renderOperatorsOn:", "renderValueInputOn:"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_renderFooterOn_",
+smalltalk.method({
+selector: "renderFooterOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$5,$6,$2;
+$1=_st(html)._div();
+_st($1)._class_("modal-footer");
+$2=_st($1)._with_((function(el){
+return smalltalk.withContext(function($ctx2) {$3=_st(el)._button();
+_st($3)._class_("btn");
+_st($3)._at_put_("data-dismiss","modal");
+_st($3)._at_put_("aria-hidden","true");
+$4=_st($3)._with_("Close");
+$4;
+$5=_st(el)._button();
+_st($5)._class_("btn btn-primary");
+_st($5)._onClick_((function(){
+return smalltalk.withContext(function($ctx3) {return _st(self)._search();
+}, function($ctx3) {$ctx3.fillBlock({},$ctx1)})}));
+$6=_st($5)._with_("Search");
+return $6;
+}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderFooterOn:",{html:html}, smalltalk.MWSearch)})},
+args: ["html"],
+source: "renderFooterOn: html\x0a\x09html div class:'modal-footer';\x0a    \x09with: [ :el |\x0a        \x09el button class:'btn'; at: 'data-dismiss' put:'modal'; at: 'aria-hidden' put:'true'; with:'Close'.\x0a\x09\x09\x09el button class:'btn btn-primary'; onClick: [ self search ]; with: 'Search'.\x0a        ]\x0a\x0a",
+messageSends: ["class:", "div", "with:", "button", "at:put:", "onClick:", "search"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_renderHeaderOn_",
+smalltalk.method({
+selector: "renderHeaderOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$5,$6,$2;
+$1=_st(html)._div();
+_st($1)._class_("modal-header");
+$2=_st($1)._with_((function(el){
+return smalltalk.withContext(function($ctx2) {$3=_st(el)._button();
+_st($3)._type_("button");
+_st($3)._class_("close");
+_st($3)._at_put_("data-dismiss","modal");
+_st($3)._at_put_("aria-hidden","true");
+$4=_st($3)._with_("×");
+$4;
+$5=_st(el)._h3();
+_st($5)._id_("myModalLabel");
+$6=_st($5)._with_("Search");
+return $6;
+}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:",{html:html}, smalltalk.MWSearch)})},
+args: ["html"],
+source: "renderHeaderOn: html\x0a\x09html div\x0a    \x09class:'modal-header';\x0a        with: [ :el |\x0a        \x09el button \x0a            \x09type:'button';\x0a            \x09class:'close';\x0a            \x09at: 'data-dismiss' put:'modal';\x0a            \x09at: 'aria-hidden' put:'true';\x0a\x09            with: '×'.\x0a\x09\x09\x09el h3 \x0a            \x09id:'myModalLabel'; \x0a                with: 'Search'.\x0a        ].\x0a\x0a\x09",
+messageSends: ["class:", "div", "with:", "type:", "button", "at:put:", "id:", "h3"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { _st(self)._renderHeaderOn_(html);
+_st(self)._renderBodyOn_(html);
+_st(self)._renderFooterOn_(html);
+return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltalk.MWSearch)})},
+args: ["html"],
+source: "renderOn: html\x0a\x09self renderHeaderOn: html.\x0a    self renderBodyOn: html.\x0a    self renderFooterOn: html.\x0a    \x0a",
+messageSends: ["renderHeaderOn:", "renderBodyOn:", "renderFooterOn:"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_renderOperatorsOn_",
+smalltalk.method({
+selector: "renderOperatorsOn:",
+category: 'rendering',
+fn: function (content){
+var self=this;
+var dropdown;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$5,$6,$7,$8,$4;
+$1=_st(content)._a();
+_st($1)._class_("btn dropdown-toggle");
+_st($1)._at_put_("data-toggle","dropdown");
+$2=_st($1)._href_("#");
+dropdown=$2;
+_st(dropdown)._with_("Choose an operator");
+_st(dropdown)._with_(_st(_st(content)._span())._class_("caret"));
+$3=_st(content)._ul();
+_st($3)._class_("dropdown-menu");
+$4=_st($3)._with_((function(elem){
+return smalltalk.withContext(function($ctx2) {return _st(_st(_st((smalltalk.MWSearch || MWSearch))._operatorsDictionnary())._keys())._do_((function(op){
+return smalltalk.withContext(function($ctx3) {$5=_st(elem)._a();
+_st($5)._href_("#");
+_st($5)._onClick_((function(){
+return smalltalk.withContext(function($ctx4) {$6=_st(dropdown)._asJQuery();
+_st($6)._empty();
+$7=_st($6)._append_(_st(op)._asString());
+$7;
+self["@selectedOperator"]=op;
+return self["@selectedOperator"];
+}, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
+$8=_st($5)._with_(op);
+return _st(_st(elem)._li())._with_($8);
+}, function($ctx3) {$ctx3.fillBlock({op:op},$ctx1)})}));
+}, function($ctx2) {$ctx2.fillBlock({elem:elem},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderOperatorsOn:",{content:content,dropdown:dropdown}, smalltalk.MWSearch)})},
+args: ["content"],
+source: "renderOperatorsOn: content\x0a\x09| dropdown |\x0a\x09dropdown := content a class: 'btn dropdown-toggle';\x0a\x09\x09at: 'data-toggle' put:'dropdown';\x0a\x09\x09href:'#'.\x0a    dropdown with: 'Choose an operator'.\x0a\x09dropdown with: (content span class: 'caret').\x0a\x09content ul class: 'dropdown-menu';\x0a\x09\x09with: [ :elem |\x0a        \x09MWSearch operatorsDictionnary keys do: [ :op  | \x0a                \x09elem li\x0a                \x09\x09with: (\x0a                        \x09elem a \x0a                            \x09href: '#'; \x0a                                onClick: [ dropdown asJQuery empty; append: op asString. selectedOperator:= op ];\x0a                               \x09with: op\x0a                          )\x0a    \x09\x09\x09]\x0a        ] \x0a    ",
+messageSends: ["class:", "a", "at:put:", "href:", "with:", "span", "ul", "do:", "onClick:", "empty", "asJQuery", "append:", "asString", "li", "keys", "operatorsDictionnary"],
+referencedClasses: ["MWSearch"]
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_renderValueInputOn_",
+smalltalk.method({
+selector: "renderValueInputOn:",
+category: 'rendering',
+fn: function (content){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$2;
+$1=_st(content)._div();
+_st($1)._class_("pull-right");
+$3=_st(content)._input();
+_st($3)._class_("input-large search-query");
+_st($3)._type_("text");
+$4=_st($3)._placeholder_("Text input");
+self["@valueInput"]=$4;
+$2=_st($1)._with_(self["@valueInput"]);
+return self}, function($ctx1) {$ctx1.fill(self,"renderValueInputOn:",{content:content}, smalltalk.MWSearch)})},
+args: ["content"],
+source: "renderValueInputOn: content\x0a\x09content div \x0a    \x09class: 'pull-right';\x0a    \x09with: (\x0a\x09\x09\x09\x09valueInput := content input class: 'input-large search-query'; type: 'text'; placeholder:'Text input'\x0a            )\x0a       \x0a\x0a    \x0a",
+messageSends: ["class:", "div", "with:", "input", "type:", "placeholder:"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_search",
+smalltalk.method({
+selector: "search",
+category: 'action',
+fn: function (){
+var self=this;
+var value;
+return smalltalk.withContext(function($ctx1) { value=_st(_st(self["@valueInput"])._asJQuery())._val();
+_st(jQuery)._ajax_options_(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlEntities())).__comma("/")).__comma(_st(self["@group"])._parentId())).__comma("?q=search&action=")).__comma(_st(self["@group"])._action())).__comma("&key=")).__comma(self["@selectedAction"])).__comma("&op=")).__comma(_st(_st((smalltalk.MWSearch || MWSearch))._operatorsDictionnary())._at_(self["@selectedOperator"]))).__comma("&value=")).__comma(value),smalltalk.HashedCollection._fromPairs_([_st("type").__minus_gt("GET"),_st("success").__minus_gt((function(tmp){
+return smalltalk.withContext(function($ctx2) {return _st(self)._searchSuccess_(tmp);
+}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),_st("error").__minus_gt((function(a,b,c){
+return smalltalk.withContext(function($ctx2) {return _st(window)._alert_("error in getting actions list");
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),_st("dataType").__minus_gt("json")]));
+_st(_st(_st(self)._cssId())._asJQuery())._modal_("toggle");
+return self}, function($ctx1) {$ctx1.fill(self,"search",{value:value}, smalltalk.MWSearch)})},
+args: [],
+source: "search\x0a\x09| value |\x0a\x09value := valueInput asJQuery val.\x0a\x09jQuery \x0a    \x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/', group parentId, '?q=search&action=', group action, '&key=',selectedAction,'&op=',(MWSearch operatorsDictionnary at: selectedOperator),'&value=', value\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self searchSuccess: tmp ].\x0a\x09\x09\x09'error' -> [:a :b : c |  window alert:'error in getting actions list'.].\x0a\x09\x09\x09'dataType' -> 'json' \x0a\x09\x09}.\x0a    (self cssId asJQuery) modal: 'toggle'.",
+messageSends: ["val", "asJQuery", "ajax:options:", ",", "at:", "operatorsDictionnary", "action", "parentId", "urlEntities", "restApiLocation", "->", "searchSuccess:", "alert:", "modal:", "cssId"],
+referencedClasses: ["MWSearch", "MWEntryPoint"]
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_searchSuccess_",
+smalltalk.method({
+selector: "searchSuccess:",
+category: 'action',
+fn: function (data){
+var self=this;
+var name;
+return smalltalk.withContext(function($ctx1) { var $1,$2;
+name=_st(_st(_st(_st(_st(_st(_st(self["@group"])._action()).__comma(" where ")).__comma(self["@selectedAction"])).__comma(" ")).__comma(_st(self["@selectedOperator"])._asString())).__comma(" ")).__comma(_st(_st(self["@valueInput"])._asJQuery())._val());
+$1=_st((smalltalk.MWAddColumn || MWAddColumn))._new();
+_st($1)._colId_(_st(_st(self)._anchor())._asString());
+$2=_st($1)._content_(_st(data)._asMooseGroupWithAction_withParentId_(name,(-1)));
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_($2);
+return self}, function($ctx1) {$ctx1.fill(self,"searchSuccess:",{data:data,name:name}, smalltalk.MWSearch)})},
+args: ["data"],
+source: "searchSuccess: data\x0a\x09| name |\x0a\x09name :=  group action, ' where ',selectedAction,' ',selectedOperator asString,' ',  valueInput asJQuery val.\x0a\x09MWAnnouncer current announce: (\x0a    \x09MWAddColumn new\x0a        \x09colId: self anchor asString;\x0a        \x09content: (data asMooseGroupWithAction: name  withParentId: -1)\x0a    )",
+messageSends: [",", "val", "asJQuery", "asString", "action", "announce:", "colId:", "anchor", "new", "content:", "asMooseGroupWithAction:withParentId:", "current"],
+referencedClasses: ["MWAddColumn", "MWAnnouncer"]
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_selectedAction",
+smalltalk.method({
+selector: "selectedAction",
+category: 'accessing',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=self["@selectedAction"];
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"selectedAction",{}, smalltalk.MWSearch)})},
+args: [],
+source: "selectedAction\x0a\x09^selectedAction",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_selectedAction_",
+smalltalk.method({
+selector: "selectedAction:",
+category: 'accessing',
+fn: function (anAction){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@selectedAction"]=anAction;
+return self}, function($ctx1) {$ctx1.fill(self,"selectedAction:",{anAction:anAction}, smalltalk.MWSearch)})},
+args: ["anAction"],
+source: "selectedAction: anAction\x0a\x09selectedAction := anAction",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_updateList",
+smalltalk.method({
+selector: "updateList",
+category: 'action',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$4,$3,$5;
+$1=_st((smalltalk.MWActionList || MWActionList))._new();
+$2=$1;
+$4=_st(self["@group"])._isSearchableColumn();
+if(smalltalk.assert($4)){
+$3=_st(_st(self["@group"])._entities())._at_((1));
+};
+_st($2)._mooseEntity_($3);
+$5=_st($1)._getActions();
+return self}, function($ctx1) {$ctx1.fill(self,"updateList",{}, smalltalk.MWSearch)})},
+args: [],
+source: "updateList\x0a\x09MWActionList new \x0a    \x09mooseEntity:  ( group isSearchableColumn ifTrue: [ group entities at:1 ]);\x0a        getActions.",
+messageSends: ["mooseEntity:", "ifTrue:", "at:", "entities", "isSearchableColumn", "new", "getActions"],
+referencedClasses: ["MWActionList"]
+}),
+smalltalk.MWSearch);
+
+smalltalk.addMethod(
+"_updateListSuccess_",
+smalltalk.method({
+selector: "updateListSuccess:",
+category: 'action',
+fn: function (actions){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@actionsList"]=actions;
+self["@isListUpdated"]=true;
+_st(self)._render();
+return self}, function($ctx1) {$ctx1.fill(self,"updateListSuccess:",{actions:actions}, smalltalk.MWSearch)})},
+args: ["actions"],
+source: "updateListSuccess: actions\x0a\x09actionsList := actions.\x0a    isListUpdated := true.\x0a    self render",
+messageSends: ["render"],
+referencedClasses: []
+}),
+smalltalk.MWSearch);
+
+
+smalltalk.addMethod(
+"_operatorsDictionnary",
+smalltalk.method({
+selector: "operatorsDictionnary",
+category: 'not yet classified',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $2,$3,$1;
+$2=_st((smalltalk.Dictionary || Dictionary))._new();
+_st($2)._at_put_(smalltalk.symbolFor(">="),"ge");
+_st($2)._at_put_(smalltalk.symbolFor(">"),"gt");
+_st($2)._at_put_(smalltalk.symbolFor("="),"eq");
+_st($2)._at_put_(smalltalk.symbolFor("<="),"le");
+_st($2)._at_put_(smalltalk.symbolFor("<"),"lt");
+$3=_st($2)._yourself();
+$1=$3;
+return $1;
+}, function($ctx1) {$ctx1.fill(self,"operatorsDictionnary",{}, smalltalk.MWSearch.klass)})},
+args: [],
+source: "operatorsDictionnary\x0a\x09^Dictionary new\x0a    \x09at: #'>=' put: 'ge';\x0a        at: #'>'   put: 'gt';\x0a        at: #'='   put: 'eq';\x0a        at: #'<='   put: 'le';\x0a        at: #'<'   put: 'lt';\x0a        yourself\x0a        ",
+messageSends: ["at:put:", "new", "yourself"],
+referencedClasses: ["Dictionary"]
+}),
+smalltalk.MWSearch.klass);
+
+
+smalltalk.addMethod(
+"_asMooseGroupWithAction_withParentId_",
+smalltalk.method({
+selector: "asMooseGroupWithAction:withParentId:",
+category: '*MooseOnWeb',
+fn: function (anAction,id){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1;
 $1=_st(self)._asMooseObject();
 return $1;
-}, function($ctx1) {$ctx1.fill(self,"asMooseGroup",{}, smalltalk.Object)})},
-args: [],
-source: "asMooseGroup\x0a\x09^self asMooseObject",
+}, function($ctx1) {$ctx1.fill(self,"asMooseGroupWithAction:withParentId:",{anAction:anAction,id:id}, smalltalk.Object)})},
+args: ["anAction", "id"],
+source: "asMooseGroupWithAction: anAction withParentId: id\x0a\x09^self asMooseObject",
 messageSends: ["asMooseObject"],
 referencedClasses: []
 }),
@@ -1882,6 +2661,60 @@ messageSends: [],
 referencedClasses: []
 }),
 smalltalk.Object);
+
+smalltalk.addMethod(
+"_isSearchableColumn",
+smalltalk.method({
+selector: "isSearchableColumn",
+category: '*MooseOnWeb',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { return false;
+}, function($ctx1) {$ctx1.fill(self,"isSearchableColumn",{}, smalltalk.Object)})},
+args: [],
+source: "isSearchableColumn\x0a\x09^false",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.Object);
+
+smalltalk.addMethod(
+"_asMooseGroupWithAction_withParentId_",
+smalltalk.method({
+selector: "asMooseGroupWithAction:withParentId:",
+category: '*MooseOnWeb',
+fn: function (anAction,id){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$4,$5,$3,$6,$8,$9,$7;
+$1=_st(self)._isEmpty();
+if(! smalltalk.assert($1)){
+$2=_st(_st(self)._first())._isKindOf_((smalltalk.JSObjectProxy || JSObjectProxy));
+if(smalltalk.assert($2)){
+$4=_st((smalltalk.MWMooseGroup || MWMooseGroup))._new();
+_st($4)._action_(anAction);
+_st($4)._parentId_(id);
+$5=_st($4)._addAll_(_st(self)._collect_((function(e){
+return smalltalk.withContext(function($ctx2) {return _st(e)._asMooseObject();
+}, function($ctx2) {$ctx2.fillBlock({e:e},$ctx1)})})));
+$3=$5;
+return $3;
+} else {
+$6=_st(self)._value();
+return $6;
+};
+};
+$8=_st((smalltalk.MWMooseGroup || MWMooseGroup))._new();
+_st($8)._action_(anAction);
+$9=_st($8)._parentId_(id);
+$7=$9;
+return $7;
+}, function($ctx1) {$ctx1.fill(self,"asMooseGroupWithAction:withParentId:",{anAction:anAction,id:id}, smalltalk.Array)})},
+args: ["anAction", "id"],
+source: "asMooseGroupWithAction: anAction withParentId: id  \x0a\x09self isEmpty ifFalse: [\x0a        (self first isKindOf: JSObjectProxy) ifTrue: [\x0a        \x09^MWMooseGroup new action: anAction; parentId: id; addAll: ( self collect: [ :e | e asMooseObject ])\x0a        ] ifFalse:  [ ^self value ]\x0a\x09].\x0a    ^MWMooseGroup new action: anAction; parentId: id.",
+messageSends: ["ifFalse:", "ifTrue:ifFalse:", "action:", "new", "parentId:", "addAll:", "collect:", "asMooseObject", "value", "isKindOf:", "first", "isEmpty"],
+referencedClasses: ["MWMooseGroup", "JSObjectProxy"]
+}),
+smalltalk.Array);
 
 smalltalk.addMethod(
 "_asMooseObject",
@@ -1914,22 +2747,25 @@ referencedClasses: ["MWMooseGroup", "JSObjectProxy"]
 smalltalk.Array);
 
 smalltalk.addMethod(
-"_asMooseGroup",
+"_asMooseGroupWithAction_withParentId_",
 smalltalk.method({
-selector: "asMooseGroup",
+selector: "asMooseGroupWithAction:withParentId:",
 category: '*MooseOnWeb',
-fn: function (){
+fn: function (anAction,id){
 var self=this;
 var group;
-return smalltalk.withContext(function($ctx1) { var $1;
-group=_st((smalltalk.MWMooseGroup || MWMooseGroup))._new();
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3;
+$1=_st((smalltalk.MWMooseGroup || MWMooseGroup))._new();
+_st($1)._action_(anAction);
+$2=_st($1)._parentId_(id);
+group=$2;
 _st(_st(group)._entities())._add_(_st(self)._asMooseObject());
-$1=group;
-return $1;
-}, function($ctx1) {$ctx1.fill(self,"asMooseGroup",{group:group}, smalltalk.JSObjectProxy)})},
-args: [],
-source: "asMooseGroup\x0a\x09| group |\x0a\x09group := MWMooseGroup new.\x0a    group entities add: self asMooseObject.\x0a    ^group",
-messageSends: ["new", "add:", "asMooseObject", "entities"],
+$3=group;
+return $3;
+}, function($ctx1) {$ctx1.fill(self,"asMooseGroupWithAction:withParentId:",{anAction:anAction,id:id,group:group}, smalltalk.JSObjectProxy)})},
+args: ["anAction", "id"],
+source: "asMooseGroupWithAction: anAction withParentId: id\x0a\x09| group |\x0a\x09group := MWMooseGroup new action: anAction; parentId: id.\x0a    group entities add: self asMooseObject.\x0a    ^group",
+messageSends: ["action:", "new", "parentId:", "add:", "asMooseObject", "entities"],
 referencedClasses: ["MWMooseGroup"]
 }),
 smalltalk.JSObjectProxy);
