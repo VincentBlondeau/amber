@@ -531,8 +531,6 @@ success: data
 	isFetched := true.
 	data keysAndValuesDo: [ :key :value | 
     	self properties at: key put: ( value asMooseGroup ).
-        Transcript show: value.
-        Transcript show: value asMooseGroup.
 	].
     MWAnnouncer current announce: MWSuccess new.
 ! !

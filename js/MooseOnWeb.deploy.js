@@ -1031,13 +1031,11 @@ fn: function (data){
 var self=this;
 return smalltalk.withContext(function($ctx1) { self["@isFetched"]=true;
 _st(data)._keysAndValuesDo_((function(key,value){
-return smalltalk.withContext(function($ctx2) {_st(_st(self)._properties())._at_put_(key,_st(value)._asMooseGroup());
-_st((smalltalk.Transcript || Transcript))._show_(value);
-return _st((smalltalk.Transcript || Transcript))._show_(_st(value)._asMooseGroup());
+return smalltalk.withContext(function($ctx2) {return _st(_st(self)._properties())._at_put_(key,_st(value)._asMooseGroup());
 }, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWSuccess || MWSuccess))._new());
 return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWMooseEntity)})},
-messageSends: ["keysAndValuesDo:", "at:put:", "asMooseGroup", "properties", "show:", "announce:", "new", "current"]}),
+messageSends: ["keysAndValuesDo:", "at:put:", "asMooseGroup", "properties", "announce:", "new", "current"]}),
 smalltalk.MWMooseEntity);
 
 smalltalk.addMethod(
