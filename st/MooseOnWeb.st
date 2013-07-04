@@ -339,9 +339,6 @@ initialize
     MWAnnouncer current on: MWAddColumn do: [ :announcement | 
         self colManage: announcement.
 	].
-    MWAnnouncer current on: MWAddLastColumn do: [ :announcement | 
-        self addCol: announcement content.
-	].
     MWAnnouncer current on: MWResetColumn do: [ :announcement | 
     	self colResetWith: announcement content
 	].

@@ -878,9 +878,6 @@ return smalltalk.withContext(function($ctx2) {return _st(self)._render();
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWAddColumn || MWAddColumn),(function(announcement){
 return smalltalk.withContext(function($ctx2) {return _st(self)._colManage_(announcement);
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
-_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWAddLastColumn || MWAddLastColumn),(function(announcement){
-return smalltalk.withContext(function($ctx2) {return _st(self)._addCol_(_st(announcement)._content());
-}, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWResetColumn || MWResetColumn),(function(announcement){
 return smalltalk.withContext(function($ctx2) {return _st(self)._colResetWith_(_st(announcement)._content());
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
@@ -890,9 +887,9 @@ return smalltalk.withContext(function($ctx2) {return _st(self)._delCol_(_st(ann
 _st(self)._render();
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWMainWidget)})},
 args: [],
-source: "initialize\x0a\x09super initialize.\x0a \x09MWAnnouncer current on: MWSuccess do: [ :announcement | self render ].\x0a    MWAnnouncer current on: MWAddColumn do: [ :announcement | \x0a        self colManage: announcement.\x0a\x09].\x0a    MWAnnouncer current on: MWAddLastColumn do: [ :announcement | \x0a        self addCol: announcement content.\x0a\x09].\x0a    MWAnnouncer current on: MWResetColumn do: [ :announcement | \x0a    \x09self colResetWith: announcement content\x0a\x09].\x0a    MWAnnouncer current on: MWDelColumn do: [ :announcement | \x0a    \x09self delCol: announcement colId\x0a\x09].\x0a\x09self render",
-messageSends: ["initialize", "on:do:", "render", "current", "colManage:", "addCol:", "content", "colResetWith:", "delCol:", "colId"],
-referencedClasses: ["MWSuccess", "MWAnnouncer", "MWAddColumn", "MWAddLastColumn", "MWResetColumn", "MWDelColumn"]
+source: "initialize\x0a\x09super initialize.\x0a \x09MWAnnouncer current on: MWSuccess do: [ :announcement | self render ].\x0a    MWAnnouncer current on: MWAddColumn do: [ :announcement | \x0a        self colManage: announcement.\x0a\x09].\x0a    MWAnnouncer current on: MWResetColumn do: [ :announcement | \x0a    \x09self colResetWith: announcement content\x0a\x09].\x0a    MWAnnouncer current on: MWDelColumn do: [ :announcement | \x0a    \x09self delCol: announcement colId\x0a\x09].\x0a\x09self render",
+messageSends: ["initialize", "on:do:", "render", "current", "colManage:", "colResetWith:", "content", "delCol:", "colId"],
+referencedClasses: ["MWSuccess", "MWAnnouncer", "MWAddColumn", "MWResetColumn", "MWDelColumn"]
 }),
 smalltalk.MWMainWidget);
 

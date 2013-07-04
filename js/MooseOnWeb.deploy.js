@@ -662,9 +662,6 @@ return smalltalk.withContext(function($ctx2) {return _st(self)._render();
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWAddColumn || MWAddColumn),(function(announcement){
 return smalltalk.withContext(function($ctx2) {return _st(self)._colManage_(announcement);
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
-_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWAddLastColumn || MWAddLastColumn),(function(announcement){
-return smalltalk.withContext(function($ctx2) {return _st(self)._addCol_(_st(announcement)._content());
-}, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWResetColumn || MWResetColumn),(function(announcement){
 return smalltalk.withContext(function($ctx2) {return _st(self)._colResetWith_(_st(announcement)._content());
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
@@ -673,7 +670,7 @@ return smalltalk.withContext(function($ctx2) {return _st(self)._delCol_(_st(ann
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
 _st(self)._render();
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWMainWidget)})},
-messageSends: ["initialize", "on:do:", "render", "current", "colManage:", "addCol:", "content", "colResetWith:", "delCol:", "colId"]}),
+messageSends: ["initialize", "on:do:", "render", "current", "colManage:", "colResetWith:", "content", "delCol:", "colId"]}),
 smalltalk.MWMainWidget);
 
 smalltalk.addMethod(
