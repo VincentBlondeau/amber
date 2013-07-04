@@ -48,7 +48,7 @@ getActions
 		options: #{
 			'type' -> 'GET'.
             'success' ->  [ :tmp | self success: tmp].
-			'error' -> [:a :b : c |  window alert:'error in getting actions list'.Transcript  show: 'error1',a, '2',b,'3',c].
+			'error' -> [:a :b : c |  window alert:'error in getting actions list'.].
 			'dataType' -> 'json'
 		}.
 !
@@ -57,6 +57,7 @@ success: data
 	actions := data asArray.
     isFetched := true.
     MWAnnouncer current announce: MWSuccess new.
+	MWAnnouncer current announce: (MWSuccessForSearch new actions: actions; yourself).
 ! !
 
 !MWActionList methodsFor: 'rendering'!
@@ -134,6 +135,20 @@ MWAnnouncement subclass: #MWSuccess
 	instanceVariableNames: ''
 	package: 'MooseOnWeb'!
 
+MWAnnouncement subclass: #MWSuccessForSearch
+	instanceVariableNames: 'actions'
+	package: 'MooseOnWeb'!
+
+!MWSuccessForSearch methodsFor: 'accessing'!
+
+actions
+	^actions
+!
+
+actions: actionArray
+	actions := actionArray
+! !
+
 Announcer subclass: #MWAnnouncer
 	instanceVariableNames: ''
 	package: 'MooseOnWeb'!
@@ -153,7 +168,7 @@ new
 ! !
 
 Widget subclass: #MWColumnWidget
-	instanceVariableNames: 'content number'
+	instanceVariableNames: 'content number isGroupColumn'
 	package: 'MooseOnWeb'!
 
 !MWColumnWidget methodsFor: 'accessing'!
@@ -194,29 +209,37 @@ close
     ).
 !
 
+renderHeaderOn: html
+	html div 
+		with: [ :cont |
+  			cont span 
+  				class:' label label-info';
+  				with: ( 
+                	self content title
+                ).        
+  			cont button 
+  				class:'pull-right btn btn-mini btn-danger';
+  				type:'button';
+  				onClick: [ self close ];
+  				with: 'X'.
+            content isSearchableColumn ifTrue: [
+  				cont a
+	  				href:'#searchModal';
+  					at: 'role' put:'button';
+  					at: 'data-toggle' put:'modal';
+  					class:'pull-right btn btn-mini btn-info';
+  					with: 'Search';
+	  				onClick: [ MWSearch new group: self content; anchor: self number ].
+            ]
+		]
+!
+
 renderOn: html
 	html div 
     	class: self cssClass; 
         at: 'row' put: self number;
     	with: [ :element | 
-        	element div 
-                with: [ :cont |
-                            cont span 
-                            	    class:' label label-info';
-                            		with: self content title.
-                            cont button 
-                                class:'pull-right btn btn-mini btn-danger';
-                                type:'button';
-                                onClick: [ self close ];
-                                with: 'X'.
-                            cont a
-                                href:'#searchModal';
-                                at: 'role' put:'button';
-                                at: 'data-toggle' put:'modal';
-                                class:'pull-right btn btn-mini btn-info';
-                                with: 'Search';
-                                onClick: [ MWSearch new].
-            	]   .
+        	self renderHeaderOn: element.
             element br.    
             element with: self content.
         ]
@@ -268,7 +291,6 @@ Widget subclass: #MWMainWidget
 !MWMainWidget methodsFor: 'accessing'!
 
 addCol: aContent
-
     self colWidget add: (
     	MWColumnWidget new 
         	content: aContent; 
@@ -317,6 +339,9 @@ initialize
     MWAnnouncer current on: MWAddColumn do: [ :announcement | 
         self colManage: announcement.
 	].
+    MWAnnouncer current on: MWAddLastColumn do: [ :announcement | 
+        self addCol: announcement content.
+	].
     MWAnnouncer current on: MWResetColumn do: [ :announcement | 
     	self colResetWith: announcement content
 	].
@@ -332,7 +357,6 @@ colManage: announcement
 		| begin end |
         begin :=  announcement colId asNumber + 1.
         end := self colWidget size +1.
-        "window alert: begin, ' ',end."
 		self colWidget removeFrom: begin to: end.
     	self addCol: announcement content.
 !
@@ -354,7 +378,7 @@ renderOn: html
 !MWMainWidget methodsFor: 'show'!
 
 showActions: mooseEntity
-	self addCol: (MWActionList new mooseEntity: mooseEntity; getActions; yourself).
+	self addCol: (MWActionList new mooseEntity: mooseEntity; getActions; yourself) asGroup: false.
 ! !
 
 MWMainWidget class instanceVariableNames: 'colWidget'!
@@ -538,7 +562,7 @@ getProperties
 success: data
 	isFetched := true.
 	data keysAndValuesDo: [ :key :value | 
-    	self properties at: key put: ( value asMooseGroup ).
+    	self properties at: key put: ( value asMooseGroupWithAction: key withParentId: self id ).
 	].
     MWAnnouncer current announce: MWSuccess new.
 ! !
@@ -595,24 +619,24 @@ renderOn: html
 ! !
 
 Widget subclass: #MWMooseGroup
-	instanceVariableNames: 'id name type entities ul'
+	instanceVariableNames: 'id name type entities ul action parentId isSearchable'
 	package: 'MooseOnWeb'!
 
 !MWMooseGroup methodsFor: 'accessing'!
+
+action
+	^action
+!
+
+action: anAction
+	action := anAction
+!
 
 addAll: anObjectCollection
 	"anObjectCollection contains MWMooseEntity under JSON format"
     anObjectCollection do: [ :e | 
     	self entities add: (MWMooseEntity new id: e id; type: e type; name: e name).
     ]
-!
-
-clickFrom: colId
-  	MWAnnouncer current announce: (
-    	MWAddColumn new 
-        	content: self;
-            colId: colId
-    ).
 !
 
 entities
@@ -627,12 +651,57 @@ id: anId
 	id:=anId
 !
 
+isSearchableColumn
+ 	^isSearchable
+!
+
+isSearchableColumn: aBool
+ 	isSearchable := aBool
+!
+
 name
 	^name
 !
 
 name: anName
 	name:=anName
+!
+
+parentId
+	^parentId
+!
+
+parentId: anId
+	parentId:= anId.
+    (anId= -1) ifTrue: [ self isSearchableColumn: false ]
+!
+
+title
+	^self name ifNil: [ ^self action ]
+!
+
+type
+	^type
+!
+
+type: anType
+	type :=anType
+! !
+
+!MWMooseGroup methodsFor: 'initialize'!
+
+initialize 
+	isSearchable := true
+! !
+
+!MWMooseGroup methodsFor: 'render'!
+
+clickFrom: colId
+  	MWAnnouncer current announce: (
+    	MWAddColumn new 
+        	content: self;
+            colId: colId
+    ).
 !
 
 renderContentOn: html
@@ -656,22 +725,10 @@ renderOn: html
     			class: 'unstyled';
         		with: [self renderContentOn: html]
               )
-!
-
-title
-	^self name
-!
-
-type
-	^type
-!
-
-type: anType
-	type :=anType
 ! !
 
 Widget subclass: #MWResultWidget
-	instanceVariableNames: 'sourceEntity action result isFetched'
+	instanceVariableNames: 'sourceEntity action result isFetched isSearchableColumn'
 	package: 'MooseOnWeb'!
 
 !MWResultWidget methodsFor: 'accessors'!
@@ -682,6 +739,14 @@ action
 
 action: anAction
 	action := anAction
+!
+
+isSearchableColumn
+	^isSearchableColumn ifNil: [ false ]
+!
+
+parentId
+	^sourceEntity id
 !
 
 sourceEntity
@@ -697,6 +762,10 @@ title
 ! !
 
 !MWResultWidget methodsFor: 'query'!
+
+entities
+	^result entities
+!
 
 getResult
 	jQuery 
@@ -716,11 +785,17 @@ initialize
 
 success: data
 	isFetched := true.
-	[ result:=(MWMooseGroup new addAll: (data entities); yourself). ] on: MessageNotUnderstood do:
-    	[ 
+	[ 	
+    	| group |
+    	group := MWMooseGroup new addAll: (data entities).
+        group action: self action.
+        group  parentId: sourceEntity id.
+        result := group.
+        isSearchableColumn := true.
+	] on: MessageNotUnderstood do:
+    [ 
       	  result :=  data.
-          window alert: 'not entities'.
-		].
+	].
   	MWAnnouncer current announce: MWSuccess new.
 ! !
 
@@ -735,19 +810,88 @@ renderOn: html
 ! !
 
 Widget subclass: #MWSearch
-	instanceVariableNames: ''
+	instanceVariableNames: 'group isListUpdated actionsList selectedAction selectedOperator valueInput anchor'
 	package: 'MooseOnWeb'!
 
-!MWSearch methodsFor: 'not yet classified'!
+!MWSearch methodsFor: 'accessing'!
+
+anchor
+	^anchor
+!
+
+anchor: a
+	anchor := a
+!
 
 cssId
 	^ '#searchModal'
 !
 
+group: aMooseGroup
+	group := aMooseGroup.
+    self updateList
+!
+
+selectedAction
+	^selectedAction
+!
+
+selectedAction: anAction
+	selectedAction := anAction
+! !
+
+!MWSearch methodsFor: 'action'!
+
+actionChosen: a
+	 self selectedAction: a.
+!
+
+search
+	| value |
+	value := valueInput asJQuery val.
+	jQuery 
+    	ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/', group parentId, '?q=search&action=', group action, '&key=',selectedAction,'&op=',(MWSearch operatorsDictionnary at: selectedOperator),'&value=', value
+		options: #{
+			'type' -> 'GET'.
+            'success' ->  [ :tmp | self searchSuccess: tmp ].
+			'error' -> [:a :b : c |  window alert:'error in getting actions list'.].
+			'dataType' -> 'json' 
+		}.
+    (self cssId asJQuery) modal: 'toggle'.
+!
+
+searchSuccess: data
+	| name |
+	name :=  group action, ' where ',selectedAction,' ',selectedOperator asString,' ',  valueInput asJQuery val.
+	MWAnnouncer current announce: (
+    	MWAddColumn new
+        	colId: self anchor asString;
+        	content: (data asMooseGroupWithAction: name  withParentId: -1)
+    )
+!
+
+updateList
+	MWActionList new 
+    	mooseEntity:  ( group isSearchableColumn ifTrue: [ group entities at:1 ]);
+        getActions.
+!
+
+updateListSuccess: actions
+	actionsList := actions.
+    isListUpdated := true.
+    self render
+! !
+
+!MWSearch methodsFor: 'initialize'!
+
 initialize
 	super initialize.
+    MWAnnouncer current on: MWSuccessForSearch do: [ :announcement |  self updateListSuccess: announcement actions ].
+    isListUpdated := false.
 	self render
-!
+! !
+
+!MWSearch methodsFor: 'rendering'!
 
 render
 	(self cssId asJQuery) empty.
@@ -755,19 +899,35 @@ render
 !
 
 renderActionListOn: content 
-	content a class: 'btn dropdown-toggle';
-                    	at: 'data-toggle' put:'dropdown';
-                        href:'#';
-                        with: 'Action';
-                        with: (content span class: 'caret').
-                    content ul class: 'dropdown-menu';
-                    	with: [content li  with: 'Other action'].
+	| dropdown |
+	dropdown := content a class: 'btn dropdown-toggle';
+		at: 'data-toggle' put:'dropdown';
+		href:'#'.
+    dropdown with: 'Choose an action'.
+	dropdown with: (content span class: 'caret').
+	content ul class: 'dropdown-menu';
+		with: [ :elem |
+        	isListUpdated ifTrue: [
+        		actionsList do: [ :a | 
+                	elem li
+                		with: (
+                        	elem a 
+                            	href: '#'; 
+                                onClick: [ dropdown asJQuery empty; append: a. selectedAction := a ];
+                               	with: a
+                          )
+    			]     
+           ]
+        ]
 !
 
 renderBodyOn: html
 		html div class:' modal-body'; at:'max-height' put: '200'; with: [ :el |
          	el div class: 'btn-group';
-            	with: [ :content | "self renderActionListOn: content "]
+            	with: [ :content | self renderActionListOn: content ].
+          	el div class: 'btn-group';
+            	with: [ :content | self renderOperatorsOn: content ].
+           self renderValueInputOn: el.
         ]
 !
 
@@ -775,7 +935,7 @@ renderFooterOn: html
 	html div class:'modal-footer';
     	with: [ :el |
         	el button class:'btn'; at: 'data-dismiss' put:'modal'; at: 'aria-hidden' put:'true'; with:'Close'.
-			el button class:'btn btn-primary'; onClick: [ self search ]; with: 'Save changes'.
+			el button class:'btn btn-primary'; onClick: [ self search ]; with: 'Search'.
         ]
 !
 
@@ -801,24 +961,71 @@ renderOn: html
     self renderFooterOn: html.
 !
 
-search
-	MWAnnouncer current announce: (
-    	MWSuccess new 
-    ).
-    (self cssId asJQuery) modal: 'toggle'.
+renderOperatorsOn: content
+	| dropdown |
+	dropdown := content a class: 'btn dropdown-toggle';
+		at: 'data-toggle' put:'dropdown';
+		href:'#'.
+    dropdown with: 'Choose an operator'.
+	dropdown with: (content span class: 'caret').
+	content ul class: 'dropdown-menu';
+		with: [ :elem |
+        	MWSearch operatorsDictionnary keys do: [ :op  | 
+                	elem li
+                		with: (
+                        	elem a 
+                            	href: '#'; 
+                                onClick: [ dropdown asJQuery empty; append: op asString. selectedOperator:= op ];
+                               	with: op
+                          )
+    			]
+        ]
+!
+
+renderValueInputOn: content
+	content div 
+    	class: 'pull-right';
+    	with: (
+				valueInput := content input class: 'input-large search-query'; type: 'text'; placeholder:'Text input'
+            )
+! !
+
+!MWSearch class methodsFor: 'not yet classified'!
+
+operatorsDictionnary
+	^Dictionary new
+    	at: #'>=' put: 'ge';
+        at: #'>'   put: 'gt';
+        at: #'='   put: 'eq';
+        at: #'<='   put: 'le';
+        at: #'<'   put: 'lt';
+        yourself
 ! !
 
 !Object methodsFor: '*MooseOnWeb'!
 
-asMooseGroup
+asMooseGroupWithAction: anAction withParentId: id
 	^self asMooseObject
 !
 
 asMooseObject
 	^self
+!
+
+isSearchableColumn
+	^false
 ! !
 
 !Array methodsFor: '*MooseOnWeb'!
+
+asMooseGroupWithAction: anAction withParentId: id  
+	self isEmpty ifFalse: [
+        (self first isKindOf: JSObjectProxy) ifTrue: [
+        	^MWMooseGroup new action: anAction; parentId: id; addAll: ( self collect: [ :e | e asMooseObject ])
+        ] ifFalse:  [ ^self value ]
+	].
+    ^MWMooseGroup new action: anAction; parentId: id.
+!
 
 asMooseObject
 	self isEmpty ifFalse: [
@@ -831,9 +1038,9 @@ asMooseObject
 
 !JSObjectProxy methodsFor: '*MooseOnWeb'!
 
-asMooseGroup
+asMooseGroupWithAction: anAction withParentId: id
 	| group |
-	group := MWMooseGroup new.
+	group := MWMooseGroup new action: anAction; parentId: id.
     group entities add: self asMooseObject.
     ^group
 !
