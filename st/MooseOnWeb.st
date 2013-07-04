@@ -145,7 +145,7 @@ actions
 	^actions
 !
 
-actions: actionArray
+actions: actionArray 
 	actions := actionArray
 ! !
 

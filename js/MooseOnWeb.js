@@ -342,7 +342,7 @@ var self=this;
 return smalltalk.withContext(function($ctx1) { self["@actions"]=actionArray;
 return self}, function($ctx1) {$ctx1.fill(self,"actions:",{actionArray:actionArray}, smalltalk.MWSuccessForSearch)})},
 args: ["actionArray"],
-source: "actions: actionArray\x0a\x09actions := actionArray",
+source: "actions: actionArray \x0a\x09actions := actionArray",
 messageSends: [],
 referencedClasses: []
 }),
