@@ -503,8 +503,8 @@ smalltalk.method({
 selector: "restApiLocation",
 fn: function (){
 var self=this;
-return smalltalk.withContext(function($ctx1) { return "http://localhost:8080/mooseOnWeb";
-}, function($ctx1) {$ctx1.fill(self,"restApiLocation",{}, smalltalk.EntryPoint.klass)})},
+return smalltalk.withContext(function($ctx1) { return "http://37.139.2.203/API";
+}, function($ctx1) {$ctx1.fill(self,"restApiLocation",{}, smalltalk.MWEntryPoint.klass)})},
 messageSends: []}),
 smalltalk.MWEntryPoint.klass);
 
@@ -838,11 +838,10 @@ var result;
 return smalltalk.withContext(function($ctx1) { result=_st(jQuery)._ajax_options_(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlModels()),smalltalk.HashedCollection._fromPairs_([_st("type").__minus_gt("GET"),_st("success").__minus_gt((function(tmp){
 return smalltalk.withContext(function($ctx2) {return _st(self)._success_(tmp);
 }, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),_st("error").__minus_gt((function(a,b,c){
-return smalltalk.withContext(function($ctx2) {_st(window)._alert_("error in getting models list");
-return _st((smalltalk.Transcript || Transcript))._show_(_st(_st(_st(_st(_st("error1").__comma(a)).__comma("2")).__comma(b)).__comma("3")).__comma(c));
+return smalltalk.withContext(function($ctx2) {return _st(window)._alert_("error in getting models list");
 }, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),_st("dataType").__minus_gt("json")]));
 return self}, function($ctx1) {$ctx1.fill(self,"getModels",{result:result}, smalltalk.MWModelRoot)})},
-messageSends: ["ajax:options:", ",", "urlModels", "restApiLocation", "->", "success:", "alert:", "show:"]}),
+messageSends: ["ajax:options:", ",", "urlModels", "restApiLocation", "->", "success:", "alert:"]}),
 smalltalk.MWModelRoot);
 
 smalltalk.addMethod(

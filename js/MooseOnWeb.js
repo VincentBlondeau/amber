@@ -602,7 +602,7 @@ return smalltalk.withContext(function($ctx1) { _st((smalltalk.MWMenuWidget || M
 _st((smalltalk.MWMainWidget || MWMainWidget))._new();
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWEntryPoint)})},
 args: [],
-source: "initialize\x0a\x09MWMenuWidget new.\x0a    MWMainWidget new.\x0a  \x22  IndexChartApp new.\x0a    ModelRoot new.\x22",
+source: "initialize\x0a\x09MWMenuWidget new.\x0a    MWMainWidget new.",
 messageSends: ["new"],
 referencedClasses: ["MWMenuWidget", "MWMainWidget"]
 }),
@@ -664,10 +664,10 @@ selector: "restApiLocation",
 category: 'Accesseurs',
 fn: function (){
 var self=this;
-return smalltalk.withContext(function($ctx1) { return "http://localhost:8080/mooseOnWeb";
-}, function($ctx1) {$ctx1.fill(self,"restApiLocation",{}, smalltalk.EntryPoint.klass)})},
+return smalltalk.withContext(function($ctx1) { return "http://37.139.2.203/API";
+}, function($ctx1) {$ctx1.fill(self,"restApiLocation",{}, smalltalk.MWEntryPoint.klass)})},
 args: [],
-source: "restApiLocation\x0a\x09^'http://localhost:8080/mooseOnWeb'",
+source: "restApiLocation\x0a\x09^'http://37.139.2.203/API'",
 messageSends: [],
 referencedClasses: []
 }),
@@ -1109,14 +1109,13 @@ var result;
 return smalltalk.withContext(function($ctx1) { result=_st(jQuery)._ajax_options_(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlModels()),smalltalk.HashedCollection._fromPairs_([_st("type").__minus_gt("GET"),_st("success").__minus_gt((function(tmp){
 return smalltalk.withContext(function($ctx2) {return _st(self)._success_(tmp);
 }, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),_st("error").__minus_gt((function(a,b,c){
-return smalltalk.withContext(function($ctx2) {_st(window)._alert_("error in getting models list");
-return _st((smalltalk.Transcript || Transcript))._show_(_st(_st(_st(_st(_st("error1").__comma(a)).__comma("2")).__comma(b)).__comma("3")).__comma(c));
+return smalltalk.withContext(function($ctx2) {return _st(window)._alert_("error in getting models list");
 }, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),_st("dataType").__minus_gt("json")]));
 return self}, function($ctx1) {$ctx1.fill(self,"getModels",{result:result}, smalltalk.MWModelRoot)})},
 args: [],
-source: "getModels\x0a\x09| result |\x0a\x09result := jQuery \x0a\x09\x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlModels\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self success: tmp].\x0a\x09\x09\x09'error' -> [:a :b : c |window alert:'error in getting models list'.Transcript  show: 'error1',a, '2',b,'3',c].\x0a\x09\x09\x09'dataType' -> 'json'\x0a\x09\x09}.",
-messageSends: ["ajax:options:", ",", "urlModels", "restApiLocation", "->", "success:", "alert:", "show:"],
-referencedClasses: ["MWEntryPoint", "Transcript"]
+source: "getModels\x0a\x09| result |\x0a\x09result := jQuery \x0a\x09\x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlModels\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self success: tmp].\x0a\x09\x09\x09'error' -> [:a :b : c |window alert:'error in getting models list'.].\x0a\x09\x09\x09'dataType' -> 'json'\x0a\x09\x09}.",
+messageSends: ["ajax:options:", ",", "urlModels", "restApiLocation", "->", "success:", "alert:"],
+referencedClasses: ["MWEntryPoint"]
 }),
 smalltalk.MWModelRoot);
 

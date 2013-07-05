@@ -254,8 +254,6 @@ Object subclass: #MWEntryPoint
 initialize
 	MWMenuWidget new.
     MWMainWidget new.
-  "  IndexChartApp new.
-    ModelRoot new."
 ! !
 
 !MWEntryPoint class methodsFor: 'Accesseurs'!
@@ -273,7 +271,7 @@ colorcolorGroup
 !
 
 restApiLocation
-	^'http://localhost:8080/mooseOnWeb'
+	^'http://37.139.2.203/API'
 !
 
 urlEntities
@@ -450,7 +448,7 @@ getModels
 		options: #{
 			'type' -> 'GET'.
             'success' ->  [ :tmp | self success: tmp].
-			'error' -> [:a :b : c |window alert:'error in getting models list'.Transcript  show: 'error1',a, '2',b,'3',c].
+			'error' -> [:a :b : c |window alert:'error in getting models list'.].
 			'dataType' -> 'json'
 		}.
 !

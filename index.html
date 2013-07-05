@@ -27,11 +27,10 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <!-- Fin Bootstrap-->
     <script src="js/amber.js" type="text/javascript"></script>
-    
     <script type="text/javascript">
 		loadAmber({
 			
-			deploy: false  , 
+			deploy: true, 
 			localRepo: { path: 'js/', sourcePath: 'st/' },
 			files: ['MooseOnWeb'],
 			prefix: 'js', // path for js files i think
@@ -57,13 +56,11 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
-	      
-              <li class="dropdown" id="models-menu">
-		
-              </li>
-	      <li class="active"><a href="#" onclick="smalltalk.Browser._open();">DEV</a></li>
-            </ul>
 	    
+              <li class="dropdown" id="models-menu">
+	
+              </li>
+            </ul>
 	    <p class="navbar-text pull-right">
               <!--<input type="text" class="search-query" placeholder="Search">-->
             </p>
@@ -80,7 +77,6 @@
     <!-- Le javascript
 	 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    
     <script src="assets/js/bootstrap-transition.js"></script>
     <script src="assets/js/bootstrap-alert.js"></script>
     <script src="assets/js/bootstrap-modal.js"></script>
@@ -93,6 +89,5 @@
     <script src="assets/js/bootstrap-collapse.js"></script>
     <script src="assets/js/bootstrap-carousel.js"></script>
     <script src="assets/js/bootstrap-typeahead.js"></script>
-    
   </body>
 </html>
