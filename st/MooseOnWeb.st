@@ -54,7 +54,11 @@ getActions
 !
 
 success: data
-	actions := data asArray.
+	actions := Dictionary new.
+    
+    data keysAndValuesDo: [ :key :value | 
+    	actions at: key put: value
+    ].
     isFetched := true.
     MWAnnouncer current announce: MWSuccess new.
 	MWAnnouncer current announce: (MWSuccessForSearch new actions: actions; yourself).
@@ -66,13 +70,13 @@ renderContents: html
 	isFetched ifFalse: [
       html span class: 'label label-info'; with: 'Loading'.
     ] ifTrue: [
-      actions do: [ :action |
+      actions keysAndValuesDo: [ :key :value | 
           html li 
           	with: [
               html a
               	  href: '#';
-                  with: action;
-                  onClick: [ self actionClick: action ]
+                  with: key;
+                  onClick: [ self actionClick: key ]
           ]
       ]
     ]
@@ -271,7 +275,7 @@ colorcolorGroup
 !
 
 restApiLocation
-	^'http://37.139.2.203/API'
+	^'http://localhost:8080/mooseOnWeb'
 !
 
 urlEntities
@@ -454,7 +458,7 @@ getModels
 !
 
 success: data
-	data entities do: [:e |  
+	data do: [:e |  
     	models add: (
         	MWMooseEntity new 
             	name: e name; 
@@ -845,11 +849,11 @@ search
 	| value |
 	value := valueInput asJQuery val.
 	jQuery 
-    	ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/', group parentId, '?q=search&action=', group action, '&key=',selectedAction,'&op=',(MWSearch operatorsDictionnary at: selectedOperator),'&value=', value
+    	ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/', group parentId, '?q=search&onAction=', group action, '&key=',selectedAction,'&op=',(MWSearch operatorsDictionnary at: selectedOperator),'&value=', value
 		options: #{
 			'type' -> 'GET'.
             'success' ->  [ :tmp | self searchSuccess: tmp ].
-			'error' -> [:a :b : c |  window alert:'error in getting actions list'.].
+			'error' -> [:a :b : c |  window alert:'Error in searching'.].
 			'dataType' -> 'json' 
 		}.
     (self cssId asJQuery) modal: 'toggle'.
@@ -903,13 +907,13 @@ renderActionListOn: content
 	content ul class: 'dropdown-menu';
 		with: [ :elem |
         	isListUpdated ifTrue: [
-        		actionsList do: [ :a | 
+        		actionsList keysAndValuesDo: [ :key :value | 
                 	elem li
                 		with: (
                         	elem a 
                             	href: '#'; 
-                                onClick: [ dropdown asJQuery empty; append: a. selectedAction := a ];
-                               	with: a
+                                onClick: [ dropdown asJQuery empty; append: key. selectedAction := key ];
+                               	with: key
                           )
     			]     
            ]

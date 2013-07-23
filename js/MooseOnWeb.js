@@ -106,17 +106,17 @@ var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4,$5;
 $1=self["@isFetched"];
 if(smalltalk.assert($1)){
-_st(self["@actions"])._do_((function(action){
+_st(self["@actions"])._keysAndValuesDo_((function(key,value){
 return smalltalk.withContext(function($ctx2) {return _st(_st(html)._li())._with_((function(){
 return smalltalk.withContext(function($ctx3) {$4=_st(html)._a();
 _st($4)._href_("#");
-_st($4)._with_(action);
+_st($4)._with_(key);
 $5=_st($4)._onClick_((function(){
-return smalltalk.withContext(function($ctx4) {return _st(self)._actionClick_(action);
+return smalltalk.withContext(function($ctx4) {return _st(self)._actionClick_(key);
 }, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
 return $5;
 }, function($ctx3) {$ctx3.fillBlock({},$ctx1)})}));
-}, function($ctx2) {$ctx2.fillBlock({action:action},$ctx1)})}));
+}, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
 } else {
 $2=_st(html)._span();
 _st($2)._class_("label label-info");
@@ -125,8 +125,8 @@ $3;
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderContents:",{html:html}, smalltalk.MWActionList)})},
 args: ["html"],
-source: "renderContents: html\x09\x0a\x09isFetched ifFalse: [\x0a      html span class: 'label label-info'; with: 'Loading'.\x0a    ] ifTrue: [\x0a      actions do: [ :action |\x0a          html li \x0a          \x09with: [\x0a              html a\x0a              \x09  href: '#';\x0a                  with: action;\x0a                  onClick: [ self actionClick: action ]\x0a          ]\x0a      ]\x0a    ]\x0a\x0a  ",
-messageSends: ["ifFalse:ifTrue:", "class:", "span", "with:", "do:", "href:", "a", "onClick:", "actionClick:", "li"],
+source: "renderContents: html\x09\x0a\x09isFetched ifFalse: [\x0a      html span class: 'label label-info'; with: 'Loading'.\x0a    ] ifTrue: [\x0a      actions keysAndValuesDo: [ :key :value | \x0a          html li \x0a          \x09with: [\x0a              html a\x0a              \x09  href: '#';\x0a                  with: key;\x0a                  onClick: [ self actionClick: key ]\x0a          ]\x0a      ]\x0a    ]\x0a\x0a  ",
+messageSends: ["ifFalse:ifTrue:", "class:", "span", "with:", "keysAndValuesDo:", "href:", "a", "onClick:", "actionClick:", "li"],
 referencedClasses: []
 }),
 smalltalk.MWActionList);
@@ -161,7 +161,10 @@ category: 'query',
 fn: function (data){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2;
-self["@actions"]=_st(data)._asArray();
+self["@actions"]=_st((smalltalk.Dictionary || Dictionary))._new();
+_st(data)._keysAndValuesDo_((function(key,value){
+return smalltalk.withContext(function($ctx2) {return _st(self["@actions"])._at_put_(key,value);
+}, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
 self["@isFetched"]=true;
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWSuccess || MWSuccess))._new());
 $1=_st((smalltalk.MWSuccessForSearch || MWSuccessForSearch))._new();
@@ -170,9 +173,9 @@ $2=_st($1)._yourself();
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_($2);
 return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWActionList)})},
 args: ["data"],
-source: "success: data\x0a\x09actions := data asArray.\x0a    isFetched := true.\x0a    MWAnnouncer current announce: MWSuccess new.\x0a\x09MWAnnouncer current announce: (MWSuccessForSearch new actions: actions; yourself).",
-messageSends: ["asArray", "announce:", "new", "current", "actions:", "yourself"],
-referencedClasses: ["MWSuccess", "MWAnnouncer", "MWSuccessForSearch"]
+source: "success: data\x0a\x09actions := Dictionary new.\x0a    \x0a    data keysAndValuesDo: [ :key :value | \x0a    \x09actions at: key put: value\x0a    ].\x0a    isFetched := true.\x0a    MWAnnouncer current announce: MWSuccess new.\x0a\x09MWAnnouncer current announce: (MWSuccessForSearch new actions: actions; yourself).",
+messageSends: ["new", "keysAndValuesDo:", "at:put:", "announce:", "current", "actions:", "yourself"],
+referencedClasses: ["Dictionary", "MWSuccess", "MWAnnouncer", "MWSuccessForSearch"]
 }),
 smalltalk.MWActionList);
 
@@ -664,10 +667,10 @@ selector: "restApiLocation",
 category: 'Accesseurs',
 fn: function (){
 var self=this;
-return smalltalk.withContext(function($ctx1) { return "http://37.139.2.203/API";
+return smalltalk.withContext(function($ctx1) { return "http://localhost:8080/mooseOnWeb";
 }, function($ctx1) {$ctx1.fill(self,"restApiLocation",{}, smalltalk.MWEntryPoint.klass)})},
 args: [],
-source: "restApiLocation\x0a\x09^'http://37.139.2.203/API'",
+source: "restApiLocation\x0a\x09^'http://localhost:8080/mooseOnWeb'",
 messageSends: [],
 referencedClasses: []
 }),
@@ -1191,7 +1194,7 @@ category: 'query',
 fn: function (data){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2;
-_st(_st(data)._entities())._do_((function(e){
+_st(data)._do_((function(e){
 return smalltalk.withContext(function($ctx2) {$1=_st((smalltalk.MWMooseEntity || MWMooseEntity))._new();
 _st($1)._name_(_st(e)._name());
 _st($1)._id_(_st(e)._id());
@@ -1202,8 +1205,8 @@ return _st(self["@models"])._add_($2);
 _st(self)._render();
 return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWModelRoot)})},
 args: ["data"],
-source: "success: data\x0a\x09data entities do: [:e |  \x0a    \x09models add: (\x0a        \x09MWMooseEntity new \x0a            \x09name: e name; \x0a                id: e id;\x0a                type: e type;\x0a                yourself\x0a             )\x0a\x09].\x0a\x09self render.\x0a",
-messageSends: ["do:", "add:", "name:", "name", "new", "id:", "id", "type:", "type", "yourself", "entities", "render"],
+source: "success: data\x0a\x09data do: [:e |  \x0a    \x09models add: (\x0a        \x09MWMooseEntity new \x0a            \x09name: e name; \x0a                id: e id;\x0a                type: e type;\x0a                yourself\x0a             )\x0a\x09].\x0a\x09self render.\x0a",
+messageSends: ["do:", "add:", "name:", "name", "new", "id:", "id", "type:", "type", "yourself", "render"],
 referencedClasses: ["MWMooseEntity"]
 }),
 smalltalk.MWModelRoot);
@@ -2268,26 +2271,26 @@ _st($3)._class_("dropdown-menu");
 $4=_st($3)._with_((function(elem){
 return smalltalk.withContext(function($ctx2) {$5=self["@isListUpdated"];
 if(smalltalk.assert($5)){
-return _st(self["@actionsList"])._do_((function(a){
+return _st(self["@actionsList"])._keysAndValuesDo_((function(key,value){
 return smalltalk.withContext(function($ctx3) {$6=_st(elem)._a();
 _st($6)._href_("#");
 _st($6)._onClick_((function(){
 return smalltalk.withContext(function($ctx4) {$7=_st(dropdown)._asJQuery();
 _st($7)._empty();
-$8=_st($7)._append_(a);
+$8=_st($7)._append_(key);
 $8;
-self["@selectedAction"]=a;
+self["@selectedAction"]=key;
 return self["@selectedAction"];
 }, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
-$9=_st($6)._with_(a);
+$9=_st($6)._with_(key);
 return _st(_st(elem)._li())._with_($9);
-}, function($ctx3) {$ctx3.fillBlock({a:a},$ctx1)})}));
+}, function($ctx3) {$ctx3.fillBlock({key:key,value:value},$ctx1)})}));
 };
 }, function($ctx2) {$ctx2.fillBlock({elem:elem},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderActionListOn:",{content:content,dropdown:dropdown}, smalltalk.MWSearch)})},
 args: ["content"],
-source: "renderActionListOn: content \x0a\x09| dropdown |\x0a\x09dropdown := content a class: 'btn dropdown-toggle';\x0a\x09\x09at: 'data-toggle' put:'dropdown';\x0a\x09\x09href:'#'.\x0a    dropdown with: 'Choose an action'.\x0a\x09dropdown with: (content span class: 'caret').\x0a\x09content ul class: 'dropdown-menu';\x0a\x09\x09with: [ :elem |\x0a        \x09isListUpdated ifTrue: [\x0a        \x09\x09actionsList do: [ :a | \x0a                \x09elem li\x0a                \x09\x09with: (\x0a                        \x09elem a \x0a                            \x09href: '#'; \x0a                                onClick: [ dropdown asJQuery empty; append: a. selectedAction := a ];\x0a                               \x09with: a\x0a                          )\x0a    \x09\x09\x09]     \x0a           ]\x0a        ] \x0a       \x0a\x0a    \x0a",
-messageSends: ["class:", "a", "at:put:", "href:", "with:", "span", "ul", "ifTrue:", "do:", "onClick:", "empty", "asJQuery", "append:", "li"],
+source: "renderActionListOn: content \x0a\x09| dropdown |\x0a\x09dropdown := content a class: 'btn dropdown-toggle';\x0a\x09\x09at: 'data-toggle' put:'dropdown';\x0a\x09\x09href:'#'.\x0a    dropdown with: 'Choose an action'.\x0a\x09dropdown with: (content span class: 'caret').\x0a\x09content ul class: 'dropdown-menu';\x0a\x09\x09with: [ :elem |\x0a        \x09isListUpdated ifTrue: [\x0a        \x09\x09actionsList keysAndValuesDo: [ :key :value | \x0a                \x09elem li\x0a                \x09\x09with: (\x0a                        \x09elem a \x0a                            \x09href: '#'; \x0a                                onClick: [ dropdown asJQuery empty; append: key. selectedAction := key ];\x0a                               \x09with: key\x0a                          )\x0a    \x09\x09\x09]     \x0a           ]\x0a        ] \x0a       \x0a\x0a    \x0a",
+messageSends: ["class:", "a", "at:put:", "href:", "with:", "span", "ul", "ifTrue:", "keysAndValuesDo:", "onClick:", "empty", "asJQuery", "append:", "li"],
 referencedClasses: []
 }),
 smalltalk.MWSearch);
@@ -2483,15 +2486,15 @@ fn: function (){
 var self=this;
 var value;
 return smalltalk.withContext(function($ctx1) { value=_st(_st(self["@valueInput"])._asJQuery())._val();
-_st(jQuery)._ajax_options_(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlEntities())).__comma("/")).__comma(_st(self["@group"])._parentId())).__comma("?q=search&action=")).__comma(_st(self["@group"])._action())).__comma("&key=")).__comma(self["@selectedAction"])).__comma("&op=")).__comma(_st(_st((smalltalk.MWSearch || MWSearch))._operatorsDictionnary())._at_(self["@selectedOperator"]))).__comma("&value=")).__comma(value),smalltalk.HashedCollection._fromPairs_([_st("type").__minus_gt("GET"),_st("success").__minus_gt((function(tmp){
+_st(jQuery)._ajax_options_(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlEntities())).__comma("/")).__comma(_st(self["@group"])._parentId())).__comma("?q=search&onAction=")).__comma(_st(self["@group"])._action())).__comma("&key=")).__comma(self["@selectedAction"])).__comma("&op=")).__comma(_st(_st((smalltalk.MWSearch || MWSearch))._operatorsDictionnary())._at_(self["@selectedOperator"]))).__comma("&value=")).__comma(value),smalltalk.HashedCollection._fromPairs_([_st("type").__minus_gt("GET"),_st("success").__minus_gt((function(tmp){
 return smalltalk.withContext(function($ctx2) {return _st(self)._searchSuccess_(tmp);
 }, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),_st("error").__minus_gt((function(a,b,c){
-return smalltalk.withContext(function($ctx2) {return _st(window)._alert_("error in getting actions list");
+return smalltalk.withContext(function($ctx2) {return _st(window)._alert_("Error in searching");
 }, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),_st("dataType").__minus_gt("json")]));
 _st(_st(_st(self)._cssId())._asJQuery())._modal_("toggle");
 return self}, function($ctx1) {$ctx1.fill(self,"search",{value:value}, smalltalk.MWSearch)})},
 args: [],
-source: "search\x0a\x09| value |\x0a\x09value := valueInput asJQuery val.\x0a\x09jQuery \x0a    \x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/', group parentId, '?q=search&action=', group action, '&key=',selectedAction,'&op=',(MWSearch operatorsDictionnary at: selectedOperator),'&value=', value\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self searchSuccess: tmp ].\x0a\x09\x09\x09'error' -> [:a :b : c |  window alert:'error in getting actions list'.].\x0a\x09\x09\x09'dataType' -> 'json' \x0a\x09\x09}.\x0a    (self cssId asJQuery) modal: 'toggle'.",
+source: "search\x0a\x09| value |\x0a\x09value := valueInput asJQuery val.\x0a\x09jQuery \x0a    \x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/', group parentId, '?q=search&onAction=', group action, '&key=',selectedAction,'&op=',(MWSearch operatorsDictionnary at: selectedOperator),'&value=', value\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self searchSuccess: tmp ].\x0a\x09\x09\x09'error' -> [:a :b : c |  window alert:'Error in searching'.].\x0a\x09\x09\x09'dataType' -> 'json' \x0a\x09\x09}.\x0a    (self cssId asJQuery) modal: 'toggle'.",
 messageSends: ["val", "asJQuery", "ajax:options:", ",", "at:", "operatorsDictionnary", "action", "parentId", "urlEntities", "restApiLocation", "->", "searchSuccess:", "alert:", "modal:", "cssId"],
 referencedClasses: ["MWSearch", "MWEntryPoint"]
 }),
