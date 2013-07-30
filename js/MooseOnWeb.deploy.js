@@ -620,7 +620,7 @@ smalltalk.method({
 selector: "restApiLocation",
 fn: function (){
 var self=this;
-return smalltalk.withContext(function($ctx1) { return "http://localhost:8080/mooseOnWeb";
+return smalltalk.withContext(function($ctx1) { return "http://37.139.2.203/API";
 }, function($ctx1) {$ctx1.fill(self,"restApiLocation",{}, smalltalk.MWEntryPoint.klass)})},
 messageSends: []}),
 smalltalk.MWEntryPoint.klass);

@@ -340,7 +340,7 @@ colorcolorGroup
 !
 
 restApiLocation
-	^'http://localhost:8080/mooseOnWeb'
+	^'http://37.139.2.203/API'
 !
 
 urlEntities
