@@ -54,11 +54,13 @@ getActions
 !
 
 success: data
-	actions := Dictionary new.
+	| tempActions |
+	tempActions := Array new.
     
     data keysAndValuesDo: [ :key :value | 
-    	actions at: key put: value
+    	tempActions add: (Association key: key value: value)
     ].
+    actions := tempActions sorted: [ :a :b | a key < b key ] .
     isFetched := true.
     MWAnnouncer current announce: MWSuccess new.
 	MWAnnouncer current announce: (MWSuccessForSearch new actions: actions; yourself).
@@ -70,13 +72,16 @@ renderContents: html
 	isFetched ifFalse: [
       html span class: 'label label-info'; with: 'Loading'.
     ] ifTrue: [
-      actions keysAndValuesDo: [ :key :value | 
+      actions do: [ :association | 
           html li 
           	with: [
               html a
               	  href: '#';
-                  with: key;
-                  onClick: [ self actionClick: key ]
+                  with: association key;
+                  at: 'data-toggle' put:'tooltip';
+                  at: 'data-delay' put: '{ show: 5000, hide: 1000 }';
+                  title:  association value;
+                  onClick: [ self actionClick: association key ]
           ]
       ]
     ]
@@ -117,6 +122,10 @@ colId: id
 	colId := id
 ! !
 
+MWAnnouncement subclass: #MWClearColumn
+	instanceVariableNames: ''
+	package: 'MooseOnWeb'!
+
 MWAnnouncement subclass: #MWDelColumn
 	instanceVariableNames: 'colId'
 	package: 'MooseOnWeb'!
@@ -130,6 +139,10 @@ colId
 colId: id
 	colId := id
 ! !
+
+MWAnnouncement subclass: #MWRefreshModelsList
+	instanceVariableNames: 'colId'
+	package: 'MooseOnWeb'!
 
 MWAnnouncement subclass: #MWResetColumn
 	instanceVariableNames: ''
@@ -249,6 +262,57 @@ renderOn: html
         ]
 ! !
 
+Widget subclass: #MWDelete
+	instanceVariableNames: 'isModelLoaded id'
+	package: 'MooseOnWeb'!
+
+!MWDelete methodsFor: 'not yet classified'!
+
+cssId
+	^ '#deleteButton'
+!
+
+delete
+	(window confirm: 'Do you really want delete the current model ?') ifTrue: [
+		jQuery 
+    		ajax: MWEntryPoint restApiLocation, MWEntryPoint urlModels, '?id=', id
+			options: #{
+				'type' -> 'DELETE'.
+        	    'success' ->  [ :data | self deleteSuccess: data ].
+				'error' -> [:a :b :c |  window alert:'Error in deleting'.]
+			}.
+    ]
+!
+
+deleteSuccess: data
+	MWAnnouncer current announce: MWRefreshModelsList new.
+    MWAnnouncer current announce: MWClearColumn new.
+	window alert: 'Model Succesfully deleted !!'.
+    isModelLoaded := false.
+    self render
+!
+
+initialize
+	isModelLoaded := false.
+	MWAnnouncer current on: MWResetColumn do: [ :announcement | 
+    	id := announcement content mooseEntity id.
+    	isModelLoaded := true.
+    	self render
+	].
+  self render.
+!
+
+render
+	(self cssId asJQuery) empty.
+	self appendToJQuery: (self cssId) asJQuery
+!
+
+renderOn: html
+	isModelLoaded ifTrue: [
+		html a href: '#'; onClick: [ self delete ]; with: 'Delete Model'
+    ]
+! !
+
 Object subclass: #MWEntryPoint
 	instanceVariableNames: ''
 	package: 'MooseOnWeb'!
@@ -258,6 +322,7 @@ Object subclass: #MWEntryPoint
 initialize
 	MWMenuWidget new.
     MWMainWidget new.
+    MWDelete new.
 ! !
 
 !MWEntryPoint class methodsFor: 'Accesseurs'!
@@ -284,6 +349,99 @@ urlEntities
 
 urlModels
 	^'/models'
+! !
+
+Widget subclass: #MWImporter
+	instanceVariableNames: ''
+	package: 'MooseOnWeb'!
+
+!MWImporter methodsFor: 'not yet classified'!
+
+cssId
+	^ '#importModal'
+!
+
+import
+	| value |
+	"value := valueInput asJQuery val."
+	jQuery 
+    	ajax: MWEntryPoint restApiLocation, MWEntryPoint urlModels
+		options: #{
+			'type' -> 'POST'.
+            'success' ->  [ :tmp | self postSuccess: tmp ].
+			'error' -> [:a :b : c |  window alert:'Error in searching'.].
+			'dataType' -> 'json' 
+		}.
+    (self cssId asJQuery) modal: 'toggle'.
+!
+
+initialize
+	super initialize.
+	self render.
+!
+
+postSuccess: data
+    setTimeout value: [ (self cssId asJQuery) modal: 'toggle'. MWAnnouncer current announce: (MWRefreshModelsList new)] value: self timeout
+!
+
+render
+	(self cssId asJQuery) empty.
+	self appendToJQuery: (self cssId) asJQuery
+!
+
+renderBodyOn: html
+	| form frame |
+		html div class:' modal-body'; at:'max-height' put: '200'; with: [ :el |
+         	form := el form 
+            	target:'importIframe';
+                method:'post';
+                action: 'http://localhost:8080/mooseOnWeb/models';
+                at: 'enctype' put: 'multipart/form-data';
+                at: 'encoding'  put: 'multipart/form-data';
+                with: [ :content | self renderFormOn: content ].
+           frame := el iframe 
+            	src: 'about:none';
+                style: 'display:none';
+                name: 'importIframe'
+		]
+!
+
+renderFormOn: html
+	html fieldset with: [ :content |
+  		content label with: 'Model Name:'.
+        content input type:'text'; name: 'nameModel'; id:'nameModel'; placeholder: 'Moose Model'; at: 'required' put: nil.
+        content label with: 'MSE file to upload:'.
+  		content input type:'file'; name:'mseFile'.
+        content div class:'form-actions'; with:
+  			(content button type:'submit'; class:'btn btn-primary'; with: 'Submit'; onClick: [
+              		('#nameModel' asJQuery val size = 0) ifFalse: [
+                    self postSuccess: '']
+  				]).
+	]
+!
+
+renderHeaderOn: html
+	html div
+    	class:'modal-header';
+        with: [ :el |
+        	el button 
+            	type:'button';
+            	class:'close';
+            	at: 'data-dismiss' put:'modal';
+            	at: 'aria-hidden' put:'true';
+	            with: '×'.
+			el h3 
+                with: 'Import MSE'.
+        ].
+!
+
+renderOn: html
+	self renderHeaderOn: html.
+    self renderBodyOn: html.
+!
+
+timeout
+	^ 3000
 ! !
 
 Widget subclass: #MWMainWidget
@@ -343,6 +501,9 @@ initialize
 	].
     MWAnnouncer current on: MWResetColumn do: [ :announcement | 
     	self colResetWith: announcement content
+	].
+    MWAnnouncer current on: MWClearColumn do: [ :announcement | 
+    	self colReset. self render
 	].
     MWAnnouncer current on: MWDelColumn do: [ :announcement | 
     	self delCol: announcement colId
@@ -439,7 +600,7 @@ cssId
 
 initialize
 	super initialize.
-	models := Array new.
+    MWAnnouncer current on: MWRefreshModelsList do: [ :announcement |self getModels ].
 	self getModels
 ! !
 
@@ -458,6 +619,7 @@ getModels
 !
 
 success: data
+	models := Array new.
 	data do: [:e |  
     	models add: (
         	MWMooseEntity new 
@@ -492,11 +654,11 @@ renderOn: menu
    	models do: [ :e |
     	menu li
         	href: '#'; 
-        	with: [
-        		menu a 
+        	with:
+        		[ menu a 
             		onClick: [ self click: e ]; 
             		with: e name.  
-    		]
+               ]
 	]
 ! !
 
@@ -631,10 +793,15 @@ action: anAction
 	action := anAction
 !
 
+add: aJSObject
+	"anObjectCollection contains MWMooseEntity under JSON format"
+    self entities add: (MWMooseEntity new id: aJSObject id; type: aJSObject type; name: aJSObject name).
+!
+
 addAll: anObjectCollection
 	"anObjectCollection contains MWMooseEntity under JSON format"
     anObjectCollection do: [ :e | 
-    	self entities add: (MWMooseEntity new id: e id; type: e type; name: e name).
+    	self add: e
     ]
 !
 
@@ -783,9 +950,9 @@ initialize
 !
 
 success: data
+   	| group |
 	isFetched := true.
 	[ 	
-    	| group |
     	group := MWMooseGroup new addAll: (data entities).
         group action: self action.
         group  parentId: sourceEntity id.
@@ -793,7 +960,14 @@ success: data
         isSearchableColumn := true.
 	] on: MessageNotUnderstood do:
     [ 
-      	  result :=  data.
+    	result := (data isKindOf: JSObjectProxy) ifTrue: [ 
+        	group := MWMooseGroup new add: ( data ) .
+            group action: self action.
+      		group  parentId: sourceEntity id.
+            group
+            
+  		] ifFalse: [ data ].
+      	  
 	].
   	MWAnnouncer current announce: MWSuccess new.
 ! !
@@ -804,7 +978,7 @@ renderOn: html
     isFetched ifFalse: [ 
     	html div with: 'Loading'.
 	] ifTrue: [ 
-    	html with: result
+    	html with: result 
 	]
 ! !
 
@@ -907,13 +1081,13 @@ renderActionListOn: content
 	content ul class: 'dropdown-menu';
 		with: [ :elem |
         	isListUpdated ifTrue: [
-        		actionsList keysAndValuesDo: [ :key :value | 
+        		actionsList do: [ :associations | 
                 	elem li
                 		with: (
                         	elem a 
                             	href: '#'; 
-                                onClick: [ dropdown asJQuery empty; append: key. selectedAction := key ];
-                               	with: key
+                                onClick: [ dropdown asJQuery empty; append: associations key. selectedAction := associations key ];
+                               	with: associations  key
                           )
     			]     
            ]

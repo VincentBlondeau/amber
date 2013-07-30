@@ -80,17 +80,20 @@ var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4,$5;
 $1=self["@isFetched"];
 if(smalltalk.assert($1)){
-_st(self["@actions"])._keysAndValuesDo_((function(key,value){
+_st(self["@actions"])._do_((function(association){
 return smalltalk.withContext(function($ctx2) {return _st(_st(html)._li())._with_((function(){
 return smalltalk.withContext(function($ctx3) {$4=_st(html)._a();
 _st($4)._href_("#");
-_st($4)._with_(key);
+_st($4)._with_(_st(association)._key());
+_st($4)._at_put_("data-toggle","tooltip");
+_st($4)._at_put_("data-delay","{ show: 5000, hide: 1000 }");
+_st($4)._title_(_st(association)._value());
 $5=_st($4)._onClick_((function(){
-return smalltalk.withContext(function($ctx4) {return _st(self)._actionClick_(key);
+return smalltalk.withContext(function($ctx4) {return _st(self)._actionClick_(_st(association)._key());
 }, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
 return $5;
 }, function($ctx3) {$ctx3.fillBlock({},$ctx1)})}));
-}, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
+}, function($ctx2) {$ctx2.fillBlock({association:association},$ctx1)})}));
 } else {
 $2=_st(html)._span();
 _st($2)._class_("label label-info");
@@ -98,7 +101,7 @@ $3=_st($2)._with_("Loading");
 $3;
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderContents:",{html:html}, smalltalk.MWActionList)})},
-messageSends: ["ifFalse:ifTrue:", "class:", "span", "with:", "keysAndValuesDo:", "href:", "a", "onClick:", "actionClick:", "li"]}),
+messageSends: ["ifFalse:ifTrue:", "class:", "span", "with:", "do:", "href:", "a", "key", "at:put:", "title:", "value", "onClick:", "actionClick:", "li"]}),
 smalltalk.MWActionList);
 
 smalltalk.addMethod(
@@ -124,19 +127,23 @@ smalltalk.method({
 selector: "success:",
 fn: function (data){
 var self=this;
+var tempActions;
 return smalltalk.withContext(function($ctx1) { var $1,$2;
-self["@actions"]=_st((smalltalk.Dictionary || Dictionary))._new();
+tempActions=_st((smalltalk.Array || Array))._new();
 _st(data)._keysAndValuesDo_((function(key,value){
-return smalltalk.withContext(function($ctx2) {return _st(self["@actions"])._at_put_(key,value);
+return smalltalk.withContext(function($ctx2) {return _st(tempActions)._add_(_st((smalltalk.Association || Association))._key_value_(key,value));
 }, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
+self["@actions"]=_st(tempActions)._sorted_((function(a,b){
+return smalltalk.withContext(function($ctx2) {return _st(_st(a)._key()).__lt(_st(b)._key());
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1)})}));
 self["@isFetched"]=true;
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWSuccess || MWSuccess))._new());
 $1=_st((smalltalk.MWSuccessForSearch || MWSuccessForSearch))._new();
 _st($1)._actions_(self["@actions"]);
 $2=_st($1)._yourself();
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_($2);
-return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWActionList)})},
-messageSends: ["new", "keysAndValuesDo:", "at:put:", "announce:", "current", "actions:", "yourself"]}),
+return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data,tempActions:tempActions}, smalltalk.MWActionList)})},
+messageSends: ["new", "keysAndValuesDo:", "add:", "key:value:", "sorted:", "<", "key", "announce:", "current", "actions:", "yourself"]}),
 smalltalk.MWActionList);
 
 smalltalk.addMethod(
@@ -208,6 +215,9 @@ smalltalk.MWAddColumn);
 
 
 
+smalltalk.addClass('MWClearColumn', smalltalk.MWAnnouncement, [], 'MooseOnWeb');
+
+
 smalltalk.addClass('MWDelColumn', smalltalk.MWAnnouncement, ['colId'], 'MooseOnWeb');
 smalltalk.addMethod(
 "_colId",
@@ -233,6 +243,9 @@ return self}, function($ctx1) {$ctx1.fill(self,"colId:",{id:id}, smalltalk.MWDel
 messageSends: []}),
 smalltalk.MWDelColumn);
 
+
+
+smalltalk.addClass('MWRefreshModelsList', smalltalk.MWAnnouncement, ['colId'], 'MooseOnWeb');
 
 
 smalltalk.addClass('MWResetColumn', smalltalk.MWAnnouncement, [], 'MooseOnWeb');
@@ -453,6 +466,106 @@ smalltalk.MWColumnWidget);
 
 
 
+smalltalk.addClass('MWDelete', smalltalk.Widget, ['isModelLoaded', 'id'], 'MooseOnWeb');
+smalltalk.addMethod(
+"_cssId",
+smalltalk.method({
+selector: "cssId",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { return "#deleteButton";
+}, function($ctx1) {$ctx1.fill(self,"cssId",{}, smalltalk.MWDelete)})},
+messageSends: []}),
+smalltalk.MWDelete);
+
+smalltalk.addMethod(
+"_delete",
+smalltalk.method({
+selector: "delete",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1;
+$1=_st(window)._confirm_("Do you really want delete the current model ?");
+if(smalltalk.assert($1)){
+_st(jQuery)._ajax_options_(_st(_st(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlModels())).__comma("?id=")).__comma(self["@id"]),smalltalk.HashedCollection._fromPairs_([_st("type").__minus_gt("DELETE"),_st("success").__minus_gt((function(data){
+return smalltalk.withContext(function($ctx2) {return _st(self)._deleteSuccess_(data);
+}, function($ctx2) {$ctx2.fillBlock({data:data},$ctx1)})})),_st("error").__minus_gt((function(a,b,c){
+return smalltalk.withContext(function($ctx2) {return _st(window)._alert_("Error in deleting");
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})}))]));
+};
+return self}, function($ctx1) {$ctx1.fill(self,"delete",{}, smalltalk.MWDelete)})},
+messageSends: ["ifTrue:", "ajax:options:", ",", "urlModels", "restApiLocation", "->", "deleteSuccess:", "alert:", "confirm:"]}),
+smalltalk.MWDelete);
+
+smalltalk.addMethod(
+"_deleteSuccess_",
+smalltalk.method({
+selector: "deleteSuccess:",
+fn: function (data){
+var self=this;
+return smalltalk.withContext(function($ctx1) { _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWRefreshModelsList || MWRefreshModelsList))._new());
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWClearColumn || MWClearColumn))._new());
+_st(window)._alert_("Model Succesfully deleted !");
+self["@isModelLoaded"]=false;
+_st(self)._render();
+return self}, function($ctx1) {$ctx1.fill(self,"deleteSuccess:",{data:data}, smalltalk.MWDelete)})},
+messageSends: ["announce:", "new", "current", "alert:", "render"]}),
+smalltalk.MWDelete);
+
+smalltalk.addMethod(
+"_initialize",
+smalltalk.method({
+selector: "initialize",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { self["@isModelLoaded"]=false;
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWResetColumn || MWResetColumn),(function(announcement){
+return smalltalk.withContext(function($ctx2) {self["@id"]=_st(_st(_st(announcement)._content())._mooseEntity())._id();
+self["@id"];
+self["@isModelLoaded"]=true;
+self["@isModelLoaded"];
+return _st(self)._render();
+}, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
+_st(self)._render();
+return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWDelete)})},
+messageSends: ["on:do:", "id", "mooseEntity", "content", "render", "current"]}),
+smalltalk.MWDelete);
+
+smalltalk.addMethod(
+"_render",
+smalltalk.method({
+selector: "render",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { _st(_st(_st(self)._cssId())._asJQuery())._empty();
+_st(self)._appendToJQuery_(_st(_st(self)._cssId())._asJQuery());
+return self}, function($ctx1) {$ctx1.fill(self,"render",{}, smalltalk.MWDelete)})},
+messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"]}),
+smalltalk.MWDelete);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3;
+$1=self["@isModelLoaded"];
+if(smalltalk.assert($1)){
+$2=_st(html)._a();
+_st($2)._href_("#");
+_st($2)._onClick_((function(){
+return smalltalk.withContext(function($ctx2) {return _st(self)._delete();
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
+$3=_st($2)._with_("Delete Model");
+$3;
+};
+return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltalk.MWDelete)})},
+messageSends: ["ifTrue:", "href:", "a", "onClick:", "delete", "with:"]}),
+smalltalk.MWDelete);
+
+
+
 smalltalk.addClass('MWEntryPoint', smalltalk.Object, [], 'MooseOnWeb');
 smalltalk.addMethod(
 "_initialize",
@@ -462,6 +575,7 @@ fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { _st((smalltalk.MWMenuWidget || MWMenuWidget))._new();
 _st((smalltalk.MWMainWidget || MWMainWidget))._new();
+_st((smalltalk.MWDelete || MWDelete))._new();
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWEntryPoint)})},
 messageSends: ["new"]}),
 smalltalk.MWEntryPoint);
@@ -532,6 +646,195 @@ return smalltalk.withContext(function($ctx1) { return "/models";
 }, function($ctx1) {$ctx1.fill(self,"urlModels",{}, smalltalk.EntryPoint.klass)})},
 messageSends: []}),
 smalltalk.MWEntryPoint.klass);
+
+
+smalltalk.addClass('MWImporter', smalltalk.Widget, [], 'MooseOnWeb');
+smalltalk.addMethod(
+"_cssId",
+smalltalk.method({
+selector: "cssId",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { return "#importModal";
+}, function($ctx1) {$ctx1.fill(self,"cssId",{}, smalltalk.MWImporter)})},
+messageSends: []}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_import",
+smalltalk.method({
+selector: "import",
+fn: function (){
+var self=this;
+var value;
+return smalltalk.withContext(function($ctx1) { _st(jQuery)._ajax_options_(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlModels()),smalltalk.HashedCollection._fromPairs_([_st("type").__minus_gt("POST"),_st("success").__minus_gt((function(tmp){
+return smalltalk.withContext(function($ctx2) {return _st(self)._postSuccess_(tmp);
+}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),_st("error").__minus_gt((function(a,b,c){
+return smalltalk.withContext(function($ctx2) {return _st(window)._alert_("Error in searching");
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),_st("dataType").__minus_gt("json")]));
+_st(_st(_st(self)._cssId())._asJQuery())._modal_("toggle");
+return self}, function($ctx1) {$ctx1.fill(self,"import",{value:value}, smalltalk.MWImporter)})},
+messageSends: ["ajax:options:", ",", "urlModels", "restApiLocation", "->", "postSuccess:", "alert:", "modal:", "asJQuery", "cssId"]}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_initialize",
+smalltalk.method({
+selector: "initialize",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { smalltalk.Widget.fn.prototype._initialize.apply(_st(self), []);
+_st(self)._render();
+return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWImporter)})},
+messageSends: ["initialize", "render"]}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_postSuccess_",
+smalltalk.method({
+selector: "postSuccess:",
+fn: function (data){
+var self=this;
+return smalltalk.withContext(function($ctx1) { _st(setTimeout)._value_value_((function(){
+return smalltalk.withContext(function($ctx2) {_st(_st(_st(self)._cssId())._asJQuery())._modal_("toggle");
+return _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWRefreshModelsList || MWRefreshModelsList))._new());
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}),_st(self)._timeout());
+return self}, function($ctx1) {$ctx1.fill(self,"postSuccess:",{data:data}, smalltalk.MWImporter)})},
+messageSends: ["value:value:", "modal:", "asJQuery", "cssId", "announce:", "new", "current", "timeout"]}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_render",
+smalltalk.method({
+selector: "render",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { _st(_st(_st(self)._cssId())._asJQuery())._empty();
+_st(self)._appendToJQuery_(_st(_st(self)._cssId())._asJQuery());
+return self}, function($ctx1) {$ctx1.fill(self,"render",{}, smalltalk.MWImporter)})},
+messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"]}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_renderBodyOn_",
+smalltalk.method({
+selector: "renderBodyOn:",
+fn: function (html){
+var self=this;
+var form,frame;
+return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$5,$6,$2;
+$1=_st(html)._div();
+_st($1)._class_(" modal-body");
+_st($1)._at_put_("max-height","200");
+$2=_st($1)._with_((function(el){
+return smalltalk.withContext(function($ctx2) {$3=_st(el)._form();
+_st($3)._target_("importIframe");
+_st($3)._method_("post");
+_st($3)._action_("http://localhost:8080/mooseOnWeb/models");
+_st($3)._at_put_("enctype","multipart/form-data");
+_st($3)._at_put_("encoding","multipart/form-data");
+$4=_st($3)._with_((function(content){
+return smalltalk.withContext(function($ctx3) {return _st(self)._renderFormOn_(content);
+}, function($ctx3) {$ctx3.fillBlock({content:content},$ctx1)})}));
+form=$4;
+form;
+$5=_st(el)._iframe();
+_st($5)._src_("about:none");
+_st($5)._style_("display:none");
+$6=_st($5)._name_("importIframe");
+frame=$6;
+return frame;
+}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderBodyOn:",{html:html,form:form,frame:frame}, smalltalk.MWImporter)})},
+messageSends: ["class:", "div", "at:put:", "with:", "target:", "form", "method:", "action:", "renderFormOn:", "src:", "iframe", "style:", "name:"]}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_renderFormOn_",
+smalltalk.method({
+selector: "renderFormOn:",
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$2,$3,$4,$5,$7,$9,$8,$6;
+_st(_st(html)._fieldset())._with_((function(content){
+return smalltalk.withContext(function($ctx2) {_st(_st(content)._label())._with_("Model Name:");
+$1=_st(content)._input();
+_st($1)._type_("text");
+_st($1)._name_("nameModel");
+_st($1)._id_("nameModel");
+_st($1)._placeholder_("Moose Model");
+$2=_st($1)._at_put_("required",nil);
+$2;
+_st(_st(content)._label())._with_("MSE file to upload:");
+$3=_st(content)._input();
+_st($3)._type_("file");
+$4=_st($3)._name_("mseFile");
+$4;
+$5=_st(content)._div();
+_st($5)._class_("form-actions");
+$7=_st(content)._button();
+_st($7)._type_("submit");
+_st($7)._class_("btn btn-primary");
+_st($7)._with_("Submit");
+$8=_st($7)._onClick_((function(){
+return smalltalk.withContext(function($ctx3) {$9=_st(_st(_st(_st("#nameModel")._asJQuery())._val())._size()).__eq((0));
+if(! smalltalk.assert($9)){
+return _st(self)._postSuccess_("");
+};
+}, function($ctx3) {$ctx3.fillBlock({},$ctx1)})}));
+$6=_st($5)._with_($8);
+return $6;
+}, function($ctx2) {$ctx2.fillBlock({content:content},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderFormOn:",{html:html}, smalltalk.MWImporter)})},
+messageSends: ["with:", "label", "type:", "input", "name:", "id:", "placeholder:", "at:put:", "class:", "div", "button", "onClick:", "ifFalse:", "postSuccess:", "=", "size", "val", "asJQuery", "fieldset"]}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_renderHeaderOn_",
+smalltalk.method({
+selector: "renderHeaderOn:",
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$3,$4,$2;
+$1=_st(html)._div();
+_st($1)._class_("modal-header");
+$2=_st($1)._with_((function(el){
+return smalltalk.withContext(function($ctx2) {$3=_st(el)._button();
+_st($3)._type_("button");
+_st($3)._class_("close");
+_st($3)._at_put_("data-dismiss","modal");
+_st($3)._at_put_("aria-hidden","true");
+$4=_st($3)._with_("×");
+$4;
+return _st(_st(el)._h3())._with_("Import MSE");
+}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:",{html:html}, smalltalk.MWImporter)})},
+messageSends: ["class:", "div", "with:", "type:", "button", "at:put:", "h3"]}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+fn: function (html){
+var self=this;
+return smalltalk.withContext(function($ctx1) { _st(self)._renderHeaderOn_(html);
+_st(self)._renderBodyOn_(html);
+return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html}, smalltalk.MWImporter)})},
+messageSends: ["renderHeaderOn:", "renderBodyOn:"]}),
+smalltalk.MWImporter);
+
+smalltalk.addMethod(
+"_timeout",
+smalltalk.method({
+selector: "timeout",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { return (3000);
+}, function($ctx1) {$ctx1.fill(self,"timeout",{}, smalltalk.MWImporter)})},
+messageSends: []}),
+smalltalk.MWImporter);
+
 
 
 smalltalk.addClass('MWMainWidget', smalltalk.Widget, ['colWidget'], 'MooseOnWeb');
@@ -668,12 +971,16 @@ return smalltalk.withContext(function($ctx2) {return _st(self)._colManage_(anno
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWResetColumn || MWResetColumn),(function(announcement){
 return smalltalk.withContext(function($ctx2) {return _st(self)._colResetWith_(_st(announcement)._content());
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWClearColumn || MWClearColumn),(function(announcement){
+return smalltalk.withContext(function($ctx2) {_st(self)._colReset();
+return _st(self)._render();
+}, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWDelColumn || MWDelColumn),(function(announcement){
 return smalltalk.withContext(function($ctx2) {return _st(self)._delCol_(_st(announcement)._colId());
 }, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
 _st(self)._render();
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWMainWidget)})},
-messageSends: ["initialize", "on:do:", "render", "current", "colManage:", "colResetWith:", "content", "delCol:", "colId"]}),
+messageSends: ["initialize", "on:do:", "render", "current", "colManage:", "colResetWith:", "content", "colReset", "delCol:", "colId"]}),
 smalltalk.MWMainWidget);
 
 smalltalk.addMethod(
@@ -854,10 +1161,12 @@ selector: "initialize",
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { smalltalk.Widget.fn.prototype._initialize.apply(_st(self), []);
-self["@models"]=_st((smalltalk.Array || Array))._new();
+_st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._on_do_((smalltalk.MWRefreshModelsList || MWRefreshModelsList),(function(announcement){
+return smalltalk.withContext(function($ctx2) {return _st(self)._getModels();
+}, function($ctx2) {$ctx2.fillBlock({announcement:announcement},$ctx1)})}));
 _st(self)._getModels();
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{}, smalltalk.MWModelRoot)})},
-messageSends: ["initialize", "new", "getModels"]}),
+messageSends: ["initialize", "on:do:", "getModels", "current"]}),
 smalltalk.MWModelRoot);
 
 smalltalk.addMethod(
@@ -903,6 +1212,7 @@ selector: "success:",
 fn: function (data){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2;
+self["@models"]=_st((smalltalk.Array || Array))._new();
 _st(data)._do_((function(e){
 return smalltalk.withContext(function($ctx2) {$1=_st((smalltalk.MWMooseEntity || MWMooseEntity))._new();
 _st($1)._name_(_st(e)._name());
@@ -913,7 +1223,7 @@ return _st(self["@models"])._add_($2);
 }, function($ctx2) {$ctx2.fillBlock({e:e},$ctx1)})}));
 _st(self)._render();
 return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWModelRoot)})},
-messageSends: ["do:", "add:", "name:", "name", "new", "id:", "id", "type:", "type", "yourself", "render"]}),
+messageSends: ["new", "do:", "add:", "name:", "name", "id:", "id", "type:", "type", "yourself", "render"]}),
 smalltalk.MWModelRoot);
 
 
@@ -1176,21 +1486,32 @@ messageSends: []}),
 smalltalk.MWMooseGroup);
 
 smalltalk.addMethod(
+"_add_",
+smalltalk.method({
+selector: "add:",
+fn: function (aJSObject){
+var self=this;
+return smalltalk.withContext(function($ctx1) { var $1,$2;
+$1=_st((smalltalk.MWMooseEntity || MWMooseEntity))._new();
+_st($1)._id_(_st(aJSObject)._id());
+_st($1)._type_(_st(aJSObject)._type());
+$2=_st($1)._name_(_st(aJSObject)._name());
+_st(_st(self)._entities())._add_($2);
+return self}, function($ctx1) {$ctx1.fill(self,"add:",{aJSObject:aJSObject}, smalltalk.MWMooseGroup)})},
+messageSends: ["add:", "id:", "id", "new", "type:", "type", "name:", "name", "entities"]}),
+smalltalk.MWMooseGroup);
+
+smalltalk.addMethod(
 "_addAll_",
 smalltalk.method({
 selector: "addAll:",
 fn: function (anObjectCollection){
 var self=this;
-return smalltalk.withContext(function($ctx1) { var $1,$2;
-_st(anObjectCollection)._do_((function(e){
-return smalltalk.withContext(function($ctx2) {$1=_st((smalltalk.MWMooseEntity || MWMooseEntity))._new();
-_st($1)._id_(_st(e)._id());
-_st($1)._type_(_st(e)._type());
-$2=_st($1)._name_(_st(e)._name());
-return _st(_st(self)._entities())._add_($2);
+return smalltalk.withContext(function($ctx1) { _st(anObjectCollection)._do_((function(e){
+return smalltalk.withContext(function($ctx2) {return _st(self)._add_(e);
 }, function($ctx2) {$ctx2.fillBlock({e:e},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"addAll:",{anObjectCollection:anObjectCollection}, smalltalk.MWMooseGroup)})},
-messageSends: ["do:", "add:", "id:", "id", "new", "type:", "type", "name:", "name", "entities"]}),
+messageSends: ["do:", "add:"]}),
 smalltalk.MWMooseGroup);
 
 smalltalk.addMethod(
@@ -1568,9 +1889,10 @@ smalltalk.method({
 selector: "success:",
 fn: function (data){
 var self=this;
-return smalltalk.withContext(function($ctx1) { self["@isFetched"]=true;
-_st((function(){
 var group;
+return smalltalk.withContext(function($ctx1) { var $1;
+self["@isFetched"]=true;
+_st((function(){
 return smalltalk.withContext(function($ctx2) {group=_st(_st((smalltalk.MWMooseGroup || MWMooseGroup))._new())._addAll_(_st(data)._entities());
 group;
 _st(group)._action_(_st(self)._action());
@@ -1579,13 +1901,22 @@ self["@result"]=group;
 self["@result"];
 self["@isSearchableColumn"]=true;
 return self["@isSearchableColumn"];
-}, function($ctx2) {$ctx2.fillBlock({group:group},$ctx1)})}))._on_do_((smalltalk.MessageNotUnderstood || MessageNotUnderstood),(function(){
-return smalltalk.withContext(function($ctx2) {self["@result"]=data;
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}))._on_do_((smalltalk.MessageNotUnderstood || MessageNotUnderstood),(function(){
+return smalltalk.withContext(function($ctx2) {$1=_st(data)._isKindOf_((smalltalk.JSObjectProxy || JSObjectProxy));
+if(smalltalk.assert($1)){
+group=_st(_st((smalltalk.MWMooseGroup || MWMooseGroup))._new())._add_(data);
+group;
+_st(group)._action_(_st(self)._action());
+_st(group)._parentId_(_st(self["@sourceEntity"])._id());
+self["@result"]=group;
+} else {
+self["@result"]=data;
+};
 return self["@result"];
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
 _st(_st((smalltalk.MWAnnouncer || MWAnnouncer))._current())._announce_(_st((smalltalk.MWSuccess || MWSuccess))._new());
-return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data}, smalltalk.MWResultWidget)})},
-messageSends: ["on:do:", "addAll:", "entities", "new", "action:", "action", "parentId:", "id", "announce:", "current"]}),
+return self}, function($ctx1) {$ctx1.fill(self,"success:",{data:data,group:group}, smalltalk.MWResultWidget)})},
+messageSends: ["on:do:", "ifTrue:ifFalse:", "add:", "new", "action:", "action", "parentId:", "id", "isKindOf:", "addAll:", "entities", "announce:", "current"]}),
 smalltalk.MWResultWidget);
 
 smalltalk.addMethod(
@@ -1710,24 +2041,24 @@ _st($3)._class_("dropdown-menu");
 $4=_st($3)._with_((function(elem){
 return smalltalk.withContext(function($ctx2) {$5=self["@isListUpdated"];
 if(smalltalk.assert($5)){
-return _st(self["@actionsList"])._keysAndValuesDo_((function(key,value){
+return _st(self["@actionsList"])._do_((function(associations){
 return smalltalk.withContext(function($ctx3) {$6=_st(elem)._a();
 _st($6)._href_("#");
 _st($6)._onClick_((function(){
 return smalltalk.withContext(function($ctx4) {$7=_st(dropdown)._asJQuery();
 _st($7)._empty();
-$8=_st($7)._append_(key);
+$8=_st($7)._append_(_st(associations)._key());
 $8;
-self["@selectedAction"]=key;
+self["@selectedAction"]=_st(associations)._key();
 return self["@selectedAction"];
 }, function($ctx4) {$ctx4.fillBlock({},$ctx1)})}));
-$9=_st($6)._with_(key);
+$9=_st($6)._with_(_st(associations)._key());
 return _st(_st(elem)._li())._with_($9);
-}, function($ctx3) {$ctx3.fillBlock({key:key,value:value},$ctx1)})}));
+}, function($ctx3) {$ctx3.fillBlock({associations:associations},$ctx1)})}));
 };
 }, function($ctx2) {$ctx2.fillBlock({elem:elem},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderActionListOn:",{content:content,dropdown:dropdown}, smalltalk.MWSearch)})},
-messageSends: ["class:", "a", "at:put:", "href:", "with:", "span", "ul", "ifTrue:", "keysAndValuesDo:", "onClick:", "empty", "asJQuery", "append:", "li"]}),
+messageSends: ["class:", "a", "at:put:", "href:", "with:", "span", "ul", "ifTrue:", "do:", "onClick:", "empty", "asJQuery", "append:", "key", "li"]}),
 smalltalk.MWSearch);
 
 smalltalk.addMethod(

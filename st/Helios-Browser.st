@@ -1,13 +1,11 @@
-Smalltalk current createPackage: 'Helios-Browser' properties: #{}!
+Smalltalk current createPackage: 'Helios-Browser'!
 HLWidget subclass: #HLBrowser
-	instanceVariableNames: 'model packagesListWidget classesListWidget protocolsListWidget methodsListWidget sourceWidget'
+	instanceVariableNames: 'model packagesListWidget classesListWidget protocolsListWidget methodsListWidget sourceWidget bottomDiv'
 	package: 'Helios-Browser'!
+!HLBrowser commentStamp!
+I render a system browser with 4 panes (Packages, Classes, Protocols, Methods) and a source area.!
 
 !HLBrowser methodsFor: 'accessing'!
-
-announcer
-	^ self model announcer
-!
 
 environment
 	^ self model environment
@@ -21,18 +19,31 @@ model: aModel
 	model := aModel
 ! !
 
+!HLBrowser methodsFor: 'actions'!
+
+focus
+	^ self packagesListWidget focus
+!
+
+unregister
+	super unregister.
+
+	{ 
+		self packagesListWidget.
+		self classesListWidget.
+		self protocolsListWidget.
+		self methodsListWidget.
+		self sourceWidget
+	} 
+		do: [ :each | each unregister ]
+! !
+
 !HLBrowser methodsFor: 'keybindings'!
 
 registerBindingsOn: aBindingGroup
-	aBindingGroup 
-    	addGroupKey: 66 labelled: 'Browse';
-        addGroupKey: 71 labelled: 'Go to';
-        addGroupKey: 84 labelled: 'Toggle'.
-        
-   	HLBrowserCommand withAllSubclasses do: [ :each |
-   		each key ifNotNil: [
-  			(aBindingGroup at: each bindingGroup) 
-  				add: (each on: self model) asBinding ] ]
+	HLToolCommand 
+		registerConcreteClassesOn: aBindingGroup 
+		for: self model
 ! !
 
 !HLBrowser methodsFor: 'rendering'!
@@ -46,7 +57,15 @@ renderContentOn: html
             with: (HLVerticalSplitter
             	with: self protocolsListWidget
                 with: self methodsListWidget)) 
-        with: self sourceWidget))
+        with: self sourceWidget)).
+	
+	self packagesListWidget focus
+! !
+
+!HLBrowser methodsFor: 'testing'!
+
+canHaveFocus
+	^ true
 ! !
 
 !HLBrowser methodsFor: 'widgets'!
@@ -59,7 +78,8 @@ classesListWidget
 
 methodsListWidget
 	^ methodsListWidget ifNil: [
-      	methodsListWidget := HLMethodsListWidget on: self model ]
+      	methodsListWidget := HLMethodsListWidget on: self model.
+		methodsListWidget next: self sourceWidget ]
 !
 
 packagesListWidget
@@ -76,7 +96,9 @@ protocolsListWidget
 
 sourceWidget
 	^ sourceWidget ifNil: [
-      	sourceWidget := HLBrowserSourceWidget on: self model ]
+      	sourceWidget := HLBrowserBottomWidget new
+			model: self model;
+			yourself ]
 ! !
 
 HLBrowser class instanceVariableNames: 'nextId'!
@@ -86,6 +108,10 @@ HLBrowser class instanceVariableNames: 'nextId'!
 nextId
 	nextId ifNil: [ nextId := 0 ].
     ^ 'browser_', (nextId + 1) asString
+!
+
+tabClass
+	^ 'browser'
 !
 
 tabLabel
@@ -102,40 +128,271 @@ canBeOpenAsTab
 	^ true
 ! !
 
-HLNavigationListWidget subclass: #HLBrowserListWidget
-	instanceVariableNames: 'model'
+HLWidget subclass: #HLBrowserBottomWidget
+	instanceVariableNames: 'model codeWidget documentationWidget'
 	package: 'Helios-Browser'!
+!HLBrowserBottomWidget commentStamp!
+I render the code area of a browser and optionally the documentation for the selected class.!
 
-!HLBrowserListWidget methodsFor: 'accessing'!
+!HLBrowserBottomWidget methodsFor: 'accessing'!
+
+codeWidget
+	^ codeWidget ifNil: [ codeWidget := HLBrowserCodeWidget new
+		browserModel: self model;
+		yourself ]
+!
+
+documentationWidget
+	^ documentationWidget ifNil: [ documentationWidget := HLDocumentationWidget new
+		model: self model;
+		yourself ]
+!
 
 model
 	^ model
 !
 
-model: aBrowserModel
-	model := aBrowserModel.
-    
-    self observeModel
+model: aModel
+	model := aModel.
+	self observeModel
+!
+
+previous
+	"For navigation"
+!
+
+previous: aWidget
+	"For navigation"
 ! !
 
-!HLBrowserListWidget methodsFor: 'actions'!
+!HLBrowserBottomWidget methodsFor: 'actions'!
+
+focus
+	self codeWidget focus
+!
 
 observeModel
+	self model announcer 
+		on: HLShowInstanceToggled
+		send: #onShowInstanceToggled
+		to: self;
+		on: HLShowCommentToggled
+		send: #onShowCommentToggled
+		to: self
 ! !
 
-!HLBrowserListWidget class methodsFor: 'instance creation'!
+!HLBrowserBottomWidget methodsFor: 'reactions'!
 
-on: aModel
-	^ self new 
-    	model: aModel;
+onShowCommentToggled
+	self refresh
+!
+
+onShowInstanceToggled
+	self refresh
+! !
+
+!HLBrowserBottomWidget methodsFor: 'rendering'!
+
+renderContentOn: html
+	self model showComment 
+		ifTrue: [ self renderPanesOn: html ]
+		ifFalse: [ html with: self codeWidget ]
+!
+
+renderPanesOn: html
+	html with: (HLVerticalSplitter
+		with: self codeWidget
+		with: self documentationWidget)
+! !
+
+!HLBrowserBottomWidget methodsFor: 'testing'!
+
+canHaveFocus
+	^ true
+! !
+
+HLToolModel subclass: #HLBrowserModel
+	instanceVariableNames: 'showInstance showComment'
+	package: 'Helios-Browser'!
+
+!HLBrowserModel methodsFor: 'accessing'!
+
+showComment
+	^ showComment ifNil: [ false ]
+!
+
+showComment: aBoolean
+	self withChangesDo: [
+		showComment := aBoolean.
+		self announcer announce: HLShowCommentToggled new ]
+!
+
+showInstance
+	^ showInstance ifNil: [ true ]
+!
+
+showInstance: aBoolean
+
+	self withChangesDo: [
+		showInstance := aBoolean.
+
+    	self selectedClass ifNotNil: [
+    		self selectedClass: (aBoolean
+    			ifTrue: [self selectedClass theNonMetaClass ]
+	    	  	ifFalse: [ self selectedClass theMetaClass ]) ].
+    
+		self announcer announce: HLShowInstanceToggled new ]
+! !
+
+!HLBrowserModel methodsFor: 'actions'!
+
+focusOnClasses
+	self announcer announce: HLClassesFocusRequested new
+!
+
+focusOnMethods
+	self announcer announce: HLMethodsFocusRequested new
+!
+
+focusOnPackages
+	self announcer announce: HLPackagesFocusRequested new
+!
+
+focusOnProtocols
+	self announcer announce: HLProtocolsFocusRequested new
+!
+
+focusOnSourceCode
+	self announcer announce: HLSourceCodeFocusRequested new
+!
+
+setClassComment: aString
+	self environment
+		setClassCommentOf: self selectedClass theNonMetaClass
+		to: aString
+! !
+
+!HLBrowserModel methodsFor: 'commands actions'!
+
+editComment
+	self announcer announce: HLEditComment new
+! !
+
+!HLBrowserModel methodsFor: 'testing'!
+
+isBrowserModel
+	^ true
+! !
+
+!HLBrowserModel class methodsFor: 'actions'!
+
+on: anEnvironment
+
+	^ self new
+    	environment: anEnvironment;
         yourself
 ! !
 
-HLBrowserListWidget subclass: #HLClassesListWidget
-	instanceVariableNames: ''
+Object subclass: #HLClassCache
+	instanceVariableNames: 'class selectorsCache overrideCache overriddenCache'
 	package: 'Helios-Browser'!
 
+!HLClassCache methodsFor: 'accessing'!
+
+overriddenCache
+	^ overriddenCache ifNil: [ overriddenCache := HashedCollection new ]
+!
+
+overrideCache
+	^ overrideCache ifNil: [ overrideCache := HashedCollection new ]
+!
+
+selectorsCache
+	^ selectorsCache
+!
+
+selectorsCache: aCache
+	selectorsCache := aCache
+!
+
+theClass
+	^ class
+!
+
+theClass: aClass
+	class := aClass
+! !
+
+!HLClassCache methodsFor: 'actions'!
+
+invalidateChildrenSelector: aSelector
+	self theClass subclasses do: [ :each |
+    	(self selectorsCache cacheFor: each)
+        	removeSelector: aSelector;
+        	invalidateChildrenSelector: aSelector ]
+!
+
+invalidateParentSelector: aSelector
+	self theClass superclass ifNotNil: [
+    	(self selectorsCache cacheFor: self theClass superclass)
+        	removeSelector: aSelector;
+			invalidateParentSelector: aSelector ]
+!
+
+invalidateSelector: aSelector
+	self 
+    	invalidateParentSelector: aSelector;
+        invalidateChildrenSelector: aSelector;
+        removeSelector: aSelector
+! !
+
+!HLClassCache methodsFor: 'private'!
+
+removeSelector: aSelector
+	self overriddenCache 
+    	removeKey: aSelector
+        ifAbsent: [ ].
+    self overrideCache 
+    	removeKey: aSelector
+        ifAbsent: [ ]
+! !
+
+!HLClassCache methodsFor: 'testing'!
+
+isOverridden: aMethod
+	^ self overriddenCache 
+    	at: aMethod selector
+      	ifAbsentPut: [ aMethod isOverridden ]
+!
+
+isOverride: aMethod
+	^ self overrideCache
+    	at: aMethod selector
+      	ifAbsentPut: [ aMethod isOverride ]
+! !
+
+!HLClassCache class methodsFor: 'instance creation'!
+
+on: aClass selectorsCache: aSelectorsCache
+	^ self new
+    	theClass: aClass;
+        selectorsCache: aSelectorsCache;
+        yourself
+! !
+
+HLToolListWidget subclass: #HLClassesListWidget
+	instanceVariableNames: ''
+	package: 'Helios-Browser'!
+!HLClassesListWidget commentStamp!
+I render a list of classes in the selected package.!
+
 !HLClassesListWidget methodsFor: 'accessing'!
+
+cssClassForItem: aClass
+	aClass theNonMetaClass comment isEmpty 
+		ifTrue: [ ^ 'uncommented' ].
+	^ aClass theNonMetaClass heliosClass
+!
 
 getChildrenOf: aClass
 	^ self items select: [ :each | each superclass = aClass ]
@@ -143,17 +400,11 @@ getChildrenOf: aClass
 
 getRootClassesOf: aCollection
 	^ aCollection select: [ :each |
-    	(each allSuperclasses intersection: aCollection) isEmpty ]
+    		(aCollection includes: each superclass) not ]
 !
 
-iconForItem: aClass
-	^ aClass theNonMetaClass comment isEmpty
-    	ifFalse: [ 'icon-none' ]
-      	ifTrue: [ 'icon-question-sign' ]
-!
-
-showInstance
-	^ self model showInstance
+label
+	^ 'Classes'
 ! !
 
 !HLClassesListWidget methodsFor: 'actions'!
@@ -168,35 +419,185 @@ focusProtocolsListWidget
 
 observeModel
 	self model announcer 
-    	on: HLPackageSelected do: [ :ann | self onPackageSelected: ann item ];
-    	on: HLShowInstanceToggled do: [ :ann | self onShowInstanceToggled ];
-		on: HLClassSelected do: [ :ann | self onClassSelected: ann item ]
+    	on: HLPackageSelected
+		send: #onPackageSelected:
+		to: self;
+		
+    	on: HLShowInstanceToggled 
+		send: #onShowInstanceToggled
+		to: self;
+		
+		on: HLShowCommentToggled
+		send: #onShowCommentToggled
+		to: self;
+		
+		on: HLClassSelected
+		send: #onClassSelected:
+		to: self;
+		
+		on: HLClassesFocusRequested
+		send: #onClassesFocusRequested
+		to: self
+!
+
+observeSystem
+	self model systemAnnouncer
+    	on: ClassAdded
+		send: #onClassAdded:
+		to: self;
+		
+        on: ClassRemoved
+        send: #onClassRemoved:
+		to: self;
+		
+		on: ClassMoved
+		send: #onClassMoved:
+		to: self;
+		
+		on: ClassRenamed
+		send: #onClassRenamed:
+		to: self;
+		
+		on: ClassMigrated
+		send: #onClassMigrated:
+		to: self;
+		
+		on: ClassCommentChanged
+        send: #onClassCommentChanged:
+		to: self
 !
 
 selectItem: aClass
-	super selectItem: aClass.
     self model selectedClass: aClass
+!
+
+showComment: aBoolean
+	self model showComment: aBoolean
 !
 
 showInstance: aBoolean
 	self model showInstance: aBoolean
+!
+
+toggleShowComment
+	self model showComment: self showComment not
+! !
+
+!HLClassesListWidget methodsFor: 'private'!
+
+setItemsForPackage: aPackage
+	self items: (aPackage 
+    	ifNil: [ #() ]
+  		ifNotNil: [ ((aPackage classes 
+        	collect: [ :each | each theNonMetaClass ]) asSet asArray) 
+            	sort: [:a :b | a name < b name ] ]).
+!
+
+setItemsForSelectedPackage
+	self setItemsForPackage: self model selectedPackage
 ! !
 
 !HLClassesListWidget methodsFor: 'reactions'!
 
-onClassSelected: aClass
+onClassAdded: anAnnouncement
+	| class |
+	
+	class := anAnnouncement theClass.
+	
+	(class package = self model selectedPackage or: [
+		self items includes: class ]) ifFalse: [ ^ self ].
+    
+    self setItemsForSelectedPackage.
+    self refresh
+!
+
+onClassCommentChanged: anAnnouncement
+	| class |
+	class := anAnnouncement theClass.
+
+	class package = self model selectedPackage ifFalse: [ ^ self ].
+    
+    self refresh
+!
+
+onClassMigrated: anAnnouncement
+	| class oldClass |
+	
+	class := anAnnouncement theClass.
+	oldClass := anAnnouncement oldClass.
+
+	(self items includes: oldClass) ifFalse: [ ^ self ].
+
+	self model selectedClass = oldClass ifTrue: [
+		self model selectedClass: class ].
+    
+    self setItemsForSelectedPackage.
+    self refresh
+!
+
+onClassMoved: anAnnouncement
+	| class oldPackage |
+	
+	class := anAnnouncement theClass.
+	oldPackage := anAnnouncement oldPackage.
+	
+	(oldPackage = self model selectedPackage or: [
+		class package = self model selectedPackage ])
+			ifFalse: [ ^ self ].
+	
+	oldPackage = self model selectedPackage ifTrue: [ 
+		self 
+			selectedItem: nil;
+			selectItem: nil ].
+    
+    self setItemsForSelectedPackage.
+    self refresh
+!
+
+onClassRemoved: anAnnouncement
+	| class |
+	class := anAnnouncement theClass.
+
+	class package = self model selectedPackage ifFalse: [ ^ self ].
+    
+    self setItemsForSelectedPackage.
+    self refresh
+!
+
+onClassRenamed: anAnnouncement
+	anAnnouncement theClass package = self model selectedPackage ifFalse: [ ^ self ].
+    
+    self setItemsForSelectedPackage.
+    self refresh
+!
+
+onClassSelected: anAnnouncement
+	| selectedClass |
+	
+	anAnnouncement item ifNil: [ ^ self ].
+	
+	selectedClass := anAnnouncement item theNonMetaClass.
+	self selectedItem: selectedClass.
+
+	self hasFocus ifFalse: [
+		self 
+			activateItem: selectedClass;
+			focus ]
+!
+
+onClassesFocusRequested
 	self focus
 !
 
-onPackageSelected: aPackage
+onPackageSelected: anAnnouncement
     self selectedItem: nil.
     
-    self items: (aPackage 
-    	ifNil: [ #() ]
-  		ifNotNil: [ (aPackage classes 
-        	collect: [ :each | each theNonMetaClass ]) asSet asArray ]).
-
+    self setItemsForSelectedPackage.
     self refresh
+!
+
+onShowCommentToggled
+	self refresh
 !
 
 onShowInstanceToggled
@@ -206,42 +607,50 @@ onShowInstanceToggled
 !HLClassesListWidget methodsFor: 'rendering'!
 
 renderButtonsOn: html
+	| checkbox |
+	
 	html div 
         class: 'btn-group';
-		at: 'data-toggle' put: 'buttons-radio';
 		with: [ 
            	html button 
                 class: (String streamContents: [ :str |
                 	str nextPutAll: 'btn'.
                     self showInstance ifTrue: [ 
-                    	str nextPutAll: ' active'] ]);
+                    	str nextPutAll: ' active' ] ]);
   				with: 'Instance';
                 onClick: [ self showInstance: true ].
   			html button
   				class: (String streamContents: [ :str |
                 	str nextPutAll: 'btn'.
-                    self model showInstance ifFalse: [ 
-                    	str nextPutAll: ' active'] ]);
+                    self showClass ifTrue: [ 
+                    	str nextPutAll: ' active' ] ]);
   				with: 'Class';
-				onClick: [ self model showInstance: false ] ].
-                 
-  	html button 
-           	class: 'btn';
-            at: 'data-toggle' put: 'button';
-  			with: 'Comment'
+				onClick: [ self showInstance: false ] ].
+		html label 
+			class: 'checkbox';
+			with: [
+				checkbox := html input
+					type: 'checkbox';
+					onClick: [ self toggleShowComment ].
+				html with: 'Doc' ].
+				
+		self showComment ifTrue: [
+			checkbox at: 'checked' put: 'checked' ]
 !
 
 renderItem: aClass level: anInteger on: html
 	| li |
     
 	li := html li.
+	self registerMappingFrom: aClass to: li.
+	
     li
     	at: 'list-data' put: (self items indexOf: aClass);
-    	class: (self cssClassForItem: aClass);
-        with: [ 
+		class: (self listCssClassForItem: aClass);
+		with: [ 
         	html a
             	with: [ 
-            		(html tag: 'i') class: (self iconForItem: aClass).
+            		(html tag: 'i') class: (self cssClassForItem: aClass).
   					self renderItemLabel: aClass level: anInteger on: html ];
 				onClick: [
                   	self activateListItem: li asJQuery ] ].
@@ -252,8 +661,8 @@ renderItem: aClass level: anInteger on: html
 
 renderItem: aClass on: html
 	super renderItem: aClass on: html.
-    	(self getChildrenOf: aClass) do: [ :each |
-    		self renderItem: each level: 1 on: html ]
+    (self getChildrenOf: aClass) do: [ :each |
+    	self renderItem: each level: 1 on: html ]
 !
 
 renderItemLabel: aClass level: anInteger on: html
@@ -272,9 +681,171 @@ renderListOn: html
     	do: [ :each | self renderItem: each on: html ]
 ! !
 
-HLBrowserListWidget subclass: #HLMethodsListWidget
+!HLClassesListWidget methodsFor: 'testing'!
+
+showClass
+	^ self model showInstance not
+!
+
+showComment
+	^ self model showComment
+!
+
+showInstance
+	^ self model showInstance
+! !
+
+HLFocusableWidget subclass: #HLDocumentationWidget
+	instanceVariableNames: 'model'
+	package: 'Helios-Browser'!
+!HLDocumentationWidget commentStamp!
+I render the documentation for the selected class!
+
+!HLDocumentationWidget methodsFor: 'accessing'!
+
+documentation
+	^ self selectedItem 
+		ifNil: [ '' ]
+		ifNotNil: [ :item | item comment ifEmpty: [ self defaultDocumentation ] ]
+!
+
+head
+	^ self selectedItem 
+		ifNil: [ self defaultHead ]
+		ifNotNil: [ :item | item name ]
+!
+
+model
+	^ model
+!
+
+model: aModel
+	model := aModel.
+	self 
+		observeSystem;
+		observeModel
+!
+
+selectedItem
+	^ self model selectedClass ifNotNil: [ :class | class theNonMetaClass ]
+! !
+
+!HLDocumentationWidget methodsFor: 'actions'!
+
+editDocumentation
+	self model editComment
+!
+
+observeModel
+	self model announcer 
+		on: HLClassSelected
+		send: #onClassSelected:
+		to: self;
+		
+		on: HLEditComment
+		send: #onEditDocumentation
+		to: self
+!
+
+observeSystem
+	self model systemAnnouncer 
+		on: ClassCommentChanged
+		send: #onClassCommentChanged:
+		to: self
+!
+
+selectClass: aClass
+	self model selectedClass: aClass
+!
+
+unregister
+	super unregister.
+	self model announcer unregister: self
+! !
+
+!HLDocumentationWidget methodsFor: 'defaults'!
+
+defaultDocumentation
+	^ 'No documentation available. 
+**That''s bad. Seriously.**'
+!
+
+defaultHead
+	^ 'No class selected'
+! !
+
+!HLDocumentationWidget methodsFor: 'reactions'!
+
+onClassCommentChanged: anAnnouncement
+	anAnnouncement theClass = self model selectedClass theNonMetaClass
+		ifTrue: [ self refresh ]
+!
+
+onClassSelected: anAnnouncement
+	self refresh
+!
+
+onEditDocumentation
+	self 
+		request: self model selectedClass theNonMetaClass name, ' comment'
+		value: self model selectedClass theNonMetaClass comment
+		do: [ :comment | self setClassComment: comment ]
+!
+
+setClassComment: aString
+	self model setClassComment: aString
+! !
+
+!HLDocumentationWidget methodsFor: 'rendering'!
+
+renderContentOn: html
+	html div 
+		class: 'doc';
+		with: [
+			self 
+				renderHeadOn: html;
+				renderDocOn: html ]
+!
+
+renderDocOn: html
+	self selectedItem ifNotNil: [
+		self renderInheritanceOn: html.
+		html h1 
+			with: 'Overview';
+			with: [ 
+				html button
+					class: 'button default';
+					with: 'Edit';
+					onClick: [ self editDocumentation ] ].
+		(html div 
+			class: 'markdown';
+			asJQuery) html: ((Showdown at: 'converter') new makeHtml: self documentation) ]
+!
+
+renderHeadOn: html
+	html div 
+		class: 'head';
+		with: self head
+!
+
+renderInheritanceOn: html
+	html div 	
+		class: 'inheritance';
+		with: [
+			html with: 'Subclass of '.
+			self selectedItem superclass 
+				ifNil: [ html em with: 'nil' ]
+				ifNotNil: [
+					html a 
+						with: self selectedItem superclass name;
+						onClick: [ self selectClass: self selectedItem superclass ] ] ]
+! !
+
+HLToolListWidget subclass: #HLMethodsListWidget
 	instanceVariableNames: 'selectorsCache'
 	package: 'Helios-Browser'!
+!HLMethodsListWidget commentStamp!
+I render a list of methods for the selected protocol.!
 
 !HLMethodsListWidget methodsFor: 'accessing'!
 
@@ -282,23 +853,35 @@ allProtocol
 	^ self model allProtocol
 !
 
-iconForItem: aCompiledMethod
-	| override overriden |
+cssClassForItem: aSelector
+	| override overriden method |
     
-    override := self isOverride: aCompiledMethod.
-    overriden := self isOverriden: aCompiledMethod.
+    method := self methodForSelector: aSelector.
+    override := self isOverride: method.
+    overriden := self isOverridden: method.
     
 	^ override
     	ifTrue: [ overriden
-			ifTrue: [ 'icon-resize-vertical' ]
-			ifFalse: [ 'icon-arrow-up' ] ]
+			ifTrue: [ 'override-overridden' ]
+			ifFalse: [ 'override' ] ]
 		ifFalse: [
 			overriden
-			ifTrue: [ 'icon-arrow-down' ]
-			ifFalse: [ 'icon-none' ] ]
+			ifTrue: [ 'overridden' ]
+			ifFalse: [ '' ] ]
+!
+
+label
+	^ 'Methods'
+!
+
+methodForSelector: aSelector
+	^ self model selectedClass
+    	methodDictionary at: aSelector
 !
 
 methodsInProtocol: aString
+	self model selectedClass ifNil: [ ^ #() ].
+    
 	^ aString = self allProtocol
     	ifTrue: [ self model selectedClass methods ]
       	ifFalse: [ self model selectedClass methodsInProtocol: aString ]
@@ -321,54 +904,156 @@ overridenSelectors
 !
 
 selectorsCache
-	^ selectorsCache
+	^ self class selectorsCache
+!
+
+selectorsInProtocol: aString
+	^ ((self methodsInProtocol: aString)
+    	collect: [ :each | each selector ]) sorted
 ! !
 
 !HLMethodsListWidget methodsFor: 'actions'!
 
 observeModel
-	self model announcer on: HLProtocolSelected do: [ :ann |
-    	self onProtocolSelected: ann item ].
-    self model announcer on: HLShowInstanceToggled do: [ :ann |
-    	self onProtocolSelected: nil ].
-    self model announcer on: HLMethodSelected do: [ :ann |
-    	self onMethodSelected: ann item ]
+	self model announcer 
+		on: HLProtocolSelected 
+		send: #onProtocolSelected: 
+		to: self;
+		
+		on: HLShowInstanceToggled 
+		send: #onShowInstanceToggled
+		to: self;
+		
+		on: HLMethodSelected 
+		send: #onMethodSelected:
+		to: self;
+		
+		on: HLMethodsFocusRequested 
+		send: #onMethodsFocusRequested
+		to: self
 !
 
-selectItem: aCompiledMethod
-	super selectItem: aCompiledMethod.
-   	self model selectedMethod: aCompiledMethod
+observeSystem
+	self model systemAnnouncer 
+    	on: ProtocolAdded
+        send: #onProtocolAdded:
+		to: self;
+    	
+		on: ProtocolRemoved
+        send: #onProtocolRemoved:
+		to: self;
+		
+    	on: MethodAdded 
+        send: #onMethodAdded:
+		to: self;
+		
+        on: MethodRemoved 
+        send: #onMethodRemoved:
+		to: self;
+		
+		on: MethodMoved 
+        send: #onMethodMoved:
+		to: self
+!
+
+selectItem: aSelector
+	aSelector ifNil: [ ^ self model selectedMethod: nil ].
+
+   	self model selectedMethod: (self methodForSelector: aSelector)
 ! !
 
-!HLMethodsListWidget methodsFor: 'cache'!
+!HLMethodsListWidget methodsFor: 'private'!
 
-flushSelectorsCache
-	selectorsCache := Dictionary new
-! !
+setItemsForProtocol: aString
+	^ self items: (aString
+    	ifNil: [ #() ]
+      	ifNotNil: [ self selectorsInProtocol: aString ])
+!
 
-!HLMethodsListWidget methodsFor: 'initialization'!
-
-initialize
-	super initialize.
-    self flushSelectorsCache
+setItemsForSelectedProtocol
+	self setItemsForProtocol: self model selectedProtocol
 ! !
 
 !HLMethodsListWidget methodsFor: 'reactions'!
 
-onMethodSelected: aMethod
+onMethodAdded: anAnnouncement
+	self model selectedClass = anAnnouncement method methodClass ifFalse: [ ^ self ].
+    
+    self setItemsForSelectedProtocol.
+    self refresh
+!
+
+onMethodMoved: anAnnouncement
+	self model selectedMethod = anAnnouncement method ifFalse: [ ^ self ].
+    
+	self model selectedProtocol = self model allProtocol ifFalse: [
+		self 
+			selectedItem: nil; 
+			selectItem: nil;
+			setItemsForSelectedProtocol;
+    		refresh ]
+!
+
+onMethodRemoved: anAnnouncement
+	| method |
+	
+	method := anAnnouncement method.
+	
+	self items detect: [ :each | each = method selector ] ifNone: [ ^ self ].
+
+    self selectedItem ifNotNil: [
+      	(method methodClass = self model selectedClass and: [ method selector = self selectedItem ])
+  			ifTrue: [ 
+				self selectedItem: nil; 
+				selectItem: nil ] ].
+
+    self setItemsForSelectedProtocol.
+	self refresh
+!
+
+onMethodSelected: anAnnouncement
+	| selector method |
+	
+	method := anAnnouncement item.
+	
+	selector := method isCompiledMethod 
+		ifTrue: [ method selector ]
+		ifFalse: [ nil ].
+		
+	self 
+		selectedItem: selector;
+		activateItem: selector
+!
+
+onMethodsFocusRequested
 	self focus
 !
 
-onProtocolSelected: aString
+onProtocolAdded: anAnnouncement
+	self model selectedClass = anAnnouncement theClass ifFalse: [ ^ self ].
+	
+	self setItemsForSelectedProtocol.
+    self refresh.
+	self focus
+!
+
+onProtocolRemoved: anAnnouncement
+	self model selectedClass = anAnnouncement theClass ifFalse: [ ^ self ].
+	
+	self setItemsForSelectedProtocol.
+    self refresh.
+	self focus
+!
+
+onProtocolSelected: anAnnouncement
     self selectedItem: nil.
     
-    self items: (self model selectedClass 
-    	ifNil: [ #() ]
-      	ifNotNil: [ aString
-    		ifNil: [ #() ]
-      		ifNotNil: [ self methodsInProtocol: aString ] ]).
-        
+	self setItemsForSelectedProtocol.
     self refresh
+!
+
+onShowInstanceToggled
+	self onProtocolSelected: nil
 ! !
 
 !HLMethodsListWidget methodsFor: 'rendering'!
@@ -378,95 +1063,145 @@ renderContentOn: html
     	ifFalse: [ html div 
         	class: 'class_side'; 
             with: [ super renderContentOn: html ] ]
-      	ifTrue: [ super renderContentOn: html ].
-        
-    self flushSelectorsCache
+      	ifTrue: [ super renderContentOn: html ]
 !
 
-renderItemLabel: aCompiledMethod on: html
-	html with: aCompiledMethod selector
+renderItemLabel: aSelector on: html
+	html with: aSelector
 ! !
 
 !HLMethodsListWidget methodsFor: 'testing'!
 
-isOverride: aMethod
-
-   ^ self overrideSelectors includes: aMethod selector
+isOverridden: aMethod
+   ^ self selectorsCache isOverridden: aMethod
 !
 
-isOverriden: aMethod
-
-   ^ self overridenSelectors includes: aMethod selector
+isOverride: aMethod
+   ^ self selectorsCache isOverride: aMethod
 ! !
 
-HLBrowserListWidget subclass: #HLPackagesListWidget
+HLMethodsListWidget class instanceVariableNames: 'selectorsCache'!
+
+!HLMethodsListWidget class methodsFor: 'accessing'!
+
+selectorsCache
+	^ HLSelectorsCache current
+! !
+
+HLToolListWidget subclass: #HLPackagesListWidget
 	instanceVariableNames: ''
 	package: 'Helios-Browser'!
+!HLPackagesListWidget commentStamp!
+I render a list of the system packages.!
 
 !HLPackagesListWidget methodsFor: 'accessing'!
 
-initializeItems
-	^ items := self model packages sort:[:a :b|
-						a name < b name]
+cssClassForItem: anItem	
+	^ 'package'
 !
 
 items
-	^ items ifNil: [self initializeItems]
+	^ items ifNil: [ self initializeItems ]
+!
+
+label
+	^ 'Packages'
 ! !
 
 !HLPackagesListWidget methodsFor: 'actions'!
+
+commitPackage
+	self model commitPackage
+!
 
 focusClassesListWidget
 	self model announcer announce: HLClassesListFocus new
 !
 
 observeModel
-    self model announcer on: HLPackageSelected do: [ :ann |
-    	self onPackageSelected: ann item ]
+    self model announcer 
+		on: HLPackageSelected
+		send: #onPackageSelected:
+		to: self;
+		
+		on: HLPackagesFocusRequested 
+		send: #onPackagesFocusRequested
+		to: self
+!
+
+observeSystem
+    self model systemAnnouncer 
+		on: ClassAdded 
+		send: #onClassAdded:
+		to: self
 !
 
 selectItem: aPackage
-	super selectItem: aPackage.
-    self model selectedPackage: aPackage
+	self model selectedPackage: aPackage
+! !
+
+!HLPackagesListWidget methodsFor: 'initialization'!
+
+initializeItems
+	^ items := self model packages 
+		sort: [ :a :b | a name < b name ]
 ! !
 
 !HLPackagesListWidget methodsFor: 'reactions'!
 
-onPackageSelected: aPackage
+onClassAdded: anAnnouncement
+	"Amber doesn't have yet a global organizer for packages"
+	
+	(self items includes: anAnnouncement theClass package) ifFalse: [ 
+		self 
+			initializeItems;
+			refresh ]
+!
+
+onPackageSelected: anAnnouncement
+	| package |
+	
+	package := anAnnouncement item.
+	
+	self selectedItem: package.
+	self hasFocus ifFalse: [
+		self
+			activateItem: package;
+			focus ]
+!
+
+onPackagesFocusRequested
 	self focus
 ! !
 
 !HLPackagesListWidget methodsFor: 'rendering'!
 
-renderButtonsOn: html
-
-	html span class: 'info'; with: 'Auto commit'.
-	html div 
-        class: 'btn-group switch';
-		at: 'data-toggle' put: 'buttons-radio';
-		with: [ 
-           	html button 
-                class: (String streamContents: [ :str |
-                	str nextPutAll: 'btn' ]);
-  				with: 'On'.
-  			html button
-  				class: (String streamContents: [ :str |
-                	str nextPutAll: 'btn active' ]);
-  				with: 'Off' ].
-                
-    html a 
-         	class: 'btn';
-			with: 'Commit'.
+renderItemLabel: aPackage on: html
+	html with: aPackage name
 ! !
 
-HLBrowserListWidget subclass: #HLProtocolsListWidget
+HLToolListWidget subclass: #HLProtocolsListWidget
 	instanceVariableNames: ''
 	package: 'Helios-Browser'!
+!HLProtocolsListWidget commentStamp!
+I render a list of protocols for the selected class.!
 
 !HLProtocolsListWidget methodsFor: 'accessing'!
 
 allProtocol
 	^ self model allProtocol
+!
+
+cssClassForItem: anItem
+	anItem = self allProtocol ifTrue: [ ^ '' ].
+	anItem = 'private' ifTrue: [ ^ 'private' ].
+	anItem = 'initialization' ifTrue: [ ^ 'initialization' ].
+	(anItem match: '^\*') ifTrue: [ ^ 'extension' ].
+	^ ''
+!
+
+label
+	^ 'Protocols'
 !
 
 selectedItem
@@ -476,35 +1211,107 @@ selectedItem
 !HLProtocolsListWidget methodsFor: 'actions'!
 
 observeModel
-	self model announcer on: HLClassSelected do: [ :ann |
-    	self onClassSelected: ann item ].
-    self model announcer on: HLShowInstanceToggled do: [ :ann |
-    	self onClassSelected: self model selectedClass ].
-    self model announcer on: HLProtocolSelected do: [ :ann |
-    	self onProtocolSelected: ann item ]
+    self model announcer 
+		on: HLClassSelected
+		send: #onClassSelected:
+		to: self;
+		
+    	on: HLShowInstanceToggled 
+		send: #onClassSelected:
+		to: self;
+		
+    	on: HLProtocolSelected
+		send: #onProtocolSelected:
+		to: self;
+		
+		on: HLProtocolsFocusRequested 
+		send: #onProtocolsFocusRequested
+		to: self
+!
+
+observeSystem
+	self model systemAnnouncer
+		on: ProtocolAdded 
+		send: #onProtocolAdded:
+		to: self;
+		
+		on: ProtocolRemoved
+		send: #onProtocolRemoved:
+		to: self
 !
 
 selectItem: aString
-	super selectItem: aString.
     self model selectedProtocol: aString
 ! !
 
-!HLProtocolsListWidget methodsFor: 'reactions'!
+!HLProtocolsListWidget methodsFor: 'private'!
 
-onClassSelected: aClass
-    self selectedItem: nil.
-    
-    self items: (aClass
+setItemsForClass: aClass
+	self items: (aClass
     	ifNil: [ Array with: self allProtocol ]
       	ifNotNil: [ 
         	(Array with: self allProtocol) 
             	addAll: aClass protocols; 
-                yourself ]).
+                yourself ])
+!
 
+setItemsForSelectedClass
+	self setItemsForClass: self model selectedClass
+! !
+
+!HLProtocolsListWidget methodsFor: 'reactions'!
+
+onClassSelected: anAnnouncement
+    self selectedItem: nil.
+    
+    self setItemsForSelectedClass.
     self refresh
 !
 
-onProtocolSelected: aString
+onProtocolAdded: anAnnouncement
+	| class |
+	
+	class := anAnnouncement theClass.
+	
+	class = self model selectedClass ifFalse: [ ^ self ].
+    
+    self setItemsForSelectedClass.
+    self refresh
+!
+
+onProtocolRemoved: anAnnouncement
+	| class protocol |
+	
+	class := anAnnouncement theClass.
+	protocol := anAnnouncement protocol.
+	
+	class = self model selectedClass ifFalse: [ ^ self ].
+    
+    self model selectedProtocol = protocol 
+    	ifTrue: [ 
+			self 
+				selectedItem: nil;
+				selectItem: nil ].
+        
+    self setItemsForSelectedClass.
+    self refresh
+!
+
+onProtocolSelected: anAnnouncement
+	| protocol |
+	
+	protocol := anAnnouncement item.
+	
+	self selectedItem: protocol.
+	protocol ifNil: [ ^ self ].
+    
+	self hasFocus ifFalse: [
+		self 
+			activateItem: protocol;
+			focus ]
+!
+
+onProtocolsFocusRequested
 	self focus
 ! !
 
@@ -518,191 +1325,96 @@ renderContentOn: html
       	ifTrue: [ super renderContentOn: html ]
 ! !
 
-Object subclass: #HLBrowserModel
-	instanceVariableNames: 'announcer environment selectedPackage selectedClass selectedProtocol selectedMethod showInstance showComment'
+Object subclass: #HLSelectorsCache
+	instanceVariableNames: 'classesCache'
 	package: 'Helios-Browser'!
 
-!HLBrowserModel methodsFor: 'accessing'!
+!HLSelectorsCache methodsFor: 'accessing'!
 
-allProtocol
-	^ '-- All --'
-!
-
-announcer
-	^ announcer ifNil: [ announcer := Announcer new ]
-!
-
-environment
-	^ environment ifNil: [ HLManager current environment ]
-!
-
-environment: anEnvironment
-	environment := anEnvironment
-!
-
-packages
-	^ self environment packages
-!
-
-selectedClass
-	^ selectedClass
-!
-
-selectedClass: aClass
-	selectedClass = aClass ifFalse: [
-		aClass 
-    		ifNil: [ selectedClass := nil ]
-      		ifNotNil: [
-				self showInstance 
-    				ifTrue: [ selectedClass := aClass theNonMetaClass ]
-      				ifFalse: [ selectedClass := aClass theMetaClass ] ].
+cacheFor: aClass
+	aClass ifNil: [ ^ nil ].
     
-   		self 
-    		selectedMethod: nil;
-       	 	selectedProtocol: nil ].
-        
-   self announcer announce: (HLClassSelected on: self selectedClass)
+	^ self classesCache
+    	at: aClass name
+        ifAbsentPut: [ self newCacheFor: aClass ]
 !
 
-selectedMethod
-	^ selectedMethod
-!
-
-selectedMethod: aCompiledMethod
-	selectedMethod = aCompiledMethod ifFalse: [
-		selectedMethod := aCompiledMethod ].
-    
-    self announcer announce: (HLMethodSelected on: aCompiledMethod)
-!
-
-selectedPackage
-	^ selectedPackage
-!
-
-selectedPackage: aPackage
-	selectedPackage = aPackage ifFalse: [
-		selectedPackage := aPackage.
-    	self selectedClass: nil ].
-    
-    self announcer announce: (HLPackageSelected on: aPackage)
-!
-
-selectedProtocol
-	^ selectedProtocol
-!
-
-selectedProtocol: aString
-	selectedProtocol = aString ifFalse: [
-      	selectedProtocol := aString.
-    	self selectedMethod: nil ].
-    
-    self announcer announce: (HLProtocolSelected on: aString)
-!
-
-showComment
-	^ showComment ifNil: [ false ]
-!
-
-showComment: aBoolean
-	showComment := aBoolean.
-    
-    self announcer announce: HLShowCommentToggled new
-!
-
-showInstance
-	^ showInstance ifNil: [ true ]
-!
-
-showInstance: aBoolean
-	showInstance := aBoolean.
-    
-    self selectedClass ifNotNil: [
-    	self selectedClass: (aBoolean
-    		ifTrue: [self selectedClass theNonMetaClass ]
-    	  	ifFalse: [ self selectedClass theMetaClass ]) ].
-    
-    self announcer announce: HLShowInstanceToggled new
+classesCache
+	^ classesCache ifNil: [ classesCache := HashedCollection new ]
 ! !
 
-!HLBrowserModel class methodsFor: 'actions'!
+!HLSelectorsCache methodsFor: 'actions'!
 
-on: anEnvironment
-
-	^ self new
-    	environment: anEnvironment;
-        yourself
+observeSystem
+	SystemAnnouncer current
+		on: MethodAdded
+		send: #onMethodAdded:
+		to: self;
+		
+		on: MethodRemoved
+        send: #onMethodRemoved:
+		to: self
 ! !
 
-HLWidget subclass: #HLBrowserSourceWidget
-	instanceVariableNames: 'model codeWidget'
-	package: 'Helios-Browser'!
+!HLSelectorsCache methodsFor: 'factory'!
 
-!HLBrowserSourceWidget methodsFor: 'accessing'!
-
-codeWidget
-	^ codeWidget ifNil: [ codeWidget := HLCodeWidget new ]
-!
-
-contents
-	^ self sourceArea contents
-!
-
-contents: aString
-	self codeWidget contents: aString
-!
-
-model
-	^ model
-!
-
-model: aBrowserModel
-	model := aBrowserModel.
-    
-    self observeModel
+newCacheFor: aClass
+	^ HLClassCache 
+    	on: aClass
+        selectorsCache: self
 ! !
 
-!HLBrowserSourceWidget methodsFor: 'actions'!
+!HLSelectorsCache methodsFor: 'initialization'!
 
-observeModel
-	self model announcer on: HLMethodSelected do: [ :ann |
-    	self onMethodSelected: ann item ].
-    self model announcer on: HLClassSelected do: [ :ann |
-    	self onClassSelected: ann item ].
-    self model announcer on: HLProtocolSelected do: [ :ann |
-    	self onProtocolSelected: ann item ]
+initialize
+	super initialize.
+    self observeSystem
 ! !
 
-!HLBrowserSourceWidget methodsFor: 'reactions'!
+!HLSelectorsCache methodsFor: 'private'!
 
-onClassSelected: aClass
-	aClass ifNil: [ ^ self contents: '' ].
-    
-    self contents: aClass definition
+invalidateCacheFor: aMethod
+	(self cacheFor: aMethod methodClass)
+    	invalidateSelector: aMethod selector
+! !
+
+!HLSelectorsCache methodsFor: 'reactions'!
+
+onMethodAdded: anAnnouncement
+	self invalidateCacheFor: anAnnouncement method
 !
 
-onMethodSelected: aCompiledMethod
-	aCompiledMethod ifNil: [ ^ self contents: '' ].
-    
-    self contents: aCompiledMethod source
+onMethodRemoved: anAnnouncement
+	self invalidateCacheFor: anAnnouncement method
+! !
+
+!HLSelectorsCache methodsFor: 'testing'!
+
+isOverridden: aMethod
+	^ (self cacheFor: aMethod methodClass)
+    	isOverridden: aMethod
 !
 
-onProtocolSelected: aString
-	self model selectedClass ifNil: [ ^ self contents: '' ].
-    
-    self contents: self model selectedClass definition
+isOverride: aMethod
+	^ (self cacheFor: aMethod methodClass)
+    	isOverride: aMethod
 ! !
 
-!HLBrowserSourceWidget methodsFor: 'rendering'!
+HLSelectorsCache class instanceVariableNames: 'current'!
 
-renderContentOn: html
-	self codeWidget renderOn: html
+!HLSelectorsCache class methodsFor: 'accessing'!
+
+current
+	^ current ifNil: [ current := super new ]
+!
+
+flush
+	current := nil
 ! !
 
-!HLBrowserSourceWidget class methodsFor: 'instance creation'!
+!HLSelectorsCache class methodsFor: 'instance creation'!
 
-on: aBrowserModel
-	^ self new
-    	model: aBrowserModel;
-        yourself
+new
+	self shouldNotImplement
 ! !
 
