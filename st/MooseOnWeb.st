@@ -395,7 +395,7 @@ renderBodyOn: html
          	form := el form 
             	target:'importIframe';
                 method:'post';
-                action: 'http://localhost:8080/mooseOnWeb/models';
+                action: MWEntryPoint restApiLocation, MWEntryPoint urlModels;
                 at: 'enctype' put: 'multipart/form-data';
                 at: 'encoding'  put: 'multipart/form-data';
                 with: [ :content | self renderFormOn: content ].
@@ -871,7 +871,7 @@ clickFrom: colId
 !
 
 renderContentOn: html
-    self entities do: [ :e |
+    (self entities sorted: [:a :b | a name < b name ] ) do: [ :e |
       html li 
     	  with:
     		  (html a

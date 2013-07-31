@@ -961,7 +961,7 @@ $2=_st($1)._with_((function(el){
 return smalltalk.withContext(function($ctx2) {$3=_st(el)._form();
 _st($3)._target_("importIframe");
 _st($3)._method_("post");
-_st($3)._action_("http://localhost:8080/mooseOnWeb/models");
+_st($3)._action_(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlModels()));
 _st($3)._at_put_("enctype","multipart/form-data");
 _st($3)._at_put_("encoding","multipart/form-data");
 $4=_st($3)._with_((function(content){
@@ -978,9 +978,9 @@ return frame;
 }, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderBodyOn:",{html:html,form:form,frame:frame}, smalltalk.MWImporter)})},
 args: ["html"],
-source: "renderBodyOn: html\x0a\x09| form frame |\x0a\x09\x09html div class:' modal-body'; at:'max-height' put: '200'; with: [ :el |\x0a         \x09form := el form \x0a            \x09target:'importIframe';\x0a                method:'post';\x0a                action: 'http://localhost:8080/mooseOnWeb/models';\x0a                at: 'enctype' put: 'multipart/form-data';\x0a                at: 'encoding'  put: 'multipart/form-data';\x0a                with: [ :content | self renderFormOn: content ].\x0a           frame := el iframe \x0a            \x09src: 'about:none';\x0a                style: 'display:none';\x0a                name: 'importIframe'\x0a\x09\x09]\x0a       ",
-messageSends: ["class:", "div", "at:put:", "with:", "target:", "form", "method:", "action:", "renderFormOn:", "src:", "iframe", "style:", "name:"],
-referencedClasses: []
+source: "renderBodyOn: html\x0a\x09| form frame |\x0a\x09\x09html div class:' modal-body'; at:'max-height' put: '200'; with: [ :el |\x0a         \x09form := el form \x0a            \x09target:'importIframe';\x0a                method:'post';\x0a                action: MWEntryPoint restApiLocation, MWEntryPoint urlModels;\x0a                at: 'enctype' put: 'multipart/form-data';\x0a                at: 'encoding'  put: 'multipart/form-data';\x0a                with: [ :content | self renderFormOn: content ].\x0a           frame := el iframe \x0a            \x09src: 'about:none';\x0a                style: 'display:none';\x0a                name: 'importIframe'\x0a\x09\x09]\x0a       ",
+messageSends: ["class:", "div", "at:put:", "with:", "target:", "form", "method:", "action:", ",", "urlModels", "restApiLocation", "renderFormOn:", "src:", "iframe", "style:", "name:"],
+referencedClasses: ["MWEntryPoint"]
 }),
 smalltalk.MWImporter);
 
@@ -2193,7 +2193,9 @@ category: 'render',
 fn: function (html){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2;
-_st(_st(self)._entities())._do_((function(e){
+_st(_st(_st(self)._entities())._sorted_((function(a,b){
+return smalltalk.withContext(function($ctx2) {return _st(_st(a)._name()).__lt(_st(b)._name());
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1)})})))._do_((function(e){
 return smalltalk.withContext(function($ctx2) {$1=_st(html)._a();
 _st($1)._href_("#");
 _st($1)._onClick_((function(){
@@ -2204,8 +2206,8 @@ return _st(_st(html)._li())._with_($2);
 }, function($ctx2) {$ctx2.fillBlock({e:e},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderContentOn:",{html:html}, smalltalk.MWMooseGroup)})},
 args: ["html"],
-source: "renderContentOn: html\x0a    self entities do: [ :e |\x0a      html li \x0a    \x09  with:\x0a    \x09\x09  (html a\x0a   \x09\x09\x09\x09   href: '#';\x0a   \x09\x09\x09\x09   onClick: [ e clickFrom:  ((ul asJQuery parents: 'div') attr: 'row') ]; \x0a   \x09\x09\x09\x09   with: e name\x0a     \x09\x09\x09 )\x0a    ]\x0a\x09\x0a\x09",
-messageSends: ["do:", "with:", "href:", "a", "onClick:", "clickFrom:", "attr:", "parents:", "asJQuery", "name", "li", "entities"],
+source: "renderContentOn: html\x0a    (self entities sorted: [:a :b | a name < b name ] ) do: [ :e |\x0a      html li \x0a    \x09  with:\x0a    \x09\x09  (html a\x0a   \x09\x09\x09\x09   href: '#';\x0a   \x09\x09\x09\x09   onClick: [ e clickFrom:  ((ul asJQuery parents: 'div') attr: 'row') ]; \x0a   \x09\x09\x09\x09   with: e name\x0a     \x09\x09\x09 )\x0a    ]\x0a\x09\x0a\x09",
+messageSends: ["do:", "with:", "href:", "a", "onClick:", "clickFrom:", "attr:", "parents:", "asJQuery", "name", "li", "sorted:", "<", "entities"],
 referencedClasses: []
 }),
 smalltalk.MWMooseGroup);

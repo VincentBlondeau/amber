@@ -730,7 +730,7 @@ $2=_st($1)._with_((function(el){
 return smalltalk.withContext(function($ctx2) {$3=_st(el)._form();
 _st($3)._target_("importIframe");
 _st($3)._method_("post");
-_st($3)._action_("http://localhost:8080/mooseOnWeb/models");
+_st($3)._action_(_st(_st((smalltalk.MWEntryPoint || MWEntryPoint))._restApiLocation()).__comma(_st((smalltalk.MWEntryPoint || MWEntryPoint))._urlModels()));
 _st($3)._at_put_("enctype","multipart/form-data");
 _st($3)._at_put_("encoding","multipart/form-data");
 $4=_st($3)._with_((function(content){
@@ -746,7 +746,7 @@ frame=$6;
 return frame;
 }, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderBodyOn:",{html:html,form:form,frame:frame}, smalltalk.MWImporter)})},
-messageSends: ["class:", "div", "at:put:", "with:", "target:", "form", "method:", "action:", "renderFormOn:", "src:", "iframe", "style:", "name:"]}),
+messageSends: ["class:", "div", "at:put:", "with:", "target:", "form", "method:", "action:", ",", "urlModels", "restApiLocation", "renderFormOn:", "src:", "iframe", "style:", "name:"]}),
 smalltalk.MWImporter);
 
 smalltalk.addMethod(
@@ -1667,7 +1667,9 @@ selector: "renderContentOn:",
 fn: function (html){
 var self=this;
 return smalltalk.withContext(function($ctx1) { var $1,$2;
-_st(_st(self)._entities())._do_((function(e){
+_st(_st(_st(self)._entities())._sorted_((function(a,b){
+return smalltalk.withContext(function($ctx2) {return _st(_st(a)._name()).__lt(_st(b)._name());
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1)})})))._do_((function(e){
 return smalltalk.withContext(function($ctx2) {$1=_st(html)._a();
 _st($1)._href_("#");
 _st($1)._onClick_((function(){
@@ -1677,7 +1679,7 @@ $2=_st($1)._with_(_st(e)._name());
 return _st(_st(html)._li())._with_($2);
 }, function($ctx2) {$ctx2.fillBlock({e:e},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderContentOn:",{html:html}, smalltalk.MWMooseGroup)})},
-messageSends: ["do:", "with:", "href:", "a", "onClick:", "clickFrom:", "attr:", "parents:", "asJQuery", "name", "li", "entities"]}),
+messageSends: ["do:", "with:", "href:", "a", "onClick:", "clickFrom:", "attr:", "parents:", "asJQuery", "name", "li", "sorted:", "<", "entities"]}),
 smalltalk.MWMooseGroup);
 
 smalltalk.addMethod(
