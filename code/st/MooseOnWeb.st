@@ -26,7 +26,7 @@ actionClick: anAction
     	MWAddColumn new
         	colId: ((ul asJQuery parent: 'div') attr: 'row');
         	content: (
-              MWResultWidget new 
+              MWResult new 
                   action: anAction; 
                   sourceEntity: self mooseEntity;
                   getResult
@@ -341,7 +341,7 @@ initialize
     MWDelete new.
 ! !
 
-!MWEntryPoint class methodsFor: 'Accesseurs'!
+!MWEntryPoint class methodsFor: 'accessing'!
 
 colorGroup
 	 ^'rgb(255,140,0)'
@@ -356,7 +356,7 @@ colorcolorGroup
 !
 
 restApiLocation
-	^'http://localhost:8080/mooseOnWeb/'
+	^'http://localhost:8080/mooseOnWeb'
 !
 
 urlEntities
@@ -478,7 +478,7 @@ MWMain is the central interface of the package. It's showing and managing the di
 
 addCol: aContent
     self colWidget add: (
-    	MWColumnWidget new 
+    	MWColumn new 
         	content: aContent; 
            	number: (
             	self colWidget size +1
@@ -493,7 +493,7 @@ colReset
 
 colResetWith: aContent
 	self colReset.
-    self colWidget add: (MWColumnWidget new content: aContent).
+    self colWidget add: (MWColumn new content: aContent).
     self render
 !
 
@@ -748,7 +748,7 @@ getProperties
 		options: #{
 			'type' -> 'GET'.
             'success' ->  [ :tmp | self success: tmp].
-			'error' -> [:a :b : c |window alert:'error in getting models list'.Transcript  show: 'error1',a, '2',b,'3',c].
+			'error' -> [window alert:'error in getting entities properties'].
 			'dataType' -> 'json'
 		}.
 !
@@ -801,8 +801,8 @@ renderHeaderOn: html withKey: key withValue: value
 renderOn: html
 
 
-       isFetched ifTrue: [     
-        		div := html ul 
+       div := isFetched ifTrue: [     
+        		html ul 
          			 class: 'unstyled';
           			 with: [self renderContentOn: html] ]
                    ifFalse: [ 
@@ -976,7 +976,7 @@ getResult
 		options: #{
 			'type' -> 'GET'.
             'success' ->  [ :tmp | self success: tmp].
-			'error' -> [:a :b : c |window alert:'error in getting actions result'.Transcript  show: 'error1',a, '2',b,'3',c].
+			'error' -> [ window alert:'error in getting actions result' ].
 			'dataType' -> 'json'
 		}.
 !

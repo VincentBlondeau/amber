@@ -6,13 +6,13 @@ selector: "actionClick:",
 fn: function (anAction){
 var self=this;
 function $MWAddColumn(){return smalltalk.MWAddColumn||(typeof MWAddColumn=="undefined"?nil:MWAddColumn)}
-function $MWResultWidget(){return smalltalk.MWResultWidget||(typeof MWResultWidget=="undefined"?nil:MWResultWidget)}
+function $MWResult(){return smalltalk.MWResult||(typeof MWResult=="undefined"?nil:MWResult)}
 function $MWAnnouncer(){return smalltalk.MWAnnouncer||(typeof MWAnnouncer=="undefined"?nil:MWAnnouncer)}
 return smalltalk.withContext(function($ctx1) { 
 var $1,$3,$4,$2;
 $1=_st($MWAddColumn())._new();
 _st($1)._colId_(_st(_st(_st(self["@ul"])._asJQuery())._parent_("div"))._attr_("row"));
-$3=_st($MWResultWidget())._new();
+$3=_st($MWResult())._new();
 _st($3)._action_(anAction);
 _st($3)._sourceEntity_(self._mooseEntity());
 $4=_st($3)._getResult();
@@ -657,7 +657,7 @@ selector: "restApiLocation",
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
-return "http://localhost:8080/mooseOnWeb/";
+return "http://localhost:8080/mooseOnWeb";
 }, function($ctx1) {$ctx1.fill(self,"restApiLocation",{},smalltalk.MWEntryPoint.klass)})},
 messageSends: []}),
 smalltalk.MWEntryPoint.klass);
@@ -892,10 +892,10 @@ smalltalk.method({
 selector: "addCol:",
 fn: function (aContent){
 var self=this;
-function $MWColumnWidget(){return smalltalk.MWColumnWidget||(typeof MWColumnWidget=="undefined"?nil:MWColumnWidget)}
+function $MWColumn(){return smalltalk.MWColumn||(typeof MWColumn=="undefined"?nil:MWColumn)}
 return smalltalk.withContext(function($ctx1) { 
 var $1,$2;
-$1=_st($MWColumnWidget())._new();
+$1=_st($MWColumn())._new();
 _st($1)._content_(aContent);
 $2=_st($1)._number_(_st(_st(self._colWidget())._size()).__plus((1)));
 _st(self._colWidget())._add_($2);
@@ -939,10 +939,10 @@ smalltalk.method({
 selector: "colResetWith:",
 fn: function (aContent){
 var self=this;
-function $MWColumnWidget(){return smalltalk.MWColumnWidget||(typeof MWColumnWidget=="undefined"?nil:MWColumnWidget)}
+function $MWColumn(){return smalltalk.MWColumn||(typeof MWColumn=="undefined"?nil:MWColumn)}
 return smalltalk.withContext(function($ctx1) { 
 self._colReset();
-_st(self._colWidget())._add_(_st(_st($MWColumnWidget())._new())._content_(aContent));
+_st(self._colWidget())._add_(_st(_st($MWColumn())._new())._content_(aContent));
 self._render();
 return self}, function($ctx1) {$ctx1.fill(self,"colResetWith:",{aContent:aContent},smalltalk.MWMain)})},
 messageSends: ["colReset", "add:", "content:", "new", "colWidget", "render"]}),
@@ -1337,18 +1337,16 @@ selector: "getProperties",
 fn: function (){
 var self=this;
 function $MWEntryPoint(){return smalltalk.MWEntryPoint||(typeof MWEntryPoint=="undefined"?nil:MWEntryPoint)}
-function $Transcript(){return smalltalk.Transcript||(typeof Transcript=="undefined"?nil:Transcript)}
 return smalltalk.withContext(function($ctx1) { 
 _st(jQuery)._ajax_options_(_st(_st(_st(_st($MWEntryPoint())._restApiLocation()).__comma(_st($MWEntryPoint())._urlEntities())).__comma("/")).__comma(self._id()),smalltalk.HashedCollection._from_(["type".__minus_gt("GET"),"success".__minus_gt((function(tmp){
 return smalltalk.withContext(function($ctx2) {
 return self._success_(tmp);
-}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),"error".__minus_gt((function(a,b,c){
+}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),"error".__minus_gt((function(){
 return smalltalk.withContext(function($ctx2) {
-_st(window)._alert_("error in getting models list");
-return _st($Transcript())._show_(_st(_st(_st(_st("error1".__comma(a)).__comma("2")).__comma(b)).__comma("3")).__comma(c));
-}, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),"dataType".__minus_gt("json")]));
+return _st(window)._alert_("error in getting entities properties");
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})})),"dataType".__minus_gt("json")]));
 return self}, function($ctx1) {$ctx1.fill(self,"getProperties",{},smalltalk.MWMooseEntity)})},
-messageSends: ["ajax:options:", ",", "id", "urlEntities", "restApiLocation", "->", "success:", "alert:", "show:"]}),
+messageSends: ["ajax:options:", ",", "id", "urlEntities", "restApiLocation", "->", "success:", "alert:"]}),
 smalltalk.MWMooseEntity);
 
 smalltalk.addMethod(
@@ -1495,9 +1493,8 @@ return smalltalk.withContext(function($ctx2) {
 return self._renderContentOn_(html);
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
 self["@div"]=$3;
-self["@div"];
 } else {
-_st(_st(html)._span())._with_("Loading");
+self["@div"]=_st(_st(html)._span())._with_("Loading");
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html},smalltalk.MWMooseEntity)})},
 messageSends: ["ifTrue:ifFalse:", "class:", "ul", "with:", "renderContentOn:", "span"]}),
@@ -1900,18 +1897,16 @@ selector: "getResult",
 fn: function (){
 var self=this;
 function $MWEntryPoint(){return smalltalk.MWEntryPoint||(typeof MWEntryPoint=="undefined"?nil:MWEntryPoint)}
-function $Transcript(){return smalltalk.Transcript||(typeof Transcript=="undefined"?nil:Transcript)}
 return smalltalk.withContext(function($ctx1) { 
 _st(jQuery)._ajax_options_(_st(_st(_st(_st(_st(_st($MWEntryPoint())._restApiLocation()).__comma(_st($MWEntryPoint())._urlEntities())).__comma("/")).__comma(_st(self._sourceEntity())._id())).__comma("?action=")).__comma(self._action()),smalltalk.HashedCollection._from_(["type".__minus_gt("GET"),"success".__minus_gt((function(tmp){
 return smalltalk.withContext(function($ctx2) {
 return self._success_(tmp);
-}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),"error".__minus_gt((function(a,b,c){
+}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),"error".__minus_gt((function(){
 return smalltalk.withContext(function($ctx2) {
-_st(window)._alert_("error in getting actions result");
-return _st($Transcript())._show_(_st(_st(_st(_st("error1".__comma(a)).__comma("2")).__comma(b)).__comma("3")).__comma(c));
-}, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),"dataType".__minus_gt("json")]));
+return _st(window)._alert_("error in getting actions result");
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})})),"dataType".__minus_gt("json")]));
 return self}, function($ctx1) {$ctx1.fill(self,"getResult",{},smalltalk.MWResult)})},
-messageSends: ["ajax:options:", ",", "action", "id", "sourceEntity", "urlEntities", "restApiLocation", "->", "success:", "alert:", "show:"]}),
+messageSends: ["ajax:options:", ",", "action", "id", "sourceEntity", "urlEntities", "restApiLocation", "->", "success:", "alert:"]}),
 smalltalk.MWResult);
 
 smalltalk.addMethod(

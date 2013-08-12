@@ -8,13 +8,13 @@ category: 'events',
 fn: function (anAction){
 var self=this;
 function $MWAddColumn(){return smalltalk.MWAddColumn||(typeof MWAddColumn=="undefined"?nil:MWAddColumn)}
-function $MWResultWidget(){return smalltalk.MWResultWidget||(typeof MWResultWidget=="undefined"?nil:MWResultWidget)}
+function $MWResult(){return smalltalk.MWResult||(typeof MWResult=="undefined"?nil:MWResult)}
 function $MWAnnouncer(){return smalltalk.MWAnnouncer||(typeof MWAnnouncer=="undefined"?nil:MWAnnouncer)}
 return smalltalk.withContext(function($ctx1) { 
 var $1,$3,$4,$2;
 $1=_st($MWAddColumn())._new();
 _st($1)._colId_(_st(_st(_st(self["@ul"])._asJQuery())._parent_("div"))._attr_("row"));
-$3=_st($MWResultWidget())._new();
+$3=_st($MWResult())._new();
 _st($3)._action_(anAction);
 _st($3)._sourceEntity_(self._mooseEntity());
 $4=_st($3)._getResult();
@@ -22,9 +22,9 @@ $2=_st($1)._content_($4);
 _st(_st($MWAnnouncer())._current())._announce_($2);
 return self}, function($ctx1) {$ctx1.fill(self,"actionClick:",{anAction:anAction},smalltalk.MWActionList)})},
 args: ["anAction"],
-source: "actionClick: anAction\x0a\x09MWAnnouncer current announce: (\x0a    \x09MWAddColumn new\x0a        \x09colId: ((ul asJQuery parent: 'div') attr: 'row');\x0a        \x09content: (\x0a              MWResultWidget new \x0a                  action: anAction; \x0a                  sourceEntity: self mooseEntity;\x0a                  getResult\x0a        )\x0a    )",
+source: "actionClick: anAction\x0a\x09MWAnnouncer current announce: (\x0a    \x09MWAddColumn new\x0a        \x09colId: ((ul asJQuery parent: 'div') attr: 'row');\x0a        \x09content: (\x0a              MWResult new \x0a                  action: anAction; \x0a                  sourceEntity: self mooseEntity;\x0a                  getResult\x0a        )\x0a    )",
 messageSends: ["announce:", "colId:", "attr:", "parent:", "asJQuery", "new", "content:", "action:", "sourceEntity:", "mooseEntity", "getResult", "current"],
-referencedClasses: ["MWAddColumn", "MWResultWidget", "MWAnnouncer"]
+referencedClasses: ["MWAddColumn", "MWResult", "MWAnnouncer"]
 }),
 smalltalk.MWActionList);
 
@@ -801,7 +801,7 @@ smalltalk.MWEntryPoint);
 smalltalk.addMethod(
 smalltalk.method({
 selector: "colorGroup",
-category: 'Accesseurs',
+category: 'accessing',
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
@@ -817,7 +817,7 @@ smalltalk.MWEntryPoint.klass);
 smalltalk.addMethod(
 smalltalk.method({
 selector: "colorItems",
-category: 'Accesseurs',
+category: 'accessing',
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
@@ -833,7 +833,7 @@ smalltalk.MWEntryPoint.klass);
 smalltalk.addMethod(
 smalltalk.method({
 selector: "colorcolorGroup",
-category: 'Accesseurs',
+category: 'accessing',
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
@@ -849,14 +849,14 @@ smalltalk.MWEntryPoint.klass);
 smalltalk.addMethod(
 smalltalk.method({
 selector: "restApiLocation",
-category: 'Accesseurs',
+category: 'accessing',
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
-return "http://localhost:8080/mooseOnWeb/";
+return "http://localhost:8080/mooseOnWeb";
 }, function($ctx1) {$ctx1.fill(self,"restApiLocation",{},smalltalk.MWEntryPoint.klass)})},
 args: [],
-source: "restApiLocation\x0a\x09^'http://localhost:8080/mooseOnWeb/'",
+source: "restApiLocation\x0a\x09^'http://localhost:8080/mooseOnWeb'",
 messageSends: [],
 referencedClasses: []
 }),
@@ -865,7 +865,7 @@ smalltalk.MWEntryPoint.klass);
 smalltalk.addMethod(
 smalltalk.method({
 selector: "urlEntities",
-category: 'Accesseurs',
+category: 'accessing',
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
@@ -881,7 +881,7 @@ smalltalk.MWEntryPoint.klass);
 smalltalk.addMethod(
 smalltalk.method({
 selector: "urlModels",
-category: 'Accesseurs',
+category: 'accessing',
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
@@ -1155,19 +1155,19 @@ selector: "addCol:",
 category: 'accessing',
 fn: function (aContent){
 var self=this;
-function $MWColumnWidget(){return smalltalk.MWColumnWidget||(typeof MWColumnWidget=="undefined"?nil:MWColumnWidget)}
+function $MWColumn(){return smalltalk.MWColumn||(typeof MWColumn=="undefined"?nil:MWColumn)}
 return smalltalk.withContext(function($ctx1) { 
 var $1,$2;
-$1=_st($MWColumnWidget())._new();
+$1=_st($MWColumn())._new();
 _st($1)._content_(aContent);
 $2=_st($1)._number_(_st(_st(self._colWidget())._size()).__plus((1)));
 _st(self._colWidget())._add_($2);
 self._render();
 return self}, function($ctx1) {$ctx1.fill(self,"addCol:",{aContent:aContent},smalltalk.MWMain)})},
 args: ["aContent"],
-source: "addCol: aContent\x0a    self colWidget add: (\x0a    \x09MWColumnWidget new \x0a        \x09content: aContent; \x0a           \x09number: (\x0a            \x09self colWidget size +1\x0a            )\x0a       ).\x0a    self render",
+source: "addCol: aContent\x0a    self colWidget add: (\x0a    \x09MWColumn new \x0a        \x09content: aContent; \x0a           \x09number: (\x0a            \x09self colWidget size +1\x0a            )\x0a       ).\x0a    self render",
 messageSends: ["add:", "content:", "new", "number:", "+", "size", "colWidget", "render"],
-referencedClasses: ["MWColumnWidget"]
+referencedClasses: ["MWColumn"]
 }),
 smalltalk.MWMain);
 
@@ -1217,16 +1217,16 @@ selector: "colResetWith:",
 category: 'accessing',
 fn: function (aContent){
 var self=this;
-function $MWColumnWidget(){return smalltalk.MWColumnWidget||(typeof MWColumnWidget=="undefined"?nil:MWColumnWidget)}
+function $MWColumn(){return smalltalk.MWColumn||(typeof MWColumn=="undefined"?nil:MWColumn)}
 return smalltalk.withContext(function($ctx1) { 
 self._colReset();
-_st(self._colWidget())._add_(_st(_st($MWColumnWidget())._new())._content_(aContent));
+_st(self._colWidget())._add_(_st(_st($MWColumn())._new())._content_(aContent));
 self._render();
 return self}, function($ctx1) {$ctx1.fill(self,"colResetWith:",{aContent:aContent},smalltalk.MWMain)})},
 args: ["aContent"],
-source: "colResetWith: aContent\x0a\x09self colReset.\x0a    self colWidget add: (MWColumnWidget new content: aContent).\x0a    self render",
+source: "colResetWith: aContent\x0a\x09self colReset.\x0a    self colWidget add: (MWColumn new content: aContent).\x0a    self render",
 messageSends: ["colReset", "add:", "content:", "new", "colWidget", "render"],
-referencedClasses: ["MWColumnWidget"]
+referencedClasses: ["MWColumn"]
 }),
 smalltalk.MWMain);
 
@@ -1728,21 +1728,19 @@ category: 'query',
 fn: function (){
 var self=this;
 function $MWEntryPoint(){return smalltalk.MWEntryPoint||(typeof MWEntryPoint=="undefined"?nil:MWEntryPoint)}
-function $Transcript(){return smalltalk.Transcript||(typeof Transcript=="undefined"?nil:Transcript)}
 return smalltalk.withContext(function($ctx1) { 
 _st(jQuery)._ajax_options_(_st(_st(_st(_st($MWEntryPoint())._restApiLocation()).__comma(_st($MWEntryPoint())._urlEntities())).__comma("/")).__comma(self._id()),smalltalk.HashedCollection._from_(["type".__minus_gt("GET"),"success".__minus_gt((function(tmp){
 return smalltalk.withContext(function($ctx2) {
 return self._success_(tmp);
-}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),"error".__minus_gt((function(a,b,c){
+}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),"error".__minus_gt((function(){
 return smalltalk.withContext(function($ctx2) {
-_st(window)._alert_("error in getting models list");
-return _st($Transcript())._show_(_st(_st(_st(_st("error1".__comma(a)).__comma("2")).__comma(b)).__comma("3")).__comma(c));
-}, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),"dataType".__minus_gt("json")]));
+return _st(window)._alert_("error in getting entities properties");
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})})),"dataType".__minus_gt("json")]));
 return self}, function($ctx1) {$ctx1.fill(self,"getProperties",{},smalltalk.MWMooseEntity)})},
 args: [],
-source: "getProperties\x0a\x09jQuery \x0a\x09\x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities, '/', self id\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self success: tmp].\x0a\x09\x09\x09'error' -> [:a :b : c |window alert:'error in getting models list'.Transcript  show: 'error1',a, '2',b,'3',c].\x0a\x09\x09\x09'dataType' -> 'json'\x0a\x09\x09}.",
-messageSends: ["ajax:options:", ",", "id", "urlEntities", "restApiLocation", "->", "success:", "alert:", "show:"],
-referencedClasses: ["MWEntryPoint", "Transcript"]
+source: "getProperties\x0a\x09jQuery \x0a\x09\x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities, '/', self id\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self success: tmp].\x0a\x09\x09\x09'error' -> [window alert:'error in getting entities properties'].\x0a\x09\x09\x09'dataType' -> 'json'\x0a\x09\x09}.",
+messageSends: ["ajax:options:", ",", "id", "urlEntities", "restApiLocation", "->", "success:", "alert:"],
+referencedClasses: ["MWEntryPoint"]
 }),
 smalltalk.MWMooseEntity);
 
@@ -1931,13 +1929,12 @@ return smalltalk.withContext(function($ctx2) {
 return self._renderContentOn_(html);
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
 self["@div"]=$3;
-self["@div"];
 } else {
-_st(_st(html)._span())._with_("Loading");
+self["@div"]=_st(_st(html)._span())._with_("Loading");
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html},smalltalk.MWMooseEntity)})},
 args: ["html"],
-source: "renderOn: html\x0a\x0a\x0a       isFetched ifTrue: [     \x0a        \x09\x09div := html ul \x0a         \x09\x09\x09 class: 'unstyled';\x0a          \x09\x09\x09 with: [self renderContentOn: html] ]\x0a                   ifFalse: [ \x0a                 html span \x0a          \x09\x09\x09with: 'Loading'.\x0a                   \x0a               ]",
+source: "renderOn: html\x0a\x0a\x0a       div := isFetched ifTrue: [     \x0a        \x09\x09html ul \x0a         \x09\x09\x09 class: 'unstyled';\x0a          \x09\x09\x09 with: [self renderContentOn: html] ]\x0a                   ifFalse: [ \x0a                 html span \x0a          \x09\x09\x09with: 'Loading'.\x0a                   \x0a               ]",
 messageSends: ["ifTrue:ifFalse:", "class:", "ul", "with:", "renderContentOn:", "span"],
 referencedClasses: []
 }),
@@ -2478,21 +2475,19 @@ category: 'query',
 fn: function (){
 var self=this;
 function $MWEntryPoint(){return smalltalk.MWEntryPoint||(typeof MWEntryPoint=="undefined"?nil:MWEntryPoint)}
-function $Transcript(){return smalltalk.Transcript||(typeof Transcript=="undefined"?nil:Transcript)}
 return smalltalk.withContext(function($ctx1) { 
 _st(jQuery)._ajax_options_(_st(_st(_st(_st(_st(_st($MWEntryPoint())._restApiLocation()).__comma(_st($MWEntryPoint())._urlEntities())).__comma("/")).__comma(_st(self._sourceEntity())._id())).__comma("?action=")).__comma(self._action()),smalltalk.HashedCollection._from_(["type".__minus_gt("GET"),"success".__minus_gt((function(tmp){
 return smalltalk.withContext(function($ctx2) {
 return self._success_(tmp);
-}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),"error".__minus_gt((function(a,b,c){
+}, function($ctx2) {$ctx2.fillBlock({tmp:tmp},$ctx1)})})),"error".__minus_gt((function(){
 return smalltalk.withContext(function($ctx2) {
-_st(window)._alert_("error in getting actions result");
-return _st($Transcript())._show_(_st(_st(_st(_st("error1".__comma(a)).__comma("2")).__comma(b)).__comma("3")).__comma(c));
-}, function($ctx2) {$ctx2.fillBlock({a:a,b:b,c:c},$ctx1)})})),"dataType".__minus_gt("json")]));
+return _st(window)._alert_("error in getting actions result");
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})})),"dataType".__minus_gt("json")]));
 return self}, function($ctx1) {$ctx1.fill(self,"getResult",{},smalltalk.MWResult)})},
 args: [],
-source: "getResult\x0a\x09jQuery \x0a\x09\x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/',self sourceEntity id, '?action=',self action\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self success: tmp].\x0a\x09\x09\x09'error' -> [:a :b : c |window alert:'error in getting actions result'.Transcript  show: 'error1',a, '2',b,'3',c].\x0a\x09\x09\x09'dataType' -> 'json'\x0a\x09\x09}.",
-messageSends: ["ajax:options:", ",", "action", "id", "sourceEntity", "urlEntities", "restApiLocation", "->", "success:", "alert:", "show:"],
-referencedClasses: ["MWEntryPoint", "Transcript"]
+source: "getResult\x0a\x09jQuery \x0a\x09\x09ajax: MWEntryPoint restApiLocation, MWEntryPoint urlEntities,'/',self sourceEntity id, '?action=',self action\x0a\x09\x09options: #{\x0a\x09\x09\x09'type' -> 'GET'.\x0a            'success' ->  [ :tmp | self success: tmp].\x0a\x09\x09\x09'error' -> [ window alert:'error in getting actions result' ].\x0a\x09\x09\x09'dataType' -> 'json'\x0a\x09\x09}.",
+messageSends: ["ajax:options:", ",", "action", "id", "sourceEntity", "urlEntities", "restApiLocation", "->", "success:", "alert:"],
+referencedClasses: ["MWEntryPoint"]
 }),
 smalltalk.MWResult);
 

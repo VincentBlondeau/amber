@@ -49,10 +49,10 @@ html[xmlns] .clearfix {
   border-radius: 0;
   padding: 0 10px;
 }
-#helios .CodeMirror pre {
+/*#helios .CodeMirror pre {
   font-family: Menlo, Monaco, "Lucida Console", Courier, monospace;
   line-height: 16px;
-}
+}*/
 #helios .CodeMirror-gutter.stops {
   width: 20px;
 }

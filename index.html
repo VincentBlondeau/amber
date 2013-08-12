@@ -48,7 +48,7 @@
       }});
     </script>
   </head>
-  
+
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
@@ -61,11 +61,17 @@
           </button>
           <a class="brand">Moose On the Web</a>
           <div class="nav-collapse collapse">
-            <ul class="nav">	      
+            <ul class="nav">
 				<li class="dropdown" id="models-menu">
 					<!-- placeholder for the models list -->
 				</li>
-				<li><a href="#" onclick="smalltalk.Browser._open();">DEV</a></li>
+
+              <li class="button" id="importButton">
+               <a  data-toggle='modal' href=#importModal onClick='smalltalk.MWImporter._new();'>Import MSE</a>
+              </li>
+              <li class="button" id="deleteButton">
+              </li>
+			  <li><a href="#" onclick="smalltalk.Browser._open();">DEV</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -74,9 +80,22 @@
     <!-- search Modal -->
     <div id="searchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     </div>
+	<!-- Import modal -->
+    <div id="importModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <!--<form target="foo" type="multipart/form-data">
+	<input type="file">
+	<input type="submit">
+      </form>
+      <iframe src='http://test' style='display:none' name='foo'></iframe>-->
+    </div>
     <div class="container-fluid" id="main">
+      <div class="row-fluid">
+	<div class="span12">
+	  Please choose a model !
+	</div>
+      </div>
     </div><!--/.fluid-container-->
-    
+
     <!-- Le javascript
 	 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
