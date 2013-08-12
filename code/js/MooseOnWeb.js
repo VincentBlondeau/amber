@@ -853,10 +853,10 @@ category: 'accessing',
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
-return "http://localhost:8080/mooseOnWeb";
+return "http://37.139.2.203/API";
 }, function($ctx1) {$ctx1.fill(self,"restApiLocation",{},smalltalk.MWEntryPoint.klass)})},
 args: [],
-source: "restApiLocation\x0a\x09^'http://localhost:8080/mooseOnWeb'",
+source: "restApiLocation\x0a\x09^'http://37.139.2.203/API'",
 messageSends: [],
 referencedClasses: []
 }),
@@ -2978,7 +2978,7 @@ var self=this;
 var dropdown;
 function $MWSearch(){return smalltalk.MWSearch||(typeof MWSearch=="undefined"?nil:MWSearch)}
 return smalltalk.withContext(function($ctx1) { 
-var $1,$2,$3,$5,$6,$7,$8,$4;
+var $1,$2,$3,$5,$6,$4;
 $1=_st(content)._a();
 _st($1)._class_("btn dropdown-toggle");
 _st($1)._at_put_("data-toggle","dropdown");
@@ -2996,21 +2996,18 @@ $5=_st(elem)._a();
 _st($5)._href_("#");
 _st($5)._onClick_((function(){
 return smalltalk.withContext(function($ctx4) {
-$6=_st(dropdown)._asJQuery();
-_st($6)._empty();
-$7=_st($6)._append_(_st(op)._asString());
-$7;
+_st(_st(_st(dropdown)._asJQuery())._context())._innerHTML_(_st(op)._asString());
 self["@selectedOperator"]=op;
 return self["@selectedOperator"];
 }, function($ctx4) {$ctx4.fillBlock({},$ctx3)})}));
-$8=_st($5)._with_(op);
-return _st(_st(elem)._li())._with_($8);
+$6=_st($5)._with_(op);
+return _st(_st(elem)._li())._with_($6);
 }, function($ctx3) {$ctx3.fillBlock({op:op},$ctx2)})}));
 }, function($ctx2) {$ctx2.fillBlock({elem:elem},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderOperatorsOn:",{content:content,dropdown:dropdown},smalltalk.MWSearch)})},
 args: ["content"],
-source: "renderOperatorsOn: content\x0a\x09| dropdown |\x0a\x09dropdown := content a class: 'btn dropdown-toggle';\x0a\x09\x09at: 'data-toggle' put:'dropdown';\x0a\x09\x09href:'#'.\x0a    dropdown with: 'Choose an operator'.\x0a\x09dropdown with: (content span class: 'caret').\x0a\x09content ul class: 'dropdown-menu';\x0a\x09\x09with: [ :elem |\x0a        \x09MWSearch operatorsDictionnary keys do: [ :op  | \x0a                \x09elem li\x0a                \x09\x09with: (\x0a                        \x09elem a \x0a                            \x09href: '#'; \x0a                                onClick: [ dropdown asJQuery empty; append: op asString. selectedOperator:= op ];\x0a                               \x09with: op\x0a                          )\x0a    \x09\x09\x09]\x0a        ]",
-messageSends: ["class:", "a", "at:put:", "href:", "with:", "span", "ul", "do:", "onClick:", "empty", "asJQuery", "append:", "asString", "li", "keys", "operatorsDictionnary"],
+source: "renderOperatorsOn: content\x0a\x09| dropdown |\x0a\x09dropdown := content a class: 'btn dropdown-toggle';\x0a\x09\x09at: 'data-toggle' put:'dropdown';\x0a\x09\x09href:'#'.\x0a    dropdown with: 'Choose an operator'.\x0a\x09dropdown with: (content span class: 'caret').\x0a\x09content ul class: 'dropdown-menu';\x0a\x09\x09with: [ :elem |\x0a        \x09MWSearch operatorsDictionnary keys do: [ :op  | \x0a                \x09elem li\x0a                \x09\x09with: (\x0a                        \x09elem a \x0a                            \x09href: '#'; \x0a                                onClick: [ dropdown asJQuery context innerHTML: op asString. selectedOperator:= op ];\x0a                               \x09with: op\x0a                          )\x0a    \x09\x09\x09]\x0a        ]",
+messageSends: ["class:", "a", "at:put:", "href:", "with:", "span", "ul", "do:", "onClick:", "innerHTML:", "asString", "context", "asJQuery", "li", "keys", "operatorsDictionnary"],
 referencedClasses: ["MWSearch"]
 }),
 smalltalk.MWSearch);

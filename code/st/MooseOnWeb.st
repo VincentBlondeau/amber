@@ -356,7 +356,7 @@ colorcolorGroup
 !
 
 restApiLocation
-	^'http://localhost:8080/mooseOnWeb'
+	^'http://37.139.2.203/API'
 !
 
 urlEntities
@@ -1187,7 +1187,7 @@ renderOperatorsOn: content
                 		with: (
                         	elem a 
                             	href: '#'; 
-                                onClick: [ dropdown asJQuery empty; append: op asString. selectedOperator:= op ];
+                                onClick: [ dropdown asJQuery context innerHTML: op asString. selectedOperator:= op ];
                                	with: op
                           )
     			]
