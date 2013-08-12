@@ -2857,19 +2857,8 @@ selector: "clearKeydownEvent",
 fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
-var $1;
-_st(_st(window)._jQuery_("body"))._keydown_((function(e){
-return smalltalk.withContext(function($ctx2) {
-$1=_st(_st(_st(e)._keyCode()).__gt_eq((37)))._and_((function(){
-return smalltalk.withContext(function($ctx3) {
-return _st(_st(e)._keyCode()).__lt_eq((40));
-}, function($ctx3) {$ctx3.fillBlock({},$ctx2)})}));
-if(smalltalk.assert($1)){
-return false;
-};
-}, function($ctx2) {$ctx2.fillBlock({e:e},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"clearKeydownEvent",{},smalltalk.HLManager.klass)})},
-messageSends: ["keydown:", "ifTrue:", "and:", "<=", "keyCode", ">=", "jQuery:"]}),
+messageSends: []}),
 smalltalk.HLManager.klass);
 
 smalltalk.addMethod(

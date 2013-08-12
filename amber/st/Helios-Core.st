@@ -1335,9 +1335,9 @@ clearKeydownEvent
 	"Prevent default keydown event with arrow key from scrolling the parent page
 	when helios is run inside a frame."
 	
-	(window jQuery: 'body') keydown: [ :e | 
+	"(window jQuery: 'body') keydown: [ :e | 
 		(e keyCode >= 37 and: [ e keyCode <= 40 ])
-			ifTrue: [ false ] ]
+			ifTrue: [ false ] ]"
 ! !
 
 HLWidget subclass: #HLModalWidget
