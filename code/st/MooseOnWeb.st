@@ -8,7 +8,7 @@ A `ColumnItem` is a element able to be in a column.!
 !MWAbstractItem methodsFor: 'accessing'!
 
 getColumnNumber
-	^(htmlAnchor asJQuery parent: 'div') attr: 'row'
+	^(htmlAnchor asJQuery parents: 'div')first attr: 'row'
 ! !
 
 MWAbstractItem subclass: #MWActionList
@@ -270,13 +270,12 @@ renderContentOn: html
         	with:  
             	[ :li  |
                   self renderHeaderOn: li withKey: key withValue: value.
-                  li span with: ( value )
+                  li with: value
  				]
     ].
 !
 
 renderHeaderOn: html withKey: key withValue: value
-	"Cannot be inlined : too much recursion!!"
 	(value isKindOf: MWMooseGroup) ifTrue: [
     	html a
       		href: '#';
@@ -296,8 +295,7 @@ renderOn: html
 		class: 'unstyled';
 		with: [self renderContentOn: html] ]
 	ifFalse: [ 
-		html span 
-		with: 'Loading'.
+		html with: 'Loading'.
 		
 	]
 ! !
@@ -405,7 +403,7 @@ renderContentOn: html
     	  with:
     		  (html a
    				   href: '#';
-   				   onClick: [ e clickFrom: self getColumnNumber]; 
+   				   onClick: [ e clickFrom: self getColumnNumber ]; 
    				   with: e name
      			 )
     ]
@@ -516,6 +514,30 @@ renderOn: html
 Widget subclass: #MWAbstractModal
 	instanceVariableNames: ''
 	package: 'MooseOnWeb'!
+!MWAbstractModal commentStamp!
+A `MWAbstractModal` contains methods for boostrap modal!
+
+!MWAbstractModal methodsFor: 'rendering'!
+
+render
+	(self cssId asJQuery) empty.
+	self appendToJQuery: (self cssId) asJQuery
+!
+
+renderHeaderOn: html title: aTitle
+	html div
+    	class:'modal-header';
+        with: [ :el |
+        	el button 
+            	type:'button';
+            	class:'close';
+            	at: 'data-dismiss' put:'modal';
+            	at: 'aria-hidden' put:'true';
+	            with: '×'.
+			el h3 
+                with: aTitle.
+        ]
+! !
 
 MWAbstractModal subclass: #MWImporter
 	instanceVariableNames: ''
@@ -562,59 +584,57 @@ postSuccess: data
 
 !MWImporter methodsFor: 'rendering'!
 
-render
-	(self cssId asJQuery) empty.
-	self appendToJQuery: (self cssId) asJQuery
-!
-
 renderBodyOn: html
 	| form frame |
+	window at: 'amber_upload' put: [ window alert: 'coucou' ].
+	
 		html div class:' modal-body'; at:'max-height' put: '200'; with: [ :el |
          	form := el form 
-            	target:'importIframe';
+            	"target:'importIframe';"
                 method:'post';
                 action: MWEntryPoint restApiLocation, MWEntryPoint urlModels;
                 at: 'enctype' put: 'multipart/form-data';
                 at: 'encoding'  put: 'multipart/form-data';
-                with: [ :content | self renderFormOn: content ].
-           frame := el iframe 
-            	src: 'about:none';
-                style: 'display:none';
-                name: 'importIframe'
+                with: [ :content | 
+					self renderFormOn: content.
+					frame := el iframe 
+						id: 'importIframe';
+						"at: 'onload' put: 'amber_upload_done()';"
+    	        		src: 'about:blank';
+        	        	style: 'display:none';
+            	    	name: 'importIframe';
+						yourself
+					];
+				yourself.
+			form onSubmit: [
+				window alert: 'submit'.
+				form target:'importIframe'.
+				'importIframe' asJQuery at: 'onload' put: [ window alert: 'coucou' ].
+				console log: frame.
+			]
+			"frame asJQuery on: 'load' do: [ window alert: 'coucou' ]"
 		]
 !
 
 renderFormOn: html
 	html fieldset with: [ :content |
   		content label with: 'Model Name:'.
-        content input type:'text'; name: 'nameModel'; id:'nameModel'; placeholder: 'Moose Model'; at: 'required' put: nil.
+        content input 
+			type:'text'; 
+			name: 'nameModel'; 
+			id:'nameModel'; 
+			placeholder: 'Moose Model'; 
+			at: 'required' put: nil.
         content label with: 'MSE file to upload:'.
   		content input type:'file'; name:'mseFile'.
         content div class:'form-actions'; with:
   			(content button type:'submit'; class:'btn btn-primary'; with: 'Submit'; onClick: [
-              		('#nameModel' asJQuery val size = 0) ifFalse: [
-                    self postSuccess: '']
-  				]).
+              		('#nameModel' asJQuery val size = 0) ifFalse: [self postSuccess: '']])
 	]
 !
 
-renderHeaderOn: html
-	html div
-    	class:'modal-header';
-        with: [ :el |
-        	el button 
-            	type:'button';
-            	class:'close';
-            	at: 'data-dismiss' put:'modal';
-            	at: 'aria-hidden' put:'true';
-	            with: '×'.
-			el h3 
-                with: 'Import MSE'.
-        ].
-!
-
 renderOn: html
-	self renderHeaderOn: html.
+	self renderHeaderOn: html title: 'Import MSE'.
     self renderBodyOn: html.
 ! !
 
@@ -693,7 +713,7 @@ updateListSuccess: actions
     self render
 ! !
 
-!MWSearch methodsFor: 'initialize'!
+!MWSearch methodsFor: 'initialization'!
 
 initialize
 	super initialize.
@@ -703,11 +723,6 @@ initialize
 ! !
 
 !MWSearch methodsFor: 'rendering'!
-
-render
-	(self cssId asJQuery) empty.
-	self appendToJQuery: (self cssId) asJQuery
-!
 
 renderActionListOn: content 
 	| dropdown |
@@ -750,24 +765,8 @@ renderFooterOn: html
         ]
 !
 
-renderHeaderOn: html
-	html div
-    	class:'modal-header';
-        with: [ :el |
-        	el button 
-            	type:'button';
-            	class:'close';
-            	at: 'data-dismiss' put:'modal';
-            	at: 'aria-hidden' put:'true';
-	            with: '×'.
-			el h3 
-            	id:'myModalLabel'; 
-                with: 'Search'.
-        ].
-!
-
 renderOn: html
-	self renderHeaderOn: html.
+	self renderHeaderOn: html title: 'Search'.
     self renderBodyOn: html.
     self renderFooterOn: html.
 !
@@ -1151,8 +1150,8 @@ initialize
 
 colManage: announcement
 		| begin end |
-        begin :=  announcement colId asNumber + 1.
-        end := self colWidget size +1.
+        begin :=  announcement colId asNumber +1.
+        end := self colWidget size.
 		self colWidget removeFrom: begin to: end.
     	self addCol: announcement content.
 !

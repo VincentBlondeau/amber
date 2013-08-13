@@ -9,12 +9,12 @@ fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
 var $1;
-$1=_st(_st(_st(self["@htmlAnchor"])._asJQuery())._parent_("div"))._attr_("row");
+$1=_st(_st(_st(_st(self["@htmlAnchor"])._asJQuery())._parents_("div"))._first())._attr_("row");
 return $1;
 }, function($ctx1) {$ctx1.fill(self,"getColumnNumber",{},smalltalk.MWAbstractItem)})},
 args: [],
-source: "getColumnNumber\x0a\x09^(htmlAnchor asJQuery parent: 'div') attr: 'row'",
-messageSends: ["attr:", "parent:", "asJQuery"],
+source: "getColumnNumber\x0a\x09^(htmlAnchor asJQuery parents: 'div')first attr: 'row'",
+messageSends: ["attr:", "first", "parents:", "asJQuery"],
 referencedClasses: []
 }),
 smalltalk.MWAbstractItem);
@@ -584,13 +584,13 @@ return smalltalk.withContext(function($ctx2) {
 return _st(_st(html)._li())._with_((function(li){
 return smalltalk.withContext(function($ctx3) {
 self._renderHeaderOn_withKey_withValue_(li,key,value);
-return _st(_st(li)._span())._with_(value);
+return _st(li)._with_(value);
 }, function($ctx3) {$ctx3.fillBlock({li:li},$ctx2)})}));
 }, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderContentOn:",{html:html},smalltalk.MWMooseEntity)})},
 args: ["html"],
-source: "renderContentOn: html\x0a\x09self properties keysAndValuesDo: [ :key :value |\x0a    \x09html li \x0a        \x09with:  \x0a            \x09[ :li  |\x0a                  self renderHeaderOn: li withKey: key withValue: value.\x0a                  li span with: ( value )\x0a \x09\x09\x09\x09]\x0a    ].",
-messageSends: ["keysAndValuesDo:", "with:", "renderHeaderOn:withKey:withValue:", "span", "li", "properties"],
+source: "renderContentOn: html\x0a\x09self properties keysAndValuesDo: [ :key :value |\x0a    \x09html li \x0a        \x09with:  \x0a            \x09[ :li  |\x0a                  self renderHeaderOn: li withKey: key withValue: value.\x0a                  li with: value\x0a \x09\x09\x09\x09]\x0a    ].",
+messageSends: ["keysAndValuesDo:", "with:", "renderHeaderOn:withKey:withValue:", "li", "properties"],
 referencedClasses: []
 }),
 smalltalk.MWMooseEntity);
@@ -624,7 +624,7 @@ $5;
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:withKey:withValue:",{html:html,key:key,value:value},smalltalk.MWMooseEntity)})},
 args: ["html", "key", "value"],
-source: "renderHeaderOn: html withKey: key withValue: value\x0a\x09\x22Cannot be inlined : too much recursion!\x22\x0a\x09(value isKindOf: MWMooseGroup) ifTrue: [\x0a    \x09html a\x0a      \x09\x09href: '#';\x0a      \x09\x09onClick: [ value clickFrom: self getColumnNumber ];\x0a      \x09\x09with: (key, ' : ');\x0a      \x09\x09style: ('color: ', MWEntryPoint colorGroup)  \x0a\x09] ifFalse: [  \x0a  \x09\x09html span\x0a  \x09\x09\x09style: ('color: ', MWEntryPoint colorItems);\x0a  \x09\x09\x09with: key, ' : ' .\x0a\x09].",
+source: "renderHeaderOn: html withKey: key withValue: value\x0a\x09(value isKindOf: MWMooseGroup) ifTrue: [\x0a    \x09html a\x0a      \x09\x09href: '#';\x0a      \x09\x09onClick: [ value clickFrom: self getColumnNumber ];\x0a      \x09\x09with: (key, ' : ');\x0a      \x09\x09style: ('color: ', MWEntryPoint colorGroup)  \x0a\x09] ifFalse: [  \x0a  \x09\x09html span\x0a  \x09\x09\x09style: ('color: ', MWEntryPoint colorItems);\x0a  \x09\x09\x09with: key, ' : ' .\x0a\x09].",
 messageSends: ["ifTrue:ifFalse:", "href:", "a", "onClick:", "clickFrom:", "getColumnNumber", "with:", ",", "style:", "colorGroup", "colorItems", "span", "isKindOf:"],
 referencedClasses: ["MWEntryPoint", "MWMooseGroup"]
 }),
@@ -648,12 +648,12 @@ return self._renderContentOn_(html);
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
 self["@htmlAnchor"]=$3;
 } else {
-self["@htmlAnchor"]=_st(_st(html)._span())._with_("Loading");
+self["@htmlAnchor"]=_st(html)._with_("Loading");
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html},smalltalk.MWMooseEntity)})},
 args: ["html"],
-source: "renderOn: html\x0a\x09htmlAnchor := isFetched ifTrue: [     \x0a\x09\x09html ul \x0a\x09\x09class: 'unstyled';\x0a\x09\x09with: [self renderContentOn: html] ]\x0a\x09ifFalse: [ \x0a\x09\x09html span \x0a\x09\x09with: 'Loading'.\x0a\x09\x09\x0a\x09]",
-messageSends: ["ifTrue:ifFalse:", "class:", "ul", "with:", "renderContentOn:", "span"],
+source: "renderOn: html\x0a\x09htmlAnchor := isFetched ifTrue: [     \x0a\x09\x09html ul \x0a\x09\x09class: 'unstyled';\x0a\x09\x09with: [self renderContentOn: html] ]\x0a\x09ifFalse: [ \x0a\x09\x09html with: 'Loading'.\x0a\x09\x09\x0a\x09]",
+messageSends: ["ifTrue:ifFalse:", "class:", "ul", "with:", "renderContentOn:"],
 referencedClasses: []
 }),
 smalltalk.MWMooseEntity);
@@ -1040,7 +1040,7 @@ return _st(_st(html)._li())._with_($2);
 }, function($ctx2) {$ctx2.fillBlock({e:e},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderContentOn:",{html:html},smalltalk.MWMooseGroup)})},
 args: ["html"],
-source: "renderContentOn: html\x0a    (self entities sorted: [:a :b | a name < b name ] ) do: [ :e |\x0a      html li \x0a    \x09  with:\x0a    \x09\x09  (html a\x0a   \x09\x09\x09\x09   href: '#';\x0a   \x09\x09\x09\x09   onClick: [ e clickFrom: self getColumnNumber]; \x0a   \x09\x09\x09\x09   with: e name\x0a     \x09\x09\x09 )\x0a    ]",
+source: "renderContentOn: html\x0a    (self entities sorted: [:a :b | a name < b name ] ) do: [ :e |\x0a      html li \x0a    \x09  with:\x0a    \x09\x09  (html a\x0a   \x09\x09\x09\x09   href: '#';\x0a   \x09\x09\x09\x09   onClick: [ e clickFrom: self getColumnNumber ]; \x0a   \x09\x09\x09\x09   with: e name\x0a     \x09\x09\x09 )\x0a    ]",
 messageSends: ["do:", "with:", "href:", "a", "onClick:", "clickFrom:", "getColumnNumber", "name", "li", "sorted:", "<", "entities"],
 referencedClasses: []
 }),
@@ -1392,6 +1392,53 @@ smalltalk.MWResult);
 
 
 smalltalk.addClass('MWAbstractModal', smalltalk.Widget, [], 'MooseOnWeb');
+smalltalk.MWAbstractModal.comment="A `MWAbstractModal` contains methods for boostrap modal";
+smalltalk.addMethod(
+smalltalk.method({
+selector: "render",
+category: 'rendering',
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { 
+_st(_st(self._cssId())._asJQuery())._empty();
+self._appendToJQuery_(_st(self._cssId())._asJQuery());
+return self}, function($ctx1) {$ctx1.fill(self,"render",{},smalltalk.MWAbstractModal)})},
+args: [],
+source: "render\x0a\x09(self cssId asJQuery) empty.\x0a\x09self appendToJQuery: (self cssId) asJQuery",
+messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"],
+referencedClasses: []
+}),
+smalltalk.MWAbstractModal);
+
+smalltalk.addMethod(
+smalltalk.method({
+selector: "renderHeaderOn:title:",
+category: 'rendering',
+fn: function (html,aTitle){
+var self=this;
+return smalltalk.withContext(function($ctx1) { 
+var $1,$3,$4,$2;
+$1=_st(html)._div();
+_st($1)._class_("modal-header");
+$2=_st($1)._with_((function(el){
+return smalltalk.withContext(function($ctx2) {
+$3=_st(el)._button();
+_st($3)._type_("button");
+_st($3)._class_("close");
+_st($3)._at_put_("data-dismiss","modal");
+_st($3)._at_put_("aria-hidden","true");
+$4=_st($3)._with_("×");
+$4;
+return _st(_st(el)._h3())._with_(aTitle);
+}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:title:",{html:html,aTitle:aTitle},smalltalk.MWAbstractModal)})},
+args: ["html", "aTitle"],
+source: "renderHeaderOn: html title: aTitle\x0a\x09html div\x0a    \x09class:'modal-header';\x0a        with: [ :el |\x0a        \x09el button \x0a            \x09type:'button';\x0a            \x09class:'close';\x0a            \x09at: 'data-dismiss' put:'modal';\x0a            \x09at: 'aria-hidden' put:'true';\x0a\x09            with: '×'.\x0a\x09\x09\x09el h3 \x0a                with: aTitle.\x0a        ]",
+messageSends: ["class:", "div", "with:", "type:", "button", "at:put:", "h3"],
+referencedClasses: []
+}),
+smalltalk.MWAbstractModal);
+
 
 
 smalltalk.addClass('MWImporter', smalltalk.MWAbstractModal, [], 'MooseOnWeb');
@@ -1478,23 +1525,6 @@ smalltalk.MWImporter);
 
 smalltalk.addMethod(
 smalltalk.method({
-selector: "render",
-category: 'rendering',
-fn: function (){
-var self=this;
-return smalltalk.withContext(function($ctx1) { 
-_st(_st(self._cssId())._asJQuery())._empty();
-self._appendToJQuery_(_st(self._cssId())._asJQuery());
-return self}, function($ctx1) {$ctx1.fill(self,"render",{},smalltalk.MWImporter)})},
-args: [],
-source: "render\x0a\x09(self cssId asJQuery) empty.\x0a\x09self appendToJQuery: (self cssId) asJQuery",
-messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"],
-referencedClasses: []
-}),
-smalltalk.MWImporter);
-
-smalltalk.addMethod(
-smalltalk.method({
 selector: "renderBodyOn:",
 category: 'rendering',
 fn: function (html){
@@ -1503,34 +1533,50 @@ var form,frame;
 function $MWEntryPoint(){return smalltalk.MWEntryPoint||(typeof MWEntryPoint=="undefined"?nil:MWEntryPoint)}
 return smalltalk.withContext(function($ctx1) { 
 var $1,$3,$4,$5,$6,$2;
+_st(window)._at_put_("amber_upload",(function(){
+return smalltalk.withContext(function($ctx2) {
+return _st(window)._alert_("coucou");
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
 $1=_st(html)._div();
 _st($1)._class_(" modal-body");
 _st($1)._at_put_("max-height","200");
 $2=_st($1)._with_((function(el){
 return smalltalk.withContext(function($ctx2) {
 $3=_st(el)._form();
-_st($3)._target_("importIframe");
 _st($3)._method_("post");
 _st($3)._action_(_st(_st($MWEntryPoint())._restApiLocation()).__comma(_st($MWEntryPoint())._urlModels()));
 _st($3)._at_put_("enctype","multipart/form-data");
 _st($3)._at_put_("encoding","multipart/form-data");
-$4=_st($3)._with_((function(content){
+_st($3)._with_((function(content){
 return smalltalk.withContext(function($ctx3) {
-return self._renderFormOn_(content);
-}, function($ctx3) {$ctx3.fillBlock({content:content},$ctx2)})}));
-form=$4;
-form;
-$5=_st(el)._iframe();
-_st($5)._src_("about:none");
-_st($5)._style_("display:none");
-$6=_st($5)._name_("importIframe");
-frame=$6;
+self._renderFormOn_(content);
+$4=_st(el)._iframe();
+_st($4)._id_("importIframe");
+_st($4)._src_("about:blank");
+_st($4)._style_("display:none");
+_st($4)._name_("importIframe");
+$5=_st($4)._yourself();
+frame=$5;
 return frame;
+}, function($ctx3) {$ctx3.fillBlock({content:content},$ctx2)})}));
+$6=_st($3)._yourself();
+form=$6;
+form;
+return _st(form)._onSubmit_((function(){
+return smalltalk.withContext(function($ctx3) {
+_st(window)._alert_("submit");
+_st(form)._target_("importIframe");
+_st("importIframe"._asJQuery())._at_put_("onload",(function(){
+return smalltalk.withContext(function($ctx4) {
+return _st(window)._alert_("coucou");
+}, function($ctx4) {$ctx4.fillBlock({},$ctx3)})}));
+return _st(console)._log_(frame);
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2)})}));
 }, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderBodyOn:",{html:html,form:form,frame:frame},smalltalk.MWImporter)})},
 args: ["html"],
-source: "renderBodyOn: html\x0a\x09| form frame |\x0a\x09\x09html div class:' modal-body'; at:'max-height' put: '200'; with: [ :el |\x0a         \x09form := el form \x0a            \x09target:'importIframe';\x0a                method:'post';\x0a                action: MWEntryPoint restApiLocation, MWEntryPoint urlModels;\x0a                at: 'enctype' put: 'multipart/form-data';\x0a                at: 'encoding'  put: 'multipart/form-data';\x0a                with: [ :content | self renderFormOn: content ].\x0a           frame := el iframe \x0a            \x09src: 'about:none';\x0a                style: 'display:none';\x0a                name: 'importIframe'\x0a\x09\x09]",
-messageSends: ["class:", "div", "at:put:", "with:", "target:", "form", "method:", "action:", ",", "urlModels", "restApiLocation", "renderFormOn:", "src:", "iframe", "style:", "name:"],
+source: "renderBodyOn: html\x0a\x09| form frame |\x0a\x09window at: 'amber_upload' put: [ window alert: 'coucou' ].\x0a\x09\x0a\x09\x09html div class:' modal-body'; at:'max-height' put: '200'; with: [ :el |\x0a         \x09form := el form \x0a            \x09\x22target:'importIframe';\x22\x0a                method:'post';\x0a                action: MWEntryPoint restApiLocation, MWEntryPoint urlModels;\x0a                at: 'enctype' put: 'multipart/form-data';\x0a                at: 'encoding'  put: 'multipart/form-data';\x0a                with: [ :content | \x0a\x09\x09\x09\x09\x09self renderFormOn: content.\x0a\x09\x09\x09\x09\x09frame := el iframe \x0a\x09\x09\x09\x09\x09\x09id: 'importIframe';\x0a\x09\x09\x09\x09\x09\x09\x22at: 'onload' put: 'amber_upload_done()';\x22\x0a    \x09        \x09\x09src: 'about:blank';\x0a        \x09        \x09style: 'display:none';\x0a            \x09    \x09name: 'importIframe';\x0a\x09\x09\x09\x09\x09\x09yourself\x0a\x09\x09\x09\x09\x09];\x0a\x09\x09\x09\x09yourself.\x0a\x09\x09\x09form onSubmit: [\x0a\x09\x09\x09\x09window alert: 'submit'.\x0a\x09\x09\x09\x09form target:'importIframe'.\x0a\x09\x09\x09\x09'importIframe' asJQuery at: 'onload' put: [ window alert: 'coucou' ].\x0a\x09\x09\x09\x09console log: frame.\x0a\x09\x09\x09]\x0a\x09\x09\x09\x22frame asJQuery on: 'load' do: [ window alert: 'coucou' ]\x22\x0a\x09\x09]",
+messageSends: ["at:put:", "alert:", "class:", "div", "with:", "method:", "form", "action:", ",", "urlModels", "restApiLocation", "renderFormOn:", "id:", "iframe", "src:", "style:", "name:", "yourself", "onSubmit:", "target:", "asJQuery", "log:"],
 referencedClasses: ["MWEntryPoint"]
 }),
 smalltalk.MWImporter);
@@ -1576,37 +1622,8 @@ return $6;
 }, function($ctx2) {$ctx2.fillBlock({content:content},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderFormOn:",{html:html},smalltalk.MWImporter)})},
 args: ["html"],
-source: "renderFormOn: html\x0a\x09html fieldset with: [ :content |\x0a  \x09\x09content label with: 'Model Name:'.\x0a        content input type:'text'; name: 'nameModel'; id:'nameModel'; placeholder: 'Moose Model'; at: 'required' put: nil.\x0a        content label with: 'MSE file to upload:'.\x0a  \x09\x09content input type:'file'; name:'mseFile'.\x0a        content div class:'form-actions'; with:\x0a  \x09\x09\x09(content button type:'submit'; class:'btn btn-primary'; with: 'Submit'; onClick: [\x0a              \x09\x09('#nameModel' asJQuery val size = 0) ifFalse: [\x0a                    self postSuccess: '']\x0a  \x09\x09\x09\x09]).\x0a\x09]",
+source: "renderFormOn: html\x0a\x09html fieldset with: [ :content |\x0a  \x09\x09content label with: 'Model Name:'.\x0a        content input \x0a\x09\x09\x09type:'text'; \x0a\x09\x09\x09name: 'nameModel'; \x0a\x09\x09\x09id:'nameModel'; \x0a\x09\x09\x09placeholder: 'Moose Model'; \x0a\x09\x09\x09at: 'required' put: nil.\x0a        content label with: 'MSE file to upload:'.\x0a  \x09\x09content input type:'file'; name:'mseFile'.\x0a        content div class:'form-actions'; with:\x0a  \x09\x09\x09(content button type:'submit'; class:'btn btn-primary'; with: 'Submit'; onClick: [\x0a              \x09\x09('#nameModel' asJQuery val size = 0) ifFalse: [self postSuccess: '']])\x0a\x09]",
 messageSends: ["with:", "label", "type:", "input", "name:", "id:", "placeholder:", "at:put:", "class:", "div", "button", "onClick:", "ifFalse:", "postSuccess:", "=", "size", "val", "asJQuery", "fieldset"],
-referencedClasses: []
-}),
-smalltalk.MWImporter);
-
-smalltalk.addMethod(
-smalltalk.method({
-selector: "renderHeaderOn:",
-category: 'rendering',
-fn: function (html){
-var self=this;
-return smalltalk.withContext(function($ctx1) { 
-var $1,$3,$4,$2;
-$1=_st(html)._div();
-_st($1)._class_("modal-header");
-$2=_st($1)._with_((function(el){
-return smalltalk.withContext(function($ctx2) {
-$3=_st(el)._button();
-_st($3)._type_("button");
-_st($3)._class_("close");
-_st($3)._at_put_("data-dismiss","modal");
-_st($3)._at_put_("aria-hidden","true");
-$4=_st($3)._with_("×");
-$4;
-return _st(_st(el)._h3())._with_("Import MSE");
-}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
-return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:",{html:html},smalltalk.MWImporter)})},
-args: ["html"],
-source: "renderHeaderOn: html\x0a\x09html div\x0a    \x09class:'modal-header';\x0a        with: [ :el |\x0a        \x09el button \x0a            \x09type:'button';\x0a            \x09class:'close';\x0a            \x09at: 'data-dismiss' put:'modal';\x0a            \x09at: 'aria-hidden' put:'true';\x0a\x09            with: '×'.\x0a\x09\x09\x09el h3 \x0a                with: 'Import MSE'.\x0a        ].",
-messageSends: ["class:", "div", "with:", "type:", "button", "at:put:", "h3"],
 referencedClasses: []
 }),
 smalltalk.MWImporter);
@@ -1618,12 +1635,12 @@ category: 'rendering',
 fn: function (html){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
-self._renderHeaderOn_(html);
+self._renderHeaderOn_title_(html,"Import MSE");
 self._renderBodyOn_(html);
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html},smalltalk.MWImporter)})},
 args: ["html"],
-source: "renderOn: html\x0a\x09self renderHeaderOn: html.\x0a    self renderBodyOn: html.",
-messageSends: ["renderHeaderOn:", "renderBodyOn:"],
+source: "renderOn: html\x0a\x09self renderHeaderOn: html title: 'Import MSE'.\x0a    self renderBodyOn: html.",
+messageSends: ["renderHeaderOn:title:", "renderBodyOn:"],
 referencedClasses: []
 }),
 smalltalk.MWImporter);
@@ -1734,7 +1751,7 @@ smalltalk.MWSearch);
 smalltalk.addMethod(
 smalltalk.method({
 selector: "initialize",
-category: 'initialize',
+category: 'initialization',
 fn: function (){
 var self=this;
 function $MWSuccessForSearch(){return smalltalk.MWSuccessForSearch||(typeof MWSuccessForSearch=="undefined"?nil:MWSuccessForSearch)}
@@ -1752,23 +1769,6 @@ args: [],
 source: "initialize\x0a\x09super initialize.\x0a    MWAnnouncer current on: MWSuccessForSearch do: [ :announcement |  self updateListSuccess: announcement actions ].\x0a    isListUpdated := false.\x0a\x09self render",
 messageSends: ["initialize", "on:do:", "updateListSuccess:", "actions", "current", "render"],
 referencedClasses: ["MWSuccessForSearch", "MWAnnouncer"]
-}),
-smalltalk.MWSearch);
-
-smalltalk.addMethod(
-smalltalk.method({
-selector: "render",
-category: 'rendering',
-fn: function (){
-var self=this;
-return smalltalk.withContext(function($ctx1) { 
-_st(_st(self._cssId())._asJQuery())._empty();
-self._appendToJQuery_(_st(self._cssId())._asJQuery());
-return self}, function($ctx1) {$ctx1.fill(self,"render",{},smalltalk.MWSearch)})},
-args: [],
-source: "render\x0a\x09(self cssId asJQuery) empty.\x0a\x09self appendToJQuery: (self cssId) asJQuery",
-messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"],
-referencedClasses: []
 }),
 smalltalk.MWSearch);
 
@@ -1894,50 +1894,18 @@ smalltalk.MWSearch);
 
 smalltalk.addMethod(
 smalltalk.method({
-selector: "renderHeaderOn:",
-category: 'rendering',
-fn: function (html){
-var self=this;
-return smalltalk.withContext(function($ctx1) { 
-var $1,$3,$4,$5,$6,$2;
-$1=_st(html)._div();
-_st($1)._class_("modal-header");
-$2=_st($1)._with_((function(el){
-return smalltalk.withContext(function($ctx2) {
-$3=_st(el)._button();
-_st($3)._type_("button");
-_st($3)._class_("close");
-_st($3)._at_put_("data-dismiss","modal");
-_st($3)._at_put_("aria-hidden","true");
-$4=_st($3)._with_("×");
-$4;
-$5=_st(el)._h3();
-_st($5)._id_("myModalLabel");
-$6=_st($5)._with_("Search");
-return $6;
-}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
-return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:",{html:html},smalltalk.MWSearch)})},
-args: ["html"],
-source: "renderHeaderOn: html\x0a\x09html div\x0a    \x09class:'modal-header';\x0a        with: [ :el |\x0a        \x09el button \x0a            \x09type:'button';\x0a            \x09class:'close';\x0a            \x09at: 'data-dismiss' put:'modal';\x0a            \x09at: 'aria-hidden' put:'true';\x0a\x09            with: '×'.\x0a\x09\x09\x09el h3 \x0a            \x09id:'myModalLabel'; \x0a                with: 'Search'.\x0a        ].",
-messageSends: ["class:", "div", "with:", "type:", "button", "at:put:", "id:", "h3"],
-referencedClasses: []
-}),
-smalltalk.MWSearch);
-
-smalltalk.addMethod(
-smalltalk.method({
 selector: "renderOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
-self._renderHeaderOn_(html);
+self._renderHeaderOn_title_(html,"Search");
 self._renderBodyOn_(html);
 self._renderFooterOn_(html);
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html},smalltalk.MWSearch)})},
 args: ["html"],
-source: "renderOn: html\x0a\x09self renderHeaderOn: html.\x0a    self renderBodyOn: html.\x0a    self renderFooterOn: html.",
-messageSends: ["renderHeaderOn:", "renderBodyOn:", "renderFooterOn:"],
+source: "renderOn: html\x0a\x09self renderHeaderOn: html title: 'Search'.\x0a    self renderBodyOn: html.\x0a    self renderFooterOn: html.",
+messageSends: ["renderHeaderOn:title:", "renderBodyOn:", "renderFooterOn:"],
 referencedClasses: []
 }),
 smalltalk.MWSearch);
@@ -2838,12 +2806,12 @@ var self=this;
 var begin,end;
 return smalltalk.withContext(function($ctx1) { 
 begin=_st(_st(_st(announcement)._colId())._asNumber()).__plus((1));
-end=_st(_st(self._colWidget())._size()).__plus((1));
+end=_st(self._colWidget())._size();
 _st(self._colWidget())._removeFrom_to_(begin,end);
 self._addCol_(_st(announcement)._content());
 return self}, function($ctx1) {$ctx1.fill(self,"colManage:",{announcement:announcement,begin:begin,end:end},smalltalk.MWMain)})},
 args: ["announcement"],
-source: "colManage: announcement\x0a\x09\x09| begin end |\x0a        begin :=  announcement colId asNumber + 1.\x0a        end := self colWidget size +1.\x0a\x09\x09self colWidget removeFrom: begin to: end.\x0a    \x09self addCol: announcement content.",
+source: "colManage: announcement\x0a\x09\x09| begin end |\x0a        begin :=  announcement colId asNumber +1.\x0a        end := self colWidget size.\x0a\x09\x09self colWidget removeFrom: begin to: end.\x0a    \x09self addCol: announcement content.",
 messageSends: ["+", "asNumber", "colId", "size", "colWidget", "removeFrom:to:", "addCol:", "content"],
 referencedClasses: []
 }),

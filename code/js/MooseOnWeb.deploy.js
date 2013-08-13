@@ -7,10 +7,10 @@ fn: function (){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
 var $1;
-$1=_st(_st(_st(self["@htmlAnchor"])._asJQuery())._parent_("div"))._attr_("row");
+$1=_st(_st(_st(_st(self["@htmlAnchor"])._asJQuery())._parents_("div"))._first())._attr_("row");
 return $1;
 }, function($ctx1) {$ctx1.fill(self,"getColumnNumber",{},smalltalk.MWAbstractItem)})},
-messageSends: ["attr:", "parent:", "asJQuery"]}),
+messageSends: ["attr:", "first", "parents:", "asJQuery"]}),
 smalltalk.MWAbstractItem);
 
 
@@ -454,11 +454,11 @@ return smalltalk.withContext(function($ctx2) {
 return _st(_st(html)._li())._with_((function(li){
 return smalltalk.withContext(function($ctx3) {
 self._renderHeaderOn_withKey_withValue_(li,key,value);
-return _st(_st(li)._span())._with_(value);
+return _st(li)._with_(value);
 }, function($ctx3) {$ctx3.fillBlock({li:li},$ctx2)})}));
 }, function($ctx2) {$ctx2.fillBlock({key:key,value:value},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderContentOn:",{html:html},smalltalk.MWMooseEntity)})},
-messageSends: ["keysAndValuesDo:", "with:", "renderHeaderOn:withKey:withValue:", "span", "li", "properties"]}),
+messageSends: ["keysAndValuesDo:", "with:", "renderHeaderOn:withKey:withValue:", "li", "properties"]}),
 smalltalk.MWMooseEntity);
 
 smalltalk.addMethod(
@@ -508,10 +508,10 @@ return self._renderContentOn_(html);
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
 self["@htmlAnchor"]=$3;
 } else {
-self["@htmlAnchor"]=_st(_st(html)._span())._with_("Loading");
+self["@htmlAnchor"]=_st(html)._with_("Loading");
 };
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html},smalltalk.MWMooseEntity)})},
-messageSends: ["ifTrue:ifFalse:", "class:", "ul", "with:", "renderContentOn:", "span"]}),
+messageSends: ["ifTrue:ifFalse:", "class:", "ul", "with:", "renderContentOn:"]}),
 smalltalk.MWMooseEntity);
 
 smalltalk.addMethod(
@@ -1066,6 +1066,42 @@ smalltalk.MWResult);
 
 
 smalltalk.addClass('MWAbstractModal', smalltalk.Widget, [], 'MooseOnWeb');
+smalltalk.addMethod(
+smalltalk.method({
+selector: "render",
+fn: function (){
+var self=this;
+return smalltalk.withContext(function($ctx1) { 
+_st(_st(self._cssId())._asJQuery())._empty();
+self._appendToJQuery_(_st(self._cssId())._asJQuery());
+return self}, function($ctx1) {$ctx1.fill(self,"render",{},smalltalk.MWAbstractModal)})},
+messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"]}),
+smalltalk.MWAbstractModal);
+
+smalltalk.addMethod(
+smalltalk.method({
+selector: "renderHeaderOn:title:",
+fn: function (html,aTitle){
+var self=this;
+return smalltalk.withContext(function($ctx1) { 
+var $1,$3,$4,$2;
+$1=_st(html)._div();
+_st($1)._class_("modal-header");
+$2=_st($1)._with_((function(el){
+return smalltalk.withContext(function($ctx2) {
+$3=_st(el)._button();
+_st($3)._type_("button");
+_st($3)._class_("close");
+_st($3)._at_put_("data-dismiss","modal");
+_st($3)._at_put_("aria-hidden","true");
+$4=_st($3)._with_("×");
+$4;
+return _st(_st(el)._h3())._with_(aTitle);
+}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
+return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:title:",{html:html,aTitle:aTitle},smalltalk.MWAbstractModal)})},
+messageSends: ["class:", "div", "with:", "type:", "button", "at:put:", "h3"]}),
+smalltalk.MWAbstractModal);
+
 
 
 smalltalk.addClass('MWImporter', smalltalk.MWAbstractModal, [], 'MooseOnWeb');
@@ -1131,18 +1167,6 @@ smalltalk.MWImporter);
 
 smalltalk.addMethod(
 smalltalk.method({
-selector: "render",
-fn: function (){
-var self=this;
-return smalltalk.withContext(function($ctx1) { 
-_st(_st(self._cssId())._asJQuery())._empty();
-self._appendToJQuery_(_st(self._cssId())._asJQuery());
-return self}, function($ctx1) {$ctx1.fill(self,"render",{},smalltalk.MWImporter)})},
-messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"]}),
-smalltalk.MWImporter);
-
-smalltalk.addMethod(
-smalltalk.method({
 selector: "renderBodyOn:",
 fn: function (html){
 var self=this;
@@ -1150,32 +1174,48 @@ var form,frame;
 function $MWEntryPoint(){return smalltalk.MWEntryPoint||(typeof MWEntryPoint=="undefined"?nil:MWEntryPoint)}
 return smalltalk.withContext(function($ctx1) { 
 var $1,$3,$4,$5,$6,$2;
+_st(window)._at_put_("amber_upload",(function(){
+return smalltalk.withContext(function($ctx2) {
+return _st(window)._alert_("coucou");
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1)})}));
 $1=_st(html)._div();
 _st($1)._class_(" modal-body");
 _st($1)._at_put_("max-height","200");
 $2=_st($1)._with_((function(el){
 return smalltalk.withContext(function($ctx2) {
 $3=_st(el)._form();
-_st($3)._target_("importIframe");
 _st($3)._method_("post");
 _st($3)._action_(_st(_st($MWEntryPoint())._restApiLocation()).__comma(_st($MWEntryPoint())._urlModels()));
 _st($3)._at_put_("enctype","multipart/form-data");
 _st($3)._at_put_("encoding","multipart/form-data");
-$4=_st($3)._with_((function(content){
+_st($3)._with_((function(content){
 return smalltalk.withContext(function($ctx3) {
-return self._renderFormOn_(content);
-}, function($ctx3) {$ctx3.fillBlock({content:content},$ctx2)})}));
-form=$4;
-form;
-$5=_st(el)._iframe();
-_st($5)._src_("about:none");
-_st($5)._style_("display:none");
-$6=_st($5)._name_("importIframe");
-frame=$6;
+self._renderFormOn_(content);
+$4=_st(el)._iframe();
+_st($4)._id_("importIframe");
+_st($4)._src_("about:blank");
+_st($4)._style_("display:none");
+_st($4)._name_("importIframe");
+$5=_st($4)._yourself();
+frame=$5;
 return frame;
+}, function($ctx3) {$ctx3.fillBlock({content:content},$ctx2)})}));
+$6=_st($3)._yourself();
+form=$6;
+form;
+return _st(form)._onSubmit_((function(){
+return smalltalk.withContext(function($ctx3) {
+_st(window)._alert_("submit");
+_st(form)._target_("importIframe");
+_st("importIframe"._asJQuery())._at_put_("onload",(function(){
+return smalltalk.withContext(function($ctx4) {
+return _st(window)._alert_("coucou");
+}, function($ctx4) {$ctx4.fillBlock({},$ctx3)})}));
+return _st(console)._log_(frame);
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2)})}));
 }, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
 return self}, function($ctx1) {$ctx1.fill(self,"renderBodyOn:",{html:html,form:form,frame:frame},smalltalk.MWImporter)})},
-messageSends: ["class:", "div", "at:put:", "with:", "target:", "form", "method:", "action:", ",", "urlModels", "restApiLocation", "renderFormOn:", "src:", "iframe", "style:", "name:"]}),
+messageSends: ["at:put:", "alert:", "class:", "div", "with:", "method:", "form", "action:", ",", "urlModels", "restApiLocation", "renderFormOn:", "id:", "iframe", "src:", "style:", "name:", "yourself", "onSubmit:", "target:", "asJQuery", "log:"]}),
 smalltalk.MWImporter);
 
 smalltalk.addMethod(
@@ -1222,38 +1262,14 @@ smalltalk.MWImporter);
 
 smalltalk.addMethod(
 smalltalk.method({
-selector: "renderHeaderOn:",
-fn: function (html){
-var self=this;
-return smalltalk.withContext(function($ctx1) { 
-var $1,$3,$4,$2;
-$1=_st(html)._div();
-_st($1)._class_("modal-header");
-$2=_st($1)._with_((function(el){
-return smalltalk.withContext(function($ctx2) {
-$3=_st(el)._button();
-_st($3)._type_("button");
-_st($3)._class_("close");
-_st($3)._at_put_("data-dismiss","modal");
-_st($3)._at_put_("aria-hidden","true");
-$4=_st($3)._with_("×");
-$4;
-return _st(_st(el)._h3())._with_("Import MSE");
-}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
-return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:",{html:html},smalltalk.MWImporter)})},
-messageSends: ["class:", "div", "with:", "type:", "button", "at:put:", "h3"]}),
-smalltalk.MWImporter);
-
-smalltalk.addMethod(
-smalltalk.method({
 selector: "renderOn:",
 fn: function (html){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
-self._renderHeaderOn_(html);
+self._renderHeaderOn_title_(html,"Import MSE");
 self._renderBodyOn_(html);
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html},smalltalk.MWImporter)})},
-messageSends: ["renderHeaderOn:", "renderBodyOn:"]}),
+messageSends: ["renderHeaderOn:title:", "renderBodyOn:"]}),
 smalltalk.MWImporter);
 
 smalltalk.addMethod(
@@ -1345,18 +1361,6 @@ self["@isListUpdated"]=false;
 self._render();
 return self}, function($ctx1) {$ctx1.fill(self,"initialize",{},smalltalk.MWSearch)})},
 messageSends: ["initialize", "on:do:", "updateListSuccess:", "actions", "current", "render"]}),
-smalltalk.MWSearch);
-
-smalltalk.addMethod(
-smalltalk.method({
-selector: "render",
-fn: function (){
-var self=this;
-return smalltalk.withContext(function($ctx1) { 
-_st(_st(self._cssId())._asJQuery())._empty();
-self._appendToJQuery_(_st(self._cssId())._asJQuery());
-return self}, function($ctx1) {$ctx1.fill(self,"render",{},smalltalk.MWSearch)})},
-messageSends: ["empty", "asJQuery", "cssId", "appendToJQuery:"]}),
 smalltalk.MWSearch);
 
 smalltalk.addMethod(
@@ -1466,42 +1470,15 @@ smalltalk.MWSearch);
 
 smalltalk.addMethod(
 smalltalk.method({
-selector: "renderHeaderOn:",
-fn: function (html){
-var self=this;
-return smalltalk.withContext(function($ctx1) { 
-var $1,$3,$4,$5,$6,$2;
-$1=_st(html)._div();
-_st($1)._class_("modal-header");
-$2=_st($1)._with_((function(el){
-return smalltalk.withContext(function($ctx2) {
-$3=_st(el)._button();
-_st($3)._type_("button");
-_st($3)._class_("close");
-_st($3)._at_put_("data-dismiss","modal");
-_st($3)._at_put_("aria-hidden","true");
-$4=_st($3)._with_("×");
-$4;
-$5=_st(el)._h3();
-_st($5)._id_("myModalLabel");
-$6=_st($5)._with_("Search");
-return $6;
-}, function($ctx2) {$ctx2.fillBlock({el:el},$ctx1)})}));
-return self}, function($ctx1) {$ctx1.fill(self,"renderHeaderOn:",{html:html},smalltalk.MWSearch)})},
-messageSends: ["class:", "div", "with:", "type:", "button", "at:put:", "id:", "h3"]}),
-smalltalk.MWSearch);
-
-smalltalk.addMethod(
-smalltalk.method({
 selector: "renderOn:",
 fn: function (html){
 var self=this;
 return smalltalk.withContext(function($ctx1) { 
-self._renderHeaderOn_(html);
+self._renderHeaderOn_title_(html,"Search");
 self._renderBodyOn_(html);
 self._renderFooterOn_(html);
 return self}, function($ctx1) {$ctx1.fill(self,"renderOn:",{html:html},smalltalk.MWSearch)})},
-messageSends: ["renderHeaderOn:", "renderBodyOn:", "renderFooterOn:"]}),
+messageSends: ["renderHeaderOn:title:", "renderBodyOn:", "renderFooterOn:"]}),
 smalltalk.MWSearch);
 
 smalltalk.addMethod(
@@ -2194,7 +2171,7 @@ var self=this;
 var begin,end;
 return smalltalk.withContext(function($ctx1) { 
 begin=_st(_st(_st(announcement)._colId())._asNumber()).__plus((1));
-end=_st(_st(self._colWidget())._size()).__plus((1));
+end=_st(self._colWidget())._size();
 _st(self._colWidget())._removeFrom_to_(begin,end);
 self._addCol_(_st(announcement)._content());
 return self}, function($ctx1) {$ctx1.fill(self,"colManage:",{announcement:announcement,begin:begin,end:end},smalltalk.MWMain)})},
