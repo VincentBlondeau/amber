@@ -2170,12 +2170,13 @@ fn: function (announcement){
 var self=this;
 var begin,end;
 return smalltalk.withContext(function($ctx1) { 
+_st(console)._log_(self._colWidget());
 begin=_st(_st(_st(announcement)._colId())._asNumber()).__plus((1));
 end=_st(self._colWidget())._size();
 _st(self._colWidget())._removeFrom_to_(begin,end);
 self._addCol_(_st(announcement)._content());
 return self}, function($ctx1) {$ctx1.fill(self,"colManage:",{announcement:announcement,begin:begin,end:end},smalltalk.MWMain)})},
-messageSends: ["+", "asNumber", "colId", "size", "colWidget", "removeFrom:to:", "addCol:", "content"]}),
+messageSends: ["log:", "colWidget", "+", "asNumber", "colId", "size", "removeFrom:to:", "addCol:", "content"]}),
 smalltalk.MWMain);
 
 smalltalk.addMethod(
@@ -2254,7 +2255,7 @@ fn: function (num){
 var self=this;
 var i;
 return smalltalk.withContext(function($ctx1) { 
-_st(self._colWidget())._removeFrom_to_(num,_st(_st(_st(self._colWidget())._size()).__minus(num)).__plus((2)));
+_st(self._colWidget())._removeFrom_to_(num,_st(self._colWidget())._size());
 i=(1);
 _st(self._colWidget())._do_((function(col){
 return smalltalk.withContext(function($ctx2) {
@@ -2264,7 +2265,7 @@ return i;
 }, function($ctx2) {$ctx2.fillBlock({col:col},$ctx1)})}));
 self._render();
 return self}, function($ctx1) {$ctx1.fill(self,"delCol:",{num:num,i:i},smalltalk.MWMain)})},
-messageSends: ["removeFrom:to:", "+", "-", "size", "colWidget", "do:", "number:", "render"]}),
+messageSends: ["removeFrom:to:", "size", "colWidget", "do:", "number:", "+", "render"]}),
 smalltalk.MWMain);
 
 smalltalk.addMethod(

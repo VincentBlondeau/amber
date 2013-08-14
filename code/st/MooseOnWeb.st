@@ -1120,7 +1120,7 @@ cssId
 
 delCol: num
 	| i |
-    self colWidget removeFrom: num to:  self colWidget size - num + 2.
+    self colWidget removeFrom: num to:  self colWidget size .
     i:= 1.
     self colWidget do: [ :col | col number: i. i := i +1. ].
     self render
@@ -1150,6 +1150,7 @@ initialize
 
 colManage: announcement
 		| begin end |
+		console log: self colWidget.
         begin :=  announcement colId asNumber +1.
         end := self colWidget size.
 		self colWidget removeFrom: begin to: end.

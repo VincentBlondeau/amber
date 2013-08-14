@@ -2805,14 +2805,15 @@ fn: function (announcement){
 var self=this;
 var begin,end;
 return smalltalk.withContext(function($ctx1) { 
+_st(console)._log_(self._colWidget());
 begin=_st(_st(_st(announcement)._colId())._asNumber()).__plus((1));
 end=_st(self._colWidget())._size();
 _st(self._colWidget())._removeFrom_to_(begin,end);
 self._addCol_(_st(announcement)._content());
 return self}, function($ctx1) {$ctx1.fill(self,"colManage:",{announcement:announcement,begin:begin,end:end},smalltalk.MWMain)})},
 args: ["announcement"],
-source: "colManage: announcement\x0a\x09\x09| begin end |\x0a        begin :=  announcement colId asNumber +1.\x0a        end := self colWidget size.\x0a\x09\x09self colWidget removeFrom: begin to: end.\x0a    \x09self addCol: announcement content.",
-messageSends: ["+", "asNumber", "colId", "size", "colWidget", "removeFrom:to:", "addCol:", "content"],
+source: "colManage: announcement\x0a\x09\x09| begin end |\x0a\x09\x09console log: self colWidget.\x0a        begin :=  announcement colId asNumber +1.\x0a        end := self colWidget size.\x0a\x09\x09self colWidget removeFrom: begin to: end.\x0a    \x09self addCol: announcement content.",
+messageSends: ["log:", "colWidget", "+", "asNumber", "colId", "size", "removeFrom:to:", "addCol:", "content"],
 referencedClasses: []
 }),
 smalltalk.MWMain);
@@ -2919,7 +2920,7 @@ fn: function (num){
 var self=this;
 var i;
 return smalltalk.withContext(function($ctx1) { 
-_st(self._colWidget())._removeFrom_to_(num,_st(_st(_st(self._colWidget())._size()).__minus(num)).__plus((2)));
+_st(self._colWidget())._removeFrom_to_(num,_st(self._colWidget())._size());
 i=(1);
 _st(self._colWidget())._do_((function(col){
 return smalltalk.withContext(function($ctx2) {
@@ -2930,8 +2931,8 @@ return i;
 self._render();
 return self}, function($ctx1) {$ctx1.fill(self,"delCol:",{num:num,i:i},smalltalk.MWMain)})},
 args: ["num"],
-source: "delCol: num\x0a\x09| i |\x0a    self colWidget removeFrom: num to:  self colWidget size - num + 2.\x0a    i:= 1.\x0a    self colWidget do: [ :col | col number: i. i := i +1. ].\x0a    self render",
-messageSends: ["removeFrom:to:", "+", "-", "size", "colWidget", "do:", "number:", "render"],
+source: "delCol: num\x0a\x09| i |\x0a    self colWidget removeFrom: num to:  self colWidget size .\x0a    i:= 1.\x0a    self colWidget do: [ :col | col number: i. i := i +1. ].\x0a    self render",
+messageSends: ["removeFrom:to:", "size", "colWidget", "do:", "number:", "+", "render"],
 referencedClasses: []
 }),
 smalltalk.MWMain);
